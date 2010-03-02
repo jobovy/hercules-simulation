@@ -5,6 +5,38 @@
 import scipy as sc
 import scipy.integrate as integrate
 _degtorad= sc.pi/180.
+def uvToELz_grid(ulinspace,vlinspace,Rtheta=(1.,0.),t=-4.,pot='bar',
+            potparams=(0.9,0.01,25.*_degtorad,.8,0.,2.)):
+    """
+    NAME:
+       uvToELz_grid
+    PURPOSE:
+       calculate uvToLz on a grid in (u,v)
+    INPUT:
+       ulinspace, vlinspace - build the grid using scipy's linspace with
+                              these arguments
+       (R,theta) - final R and theta
+       t - time to integrate backwards for 
+           (interpretation depends on potential)
+       pot - type of non-axisymmetric, time-depedent potential
+       potparams - parameters for this potential
+    OUTPUT:
+       final (E,Lz) on grid [nus,nvs,2]
+    HISTORY:
+       2010-03-01 - Written - Bovy (NYU)
+    """
+    us= sc.linspace(*ulinspace)
+    vs= sc.linspace(*vlinspace)
+    nus= len(us)
+    nvs= len(vs)
+    out= sc.zeros((nus,nvs,2))
+    for ii in range(nus):
+        for jj in range(nvs):
+            tmp_out= uvToELz(UV=(us[ii],vs[jj]),Rtheta=Rtheta,t=t,pot=pot,potparams=potparams)
+            out[ii,jj,0]= tmp_out[0]
+            out[ii,jj,1]= tmp_out[1]
+    return out
+
 def uvToELz(UV=(0.,0.),Rtheta=(1.,0.),t=-4.,pot='bar',
             potparams=(0.9,0.01,25.*_degtorad,.8,0.,2.)):
     """
@@ -118,4 +150,15 @@ def barEOM(y,t,*args):
             
 
 if __name__ == '__main__':
+    #Various tests
     print uvToELz()
+
+    import timeit
+    
+    s="""r=uvToELz((numpy.random.random()-.5,numpy.random.random()-.5))"""
+    t = timeit.Timer(stmt=s,setup="from __main__ import uvToELz\nimport numpy")
+    print "uvToELz: %.4f sec/pass" % (t.timeit(number=500)/500)
+
+    if False:
+        testN= 101
+        print uvToELz_grid((-.5,.5,testN),(-.5,.5,testN))[testN/2,testN/2,:]
