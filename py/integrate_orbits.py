@@ -5,7 +5,7 @@
 import scipy as sc
 import scipy.integrate as integrate
 _degtorad= sc.pi/180.
-def uvToELz_grid(ulinspace,vlinspace,Rtheta=(1.,0.),t=-4.,pot='bar',
+def uvToELz_grid(ulinspace,vlinspace,R=1.,t=-4.,pot='bar',
             potparams=(0.9,0.01,25.*_degtorad,.8,0.,2.)):
     """
     NAME:
@@ -15,7 +15,7 @@ def uvToELz_grid(ulinspace,vlinspace,Rtheta=(1.,0.),t=-4.,pot='bar',
     INPUT:
        ulinspace, vlinspace - build the grid using scipy's linspace with
                               these arguments
-       (R,theta) - final R and theta
+       R - Galactoccentric Radius
        t - time to integrate backwards for 
            (interpretation depends on potential)
        pot - type of non-axisymmetric, time-depedent potential
@@ -32,12 +32,12 @@ def uvToELz_grid(ulinspace,vlinspace,Rtheta=(1.,0.),t=-4.,pot='bar',
     out= sc.zeros((nus,nvs,2))
     for ii in range(nus):
         for jj in range(nvs):
-            tmp_out= uvToELz(UV=(us[ii],vs[jj]),Rtheta=Rtheta,t=t,pot=pot,potparams=potparams)
+            tmp_out= uvToELz(UV=(us[ii],vs[jj]),R=R,t=t,pot=pot,potparams=potparams)
             out[ii,jj,0]= tmp_out[0]
             out[ii,jj,1]= tmp_out[1]
     return out
 
-def uvToELz(UV=(0.,0.),Rtheta=(1.,0.),t=-4.,pot='bar',
+def uvToELz(UV=(0.,0.),R=1.,t=-4.,pot='bar',
             potparams=(0.9,0.01,25.*_degtorad,.8,0.,2.)):
     """
     NAME:
@@ -46,7 +46,7 @@ def uvToELz(UV=(0.,0.),Rtheta=(1.,0.),t=-4.,pot='bar',
        calculate initial (E.Lz) for final (u,v)
     INPUT:
        (u,v) - final radial and tangential velocity, divided by vcirc
-       (R,theta) - final R and theta
+       R = Galactocentric radius
        t - time to integrate backwards for 
            (interpretation depends on potential)
        pot - type of non-axisymmetric, time-depedent potential
@@ -62,11 +62,8 @@ def uvToELz(UV=(0.,0.),Rtheta=(1.,0.),t=-4.,pot='bar',
     #Final conditions
     u,v= UV
     v+= 1. #Add circular velocity
-    R,theta = Rtheta
-    x= R*sc.cos(theta)
-    y= R*sc.sin(theta)
-    vR= (u*x+v*y)/R * OmegaoOmegab
-    vT= (v*x-u*y)/R * OmegaoOmegab
+    vR= u * OmegaoOmegab
+    vT= v * OmegaoOmegab
     (vR,vT,R) = integrate_orbit((vR,vT,R),t=t,pot=pot,potparams=potparams)
     return (axipotential(R,beta)+0.5*vR**2.+0.5*vT**2.,vT*R) #Assumes no perturbation at this time
 
