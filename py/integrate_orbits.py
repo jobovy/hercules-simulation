@@ -5,8 +5,8 @@
 import scipy as sc
 import scipy.integrate as integrate
 _degtorad= sc.pi/180.
-def uvToELz_grid(ulinspace,vlinspace,R=1.,t=-4.,pot='bar',
-            potparams=(0.9,0.01,25.*_degtorad,.8,0.,2.)):
+def uvToELz_grid(ulinspace,vlinspace,R=1.,t=-4.,pot='bar',beta=0.,
+            potparams=(0.9,0.01,25.*_degtorad,.8,2.)):
     """
     NAME:
        uvToELz_grid
@@ -15,10 +15,11 @@ def uvToELz_grid(ulinspace,vlinspace,R=1.,t=-4.,pot='bar',
     INPUT:
        ulinspace, vlinspace - build the grid using scipy's linspace with
                               these arguments
-       R - Galactoccentric Radius
+       R - Galactocentric Radius
        t - time to integrate backwards for 
            (interpretation depends on potential)
-       pot - type of non-axisymmetric, time-depedent potential
+       pot - type of non-axisymmetric, time-dependent potential
+       beta - power-law index of rotation curve
        potparams - parameters for this potential
     OUTPUT:
        final (E,Lz) on grid [nus,nvs,2]
@@ -33,13 +34,13 @@ def uvToELz_grid(ulinspace,vlinspace,R=1.,t=-4.,pot='bar',
     out= sc.zeros((nus,nvs,2))
     for ii in range(nus):
         for jj in range(nvs):
-            tmp_out= uvToELz(UV=(us[ii],vs[jj]),R=R,t=t,pot=pot,potparams=potparams)
+            tmp_out= uvToELz(UV=(us[ii],vs[jj]),R=R,t=t,pot=pot,beta=beta,potparams=potparams)
             out[ii,jj,0]= tmp_out[0]
             out[ii,jj,1]= tmp_out[1]
     return out
 
-def uvToELz(UV=(0.,0.),R=1.,t=-4.,pot='bar',
-            potparams=(0.9,0.01,25.*_degtorad,.8,0.,2.)):
+def uvToELz(UV=(0.,0.),R=1.,t=-4.,pot='bar',beta=0.,
+            potparams=(0.9,0.01,25.*_degtorad,.8,2.)):
     """
     NAME:
        uvToELz
@@ -50,7 +51,8 @@ def uvToELz(UV=(0.,0.),R=1.,t=-4.,pot='bar',
        R = Galactocentric radius
        t - time to integrate backwards for 
            (interpretation depends on potential)
-       pot - type of non-axisymmetric, time-depedent potential
+       pot - type of non-axisymmetric, time-dependent potential
+       beta - power-law index of rotation curve
        potparams - parameters for this potential
     OUTPUT:
        final (E,Lz)
@@ -59,14 +61,14 @@ def uvToELz(UV=(0.,0.),R=1.,t=-4.,pot='bar',
        2010-03-01 - Written - Bovy (NYU)
     """
     #For now assume pot == 'bar'
-    (Rolr,alpha,phi,chi,beta,t1) = potparams
+    (Rolr,alpha,phi,chi,t1) = potparams
     OmegaoOmegab= Rolr**(1.-beta)/(1.+sc.sqrt((1.+beta)/2.))
     #Final conditions
     u,v= UV
     v+= 1. #Add circular velocity
     vR= u * OmegaoOmegab
     vT= v * OmegaoOmegab
-    (vR,vT,R) = integrate_orbit((vR,vT,R),t=t,pot=pot,potparams=potparams)
+    (vR,vT,R) = integrate_orbit((vR,vT,R),t=t,pot=pot,beta=beta,potparams=potparams)
     vR/= OmegaoOmegab
     vT/= OmegaoOmegab
     return (axipotential(R,beta)+0.5*vR**2.+0.5*vT**2.,vT*R) #Assumes no perturbation at this time
@@ -90,8 +92,8 @@ def axipotential(R,beta=0.):
     else: #non-flat rotation curve
         return R**(2.*beta)/2./beta
 
-def integrate_orbit(vRvTR= (0.,1.,1.),t=-4.,pot='bar',
-                    potparams=(0.9,0.01,25.*_degtorad,.8,0.,2.)):
+def integrate_orbit(vRvTR= (0.,1.,1.),t=-4.,pot='bar',beta=0.,
+                    potparams=(0.9,0.01,25.*_degtorad,.8,2.)):
     """
     NAME:
        integrate_orbit
@@ -103,6 +105,7 @@ def integrate_orbit(vRvTR= (0.,1.,1.),t=-4.,pot='bar',
        t - time to integrate for 
            (interpretation depends on potential)
        pot - type of non-axisymmetric, time-depedent potential
+       beta - power-law index of rotation curve
        potparams - parameters for this potential
     OUTPUT:
        (vRF,vTF,RF)
@@ -110,7 +113,7 @@ def integrate_orbit(vRvTR= (0.,1.,1.),t=-4.,pot='bar',
        2010-03-01 - Written - Bovy (NYU)
     """
     #For now assume pot == 'bar'
-    (Rolr,alpha,phi,chi,beta,t1) = potparams
+    (Rolr,alpha,phi,chi,t1) = potparams
     OmegaoOmegab= Rolr**(1.-beta)/(1.+sc.sqrt((1.+beta)/2.))
     vR, vT, R= vRvTR
     h= R*vT #specific angular momentum
