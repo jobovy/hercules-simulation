@@ -6,7 +6,7 @@ import scipy as sc
 import scipy.integrate as integrate
 _degtorad= sc.pi/180.
 def uvToELz_grid(ulinspace,vlinspace,R=1.,t=-4.,pot='bar',beta=0.,
-            potparams=(0.9,0.01,25.*_degtorad,.8,2.)):
+            potparams=(0.9,0.01,25.*_degtorad,.8,None)):
     """
     NAME:
        uvToELz_grid
@@ -40,7 +40,7 @@ def uvToELz_grid(ulinspace,vlinspace,R=1.,t=-4.,pot='bar',beta=0.,
     return out
 
 def uvToELz(UV=(0.,0.),R=1.,t=-4.,pot='bar',beta=0.,
-            potparams=(0.9,0.01,25.*_degtorad,.8,2.)):
+            potparams=(0.9,0.01,25.*_degtorad,.8,None)):
     """
     NAME:
        uvToELz
@@ -48,12 +48,14 @@ def uvToELz(UV=(0.,0.),R=1.,t=-4.,pot='bar',beta=0.,
        calculate initial (E.Lz) for final (u,v)
     INPUT:
        (u,v) - final radial and tangential velocity, divided by vcirc
+               ACTUALLY -U!!
        R = Galactocentric radius
        t - time to integrate backwards for 
            (interpretation depends on potential)
        pot - type of non-axisymmetric, time-dependent potential
        beta - power-law index of rotation curve
        potparams - parameters for this potential
+                   (Rolr,alpha,phi,chi,t1)
     OUTPUT:
        final (E,Lz)
        E=E/vo^2; Lz= Lz/Ro/vo
@@ -93,7 +95,7 @@ def axipotential(R,beta=0.):
         return R**(2.*beta)/2./beta
 
 def integrate_orbit(vRvTR= (0.,1.,1.),t=-4.,pot='bar',beta=0.,
-                    potparams=(0.9,0.01,25.*_degtorad,.8,2.)):
+                    potparams=(0.9,0.01,25.*_degtorad,.8,None)):
     """
     NAME:
        integrate_orbit
@@ -114,15 +116,19 @@ def integrate_orbit(vRvTR= (0.,1.,1.),t=-4.,pot='bar',beta=0.,
     """
     #For now assume pot == 'bar'
     (Rolr,alpha,phi,chi,t1) = potparams
-    OmegaoOmegab= Rolr**(1.-beta)/(1.+sc.sqrt((1.+beta)/2.))
+    OmegaoOmegab= (Rolr**(1.-beta))/(1.+sc.sqrt((1.+beta)/2.))
     vR, vT, R= vRvTR
     h= R*vT #specific angular momentum
     #Integrate the orbit
     Rb= chi*OmegaoOmegab**(1./(1.-beta))
+    if t1 == None:
+        t1= t/2.
+    t1*= 2.*sc.pi
+    phi+= t*2.*sc.pi
     args= (h,OmegaoOmegab,beta,alpha,phi,Rb,t1)
-    time= [0.,t]
+    time= [0.,2.*sc.pi*t]
     initCond= [R,vR]
-    intOut= integrate.odeint(barEOM,initCond,time,args=args,rtol=10.**-15.)
+    intOut= integrate.odeint(barEOM,initCond,time,args=args,rtol=10.**-15.,mxstep=100000000)
     vRF= intOut[1,1]
     RF= intOut[1,0]
     vTF= h/RF
@@ -145,12 +151,16 @@ def barEOM(y,t,*args):
     """
     h, OmegaoOmegab,beta,alpha,phi,Rb, t1= args
     x= y[0]
-    xi= 2.*t/t1-1.
+    if sc.fabs(t) < t1:
+        xi= 2.*sc.fabs(t)/t1-1.
+        smooth= (3./16.*xi**5.-5./8*xi**3.+15./16.*xi+.5)
+    else: #bar is fully on
+        smooth= 1.
     if x <= Rb:
         barsign= 1.
     else: #outside of bar
         barsign= -1.
-    return [y[1],h**2./x**3.-OmegaoOmegab**2.*x**(2.*beta-1.)+barsign*alpha*OmegaoOmegab**2.*sc.cos(2.*(phi-t))*(3./16.*xi**5.-5./8*xi**3.+15./16.*xi+.5)]
+    return [y[1],h**2./x**3.-OmegaoOmegab**2.*x**(2.*beta-1.)+barsign*alpha*OmegaoOmegab**2.*sc.cos(2.*(phi-t))*smooth/x**4.]
             
 
 if __name__ == '__main__':

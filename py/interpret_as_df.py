@@ -28,15 +28,35 @@ def _interpret_as_df_dehnen(EL,beta,xD,xS,Sro):
     E, L= EL
     #Calculate Re,LE, OmegaE
     if beta == 0.:
-        xE= sc.exp(2.*E-1.)
+        xE= sc.exp(E-.5)
         LE= xE
         OmegaE= 1./xE
     else: #non-flat rotation curve
-        xE= (2.*E/(1.+1./2./beta))**(1./2./beta)
+        xE= (2.*E/(1.+1./beta))**(1./2./beta)
         LE= xE**(beta+1.)
-        xE= xE*(beta-1.)
+        OmegaE= xE*(beta-1.)
     SRE2= Sro**2.*sc.exp(-2.*(xE-1.)/xS)
     return sc.exp(-xE/xD)/SRE2*sc.exp(OmegaE*(L-LE)/SRE2)
 
 if __name__ == '__main__':
     print interpret_as_df((0.54636764432720319, 0.99999999999999989),type='dehnen')
+
+    from integrate_orbits import uvToELz
+    step=0.1
+    EL= uvToELz((0.,0.))
+    print "step= ", step
+    print "(0,0):",EL, interpret_as_df(EL)
+
+    EL= uvToELz((step,0.))
+    print "(1,0):",EL, interpret_as_df(EL)
+
+    EL= uvToELz((0.,step))
+    print "(0,1):",EL, interpret_as_df(EL)
+
+    EL= uvToELz((-step,0.))
+    print "(-1,0):",EL, interpret_as_df(EL)
+
+    EL= uvToELz((0.,-step))
+    print "(0,-1):",EL, interpret_as_df(EL)
+
+
