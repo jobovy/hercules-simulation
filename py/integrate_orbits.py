@@ -22,6 +22,7 @@ def uvToELz_grid(ulinspace,vlinspace,R=1.,t=-4.,pot='bar',
        potparams - parameters for this potential
     OUTPUT:
        final (E,Lz) on grid [nus,nvs,2]
+       E=E/vo^2; Lz= Lz/Ro/vo
     HISTORY:
        2010-03-01 - Written - Bovy (NYU)
     """
@@ -53,6 +54,7 @@ def uvToELz(UV=(0.,0.),R=1.,t=-4.,pot='bar',
        potparams - parameters for this potential
     OUTPUT:
        final (E,Lz)
+       E=E/vo^2; Lz= Lz/Ro/vo
     HISTORY:
        2010-03-01 - Written - Bovy (NYU)
     """
@@ -65,6 +67,8 @@ def uvToELz(UV=(0.,0.),R=1.,t=-4.,pot='bar',
     vR= u * OmegaoOmegab
     vT= v * OmegaoOmegab
     (vR,vT,R) = integrate_orbit((vR,vT,R),t=t,pot=pot,potparams=potparams)
+    vR/= OmegaoOmegab
+    vT/= OmegaoOmegab
     return (axipotential(R,beta)+0.5*vR**2.+0.5*vT**2.,vT*R) #Assumes no perturbation at this time
 
 def axipotential(R,beta=0.):
