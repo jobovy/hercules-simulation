@@ -128,7 +128,8 @@ def integrate_orbit(vRvTR= (0.,1.,1.),t=-4.,pot='bar',beta=0.,
     args= (h,OmegaoOmegab,beta,alpha,phi,Rb,t1)
     time= [0.,2.*sc.pi*t]
     initCond= [R,vR]
-    intOut= integrate.odeint(barEOM,initCond,time,args=args,rtol=10.**-15.,mxstep=100000000)
+    intOut= integrate.odeint(barEOM,initCond,time,args=args,
+                             rtol=10.**-15.,mxstep=100000000)
     vRF= intOut[1,1]
     RF= intOut[1,0]
     vTF= h/RF
@@ -157,15 +158,15 @@ def barEOM(y,t,*args):
     else: #bar is fully on
         smooth= 1.
     if x <= Rb:
-        barsign= 1.
+        #BOVY: IMPLEMENT
+        return [y[1],10000]
     else: #outside of bar
-        barsign= -1.
-    return [y[1],h**2./x**3.-OmegaoOmegab**2.*x**(2.*beta-1.)+barsign*alpha*OmegaoOmegab**2.*sc.cos(2.*(phi-t))*smooth/x**4.]
+        return [y[1],h**2./x**3.-OmegaoOmegab**2.*x**(2.*beta-1.)-alpha*OmegaoOmegab**2.*sc.cos(2.*(phi-t))*smooth/x**4.]
             
 
 if __name__ == '__main__':
     #Various tests
-    print uvToELz()
+    print uvToELz((-.9,-.8))
 
     import timeit
     
