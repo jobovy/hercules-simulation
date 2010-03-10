@@ -159,7 +159,7 @@ def barEOM(y,t,*args):
         smooth= 1.
     if x <= Rb:
         #BOVY: IMPLEMENT
-        return [y[1],10000]
+        return [y[1],h**2./x**3.-OmegaoOmegab**2.*x**(2.*beta-1.)-alpha*OmegaoOmegab**2./Rb**6.*sc.cos(2.*(phi-t))*smooth*x**2.]
     else: #outside of bar
         return [y[1],h**2./x**3.-OmegaoOmegab**2.*x**(2.*beta-1.)-alpha*OmegaoOmegab**2.*sc.cos(2.*(phi-t))*smooth/x**4.]
             
