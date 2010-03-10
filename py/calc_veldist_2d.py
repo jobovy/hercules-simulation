@@ -3,7 +3,7 @@ from integrate_orbits import uvToELz
 from interpret_as_df import interpret_as_df
 _degtorad= sc.pi/180.
 def calc_veldist_2d(ulinspace,vlinspace,R=1.,t=-4.,pot='bar',beta=0.,
-                    potparams=(0.9,0.01,25.*_degtorad,.8,None),
+                    potparams=(0.9,0.01,20.*_degtorad,.8,None),
                     dfparams=(0.33,1.,0.2),dftype='dehnen'):
     """
     NAME:

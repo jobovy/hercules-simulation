@@ -64,10 +64,10 @@ def uvToELz(UV=(0.,0.),R=1.,t=-4.,pot='bar',beta=0.,
     """
     #For now assume pot == 'bar'
     (Rolr,alpha,phi,chi,t1) = potparams
-    OmegaoOmegab= Rolr**(1.-beta)/(1.+sc.sqrt((1.+beta)/2.))
+    OmegaoOmegab= (Rolr**(1.-beta))/(1.+sc.sqrt((1.+beta)/2.))
     #Final conditions
     u,v= UV
-    v+= 1. #Add circular velocity
+    v+= R**beta #Add circular velocity
     vR= u * OmegaoOmegab
     vT= v * OmegaoOmegab
     (vR,vT,R) = integrate_orbit((vR,vT,R),t=t,pot=pot,beta=beta,potparams=potparams)
@@ -122,11 +122,12 @@ def integrate_orbit(vRvTR= (0.,1.,1.),t=-4.,pot='bar',beta=0.,
     #Integrate the orbit
     Rb= chi*OmegaoOmegab**(1./(1.-beta))
     if t1 == None:
-        t1= t/2.
+        t1= sc.fabs(t)/2.
     t1*= 2.*sc.pi
     phi+= t*2.*sc.pi
-    args= (h,OmegaoOmegab,beta,alpha,phi,Rb,t1)
-    time= [0.,2.*sc.pi*t]
+    tend= 2.*sc.pi*t
+    args= (h,OmegaoOmegab,beta,alpha,phi,Rb,t1,tend)
+    time= [0.,tend]
     initCond= [R,vR]
     intOut= integrate.odeint(barEOM,initCond,time,args=args,
                              rtol=10.**-15.,mxstep=100000000)
@@ -150,23 +151,31 @@ def barEOM(y,t,*args):
     HISTORY:
        2010-03-01 - Written - Bovy (NYU)
     """
-    h, OmegaoOmegab,beta,alpha,phi,Rb, t1= args
+    h, OmegaoOmegab,beta,alpha,phi,Rb, t1, tend= args
     x= y[0]
-    if sc.fabs(t) < t1:
-        xi= 2.*sc.fabs(t)/t1-1.
+    deltat= sc.fabs(t-tend)
+    if deltat < t1:
+        xi= 2.*deltat/t1-1.
         smooth= (3./16.*xi**5.-5./8*xi**3.+15./16.*xi+.5)
     else: #bar is fully on
         smooth= 1.
     if x <= Rb:
-        #BOVY: IMPLEMENT
-        return [y[1],h**2./x**3.-OmegaoOmegab**2.*x**(2.*beta-1.)-alpha*OmegaoOmegab**2./Rb**6.*sc.cos(2.*(phi-t))*smooth*x**2.]
+        return [y[1],h**2./x**3.-OmegaoOmegab**2.*x**(2.*beta-1.)
+                -alpha*OmegaoOmegab**2.*sc.cos(2.*(phi-t))*smooth*x**2./Rb**6.]
     else: #outside of bar
-        return [y[1],h**2./x**3.-OmegaoOmegab**2.*x**(2.*beta-1.)-alpha*OmegaoOmegab**2.*sc.cos(2.*(phi-t))*smooth/x**4.]
+        return [y[1],h**2./x**3.-OmegaoOmegab**2.*x**(2.*beta-1.)
+                -alpha*OmegaoOmegab**2.*sc.cos(2.*(phi-t))*smooth/x**4.]
             
 
 if __name__ == '__main__':
     #Various tests
-    print uvToELz((-.9,-.8))
+    print uvToELz((0,0))
+    print uvToELz((-.1,-.1))
+
+    """
+    import sys
+    sys.exit(-1)
+    """
 
     import timeit
     

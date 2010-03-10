@@ -42,6 +42,7 @@ if __name__ == '__main__':
     print interpret_as_df((0.54636764432720319, 0.99999999999999989),type='dehnen')
 
     from integrate_orbits import uvToELz
+    """
     step=0.1
     EL= uvToELz((0.,0.))
     print "step= ", step
@@ -58,5 +59,10 @@ if __name__ == '__main__':
 
     EL= uvToELz((0.,-step))
     print "(0,-1):",EL, interpret_as_df(EL)
+    """
+
+    _degtorad= sc.pi/180.
+    print interpret_as_df(uvToELz((0,0),potparams=(1.,0.01,25.*_degtorad,.8,None)))
+    print interpret_as_df(uvToELz((-.1,-.1),potparams=(1.,0.01,25.*_degtorad,.8,None)))
 
 
