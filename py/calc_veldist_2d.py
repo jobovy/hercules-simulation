@@ -1,6 +1,6 @@
 import scipy as sc
 from integrate_orbits import uvToELz
-from interpret_as_df import interpret_as_df
+from interpret_as_df import interpret_as_df, distF
 _degtorad= sc.pi/180.
 def calc_veldist_2d(ulinspace,vlinspace,R=1.,t=-4.,pot='bar',beta=0.,
                     potparams=(0.9,0.01,20.*_degtorad,.8,None),
@@ -31,11 +31,11 @@ def calc_veldist_2d(ulinspace,vlinspace,R=1.,t=-4.,pot='bar',beta=0.,
     nus= len(us)
     nvs= len(vs)
     out= sc.zeros((nus,nvs))
-    xD, xS, Sro= dfparams
+    df= distF(dftype=dftype,dfparams=dfparams,beta=beta)
     for ii in range(nus):
         for jj in range(nvs):
-            EL= uvToELz(UV=(-us[ii],vs[jj]),R=R,t=t,pot=pot,potparams=potparams,beta=beta)
-            out[ii,jj]= interpret_as_df(EL,beta=beta,xD=xD,xS=xS,Sro=Sro,type=dftype)
+            E,L= uvToELz(UV=(-us[ii],vs[jj]),R=R,t=t,pot=pot,potparams=potparams,beta=beta)
+            out[ii,jj]= df.eval(E,L)
     return out
 
 if __name__ == '__main__':

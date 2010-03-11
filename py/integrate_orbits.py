@@ -73,7 +73,23 @@ def uvToELz(UV=(0.,0.),R=1.,t=-4.,pot='bar',beta=0.,
     (vR,vT,R) = integrate_orbit((vR,vT,R),t=t,pot=pot,beta=beta,potparams=potparams)
     vR/= OmegaoOmegab
     vT/= OmegaoOmegab
-    return (axipotential(R,beta)+0.5*vR**2.+0.5*vT**2.,vT*R) #Assumes no perturbation at this time
+    return vRvTRToEL(vR,vT,R)
+
+def vRvTRToEL(vR,vT,R,beta):
+    """
+    NAME:
+       vRvTRToEL
+    PURPOSE:
+       calculate the energy and angular momentum
+    INPUT:
+       vR - radial velocity
+       vT - tangential velocity
+       R - Galactocentric radius
+    OUTPUT:
+    HISTORY:
+       2010-03-10 - Written - Bovy (NYU)
+    """
+    return (axipotential(R,beta)+0.5*vR**2.+0.5*vT**2.,vT*R)
 
 def axipotential(R,beta=0.):
     """

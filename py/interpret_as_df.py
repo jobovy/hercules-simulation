@@ -5,40 +5,98 @@
 import os, os.path
 import cPickle as pickle
 import scipy as sc
-def interpret_as_df(EL,beta=0.,xD=0.33,xS=1.,Sro=0.2,type='dehnen'):
-    """
-    NAME:
-       interpret_as_df
-    PURPOSE:
-       interpret (E,L) as a DF (probability)
-    INPUT:
-       EL - (E,L) - Energy and angular momentum (E/vo^2,L/Ro/vo)
-       beta - rotation curve power-law
-       xD - disk surface mass scalelength / Ro
-       xS - disk velocity dispersion scalelength / Ro
-       Sro - disk velocity dispersion at Ro (/vo)
-       type - type of DF ('dehnen' or 'shu')
-    OUTPUT:
-       DF(E,L)
-    HISTORY:
-       2010-03-08 - Written - Bovy (NYU)
-    """
-    if type == 'dehnen':
-        return _interpret_as_df_dehnen(EL,beta,xD,xS,Sro)
+import scipy.integrate as integrate
+from integrate_orbits import vRvTRToEL
+class distF:
+    """Class that represents a DF"""
+    def __init__(self,dftype='dehnen',dfparams=(0.33,1.0,0.2),beta=0.,**kwargs):
+        """
+        NAME:
+           __init__
+        PURPOSE:
+           Initialize a DF
+        INPUT:
+           dftype= 'dehnen' or 'corrected-dehnen'
+           dfparams - parameters of the df (xD,xS,Sro)
+                      xD - disk surface mass scalelength / Ro
+                      xS - disk velocity dispersion scalelength / Ro
+                      Sro - disk velocity dispersion at Ro (/vo)
+           beta - power-law index of the rotation curve
+           + DFcorrection kwargs
+        OUTPUT:
+        HISTORY:
+            2010-03-10 - Written - Bovy (NYU)
+        """
+        self._dftype= dftype
+        self._dfparams= dfparams
+        self._beta= beta
+        if dftype == 'corrected-dehnen':
+            #Load corrections
+            corr= DFcorrection(**kwargs)
+        return None
 
-def _interpret_as_df_dehnen(EL,beta,xD,xS,Sro):
-    E, L= EL
-    #Calculate Re,LE, OmegaE
-    if beta == 0.:
-        xE= sc.exp(E-.5)
-        LE= xE
-        OmegaE= 1./xE
-    else: #non-flat rotation curve
-        xE= (2.*E/(1.+1./beta))**(1./2./beta)
-        LE= xE**(beta+1.)
-        OmegaE= xE*(beta-1.)
-    SRE2= Sro**2.*sc.exp(-2.*(xE-1.)/xS)
-    return sc.exp(-xE/xD)/SRE2*sc.exp(OmegaE*(L-LE)/SRE2)
+    def eval(self,E,L):
+        """
+        NAME:
+           eval
+        PURPOSE:
+           evaluate the distribution function
+        INPUT:
+           E - energy (/vo^2)
+           L - angular momentun (/ro/vo)
+        OUTPUT:
+           DF(E,L)
+        HISTORY:
+           2010-03-10 - Written - Bovy (NYU)
+        """
+        if self._dftype == 'dehnen':
+            return self._eval_dehnen(E,L)
+        elif self._dftype == 'corrected-dehnen':
+            return self._eval_corrected_dehnen(E,L)
+    
+    def _eval_dehnen(self,E,L):
+        """Internal function that evaluates the uncorrected Dehnen DF"""
+        #Calculate Re,LE, OmegaE
+        if self._beta == 0.:
+            xE= sc.exp(E-.5)
+            LE= xE
+            OmegaE= 1./xE
+        else: #non-flat rotation curve
+            xE= (2.*E/(1.+1./self._beta))**(1./2./self._beta)
+            LE= xE**(self._beta+1.)
+            OmegaE= xE**(self._beta-1.)
+        SRE2= self._dfparams[2]**2.*sc.exp(-2.*(xE-1.)/self._dfparams[1])
+        return 1./2./sc.pi*sc.sqrt(2./(1.+self._beta))*sc.exp(-xE/self._dfparams[0])/SRE2*sc.exp(OmegaE*(L-LE)/SRE2)
+        
+    def _eval_corrected_dehnen(self,E,L):
+        """Internal function that evaluates the corrected Dehnen DF"""
+        #Calculate Re,LE, OmegaE
+        if self._beta == 0.:
+            xE= sc.exp(E-.5)
+            LE= xE
+            OmegaE= 1./xE
+        else: #non-flat rotation curve
+            xE= (2.*E/(1.+1./self._beta))**(1./2./self._beta)
+            LE= xE**(self._beta+1.)
+            OmegaE= xE*(self._beta-1.)
+        correction= corr.correct(xE)
+        SRE2= self._dfparams[2]**2.*sc.exp(-2.*(xE-1.)/self._dfparams[1])*correction[1]
+        return 1./2./sc.pi*sc.sqrt(2./(1.+self._beta))*sc.exp(-xE/self._dfparams[0])/SRE2*sc.exp(OmegaE*(L-LE)/SRE2)*correction[0]
+        
+    def _calc_surfacemass(self,R):
+        """Internal function that calculates the surface mass for a given DF at R"""
+        bound= 1.
+        #BOVY: Normalize by (0.,0.) value first?
+        return integrate.dblquad(_surfaceIntegrand,-bound,bound,
+                                 lambda x: -bound, lambda x: bound,
+                                 (R,self))
+
+def _surfaceIntegrand(vR,vT,R,df):
+    """Internal function that is the integrand for the surface mass integration"""
+    E,L= vRvTRToEL(vR,vT,R,df._beta)
+    return df.eval(E,L)
+
+
 
 class DFcorrection:
     """Class that contains the corrections necessary to reach
@@ -87,6 +145,10 @@ class DFcorrection:
             self._dftype= kwargs['dftype']
         else:
             self._dftype= 'dehnen'
+        if kwargs.has_key('beta'):
+            self._beta= kwargs['beta']
+        else:
+            self._beta= 0.
         if kwargs.has_key('corrections'):
             self._corrections= kwargs['corrections']
             if not len(self._corrections) == self._npoints:
@@ -129,13 +191,15 @@ class DFcorrection:
 
     def _calc_corrections(self):
         """Internal function that calculates the corrections"""
+        self._uncorrdf= distF(dfparams=self._dfparams,dftype=self._dftype,beta=self._beta)
         corrections= sc.ones((self._npoints,2))
         rs= sc.linspace(0,self._rmax,self._npoints)
         for ii in range(self._niter):
-            currentCorr= self.__class__(corrections=corrections)
-            this_surface= currentCorr._calc_surfacemass(rs[ii])
+            currentDF= distF(dftype='corrected-'+self.dftype,dfparams=self.dfparams,
+                             beta=self._beta,corrections=corrections)
+            this_surface= currentDF._calc_surfacemass(rs[ii])
             corrections[ii,0]*= this_surface/self._surfacemass(rs[ii])
-            thisSigma2= currentCorr._calc_sigma2surface(rs[ii])/this_surface
+            thisSigma2= currentDF._calc_sigma2surface(rs[ii])/this_surface
             corrections[ii,1]*= thisSigma2/self._sigma2(rs[ii])
         #Save
         saveDict= {'corrections': corrections}
@@ -143,10 +207,6 @@ class DFcorrection:
         pickle.dump(saveDict,savefile)
         savefile.close()
     
-    def _calc_surfacemass(self,R):
-        """Internal function that calculates the surface mass for a given DF at R"""
-        return None
-
     def _calc_sigma2surface(self,R):
         """Internal function that calculates sigma^2 Sigma for a given DF at R"""
         return None
@@ -159,7 +219,7 @@ class DFcorrection:
         """Internal function that gives the R-velocity variance at R"""
         return self_dfparams[2]**2.*sc.exp(-2.*(R-1.)/self._dfparams[1])
 
-def DFcorrectionError(Exception):
+class DFcorrectionError(Exception):
     def __init__(self, value):
         self.value = value
     def __str__(self):
