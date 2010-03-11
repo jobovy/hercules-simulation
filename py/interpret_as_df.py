@@ -35,7 +35,7 @@ class distF:
             corr= DFcorrection(**kwargs)
         return None
 
-    def eval(self,E,L):
+    def eval(self,E,L,log=False):
         """
         NAME:
            eval
@@ -44,17 +44,18 @@ class distF:
         INPUT:
            E - energy (/vo^2)
            L - angular momentun (/ro/vo)
+           log - return the log (default: false)
         OUTPUT:
            DF(E,L)
         HISTORY:
            2010-03-10 - Written - Bovy (NYU)
         """
         if self._dftype == 'dehnen':
-            return self._eval_dehnen(E,L)
+            return self._eval_dehnen(E,L,log)
         elif self._dftype == 'corrected-dehnen':
-            return self._eval_corrected_dehnen(E,L)
+            return self._eval_corrected_dehnen(E,L,log)
     
-    def _eval_dehnen(self,E,L):
+    def _eval_dehnen(self,E,L,log):
         """Internal function that evaluates the uncorrected Dehnen DF"""
         #Calculate Re,LE, OmegaE
         if self._beta == 0.:
@@ -66,9 +67,12 @@ class distF:
             LE= xE**(self._beta+1.)
             OmegaE= xE**(self._beta-1.)
         SRE2= self._dfparams[2]**2.*sc.exp(-2.*(xE-1.)/self._dfparams[1])
-        return 1./2./sc.pi*sc.sqrt(2./(1.+self._beta))*sc.exp(-xE/self._dfparams[0])/SRE2*sc.exp(OmegaE*(L-LE)/SRE2)
+        if log:#BOVY: IS THIS CORRECT?
+            return -sc.log(2.*sc.pi*SRE2)+.5*sc.log(2./(1.+self._beta))-xE/self._dfparams[0]+OmegaE*(L-LE)/SRE2
+        else:
+            return 1./2./sc.pi*sc.sqrt(2./(1.+self._beta))*sc.exp(-xE/self._dfparams[0])/SRE2*sc.exp(OmegaE*(L-LE)/SRE2)
         
-    def _eval_corrected_dehnen(self,E,L):
+    def _eval_corrected_dehnen(self,E,L,log):
         """Internal function that evaluates the corrected Dehnen DF"""
         #Calculate Re,LE, OmegaE
         if self._beta == 0.:
@@ -86,16 +90,16 @@ class distF:
     def _calc_surfacemass(self,R):
         """Internal function that calculates the surface mass for a given DF at R"""
         bound= 1.
-        #BOVY: Normalize by (0.,0.) value first?
-        return integrate.dblquad(_surfaceIntegrand,-bound,bound,
-                                 lambda x: -bound, lambda x: bound,
-                                 (R,self))
+        lognorm= self.eval(*vRvTRToEL(0.,R**self._beta,R,self._beta),log=True)
+        print sc.exp(lognorm)
+        #BOVY: ALSO ADJUST BOUNDS BASED ON SHRINKING SIGMAR? + USE GAMMA HERE TO GO TO VT
+        return integrate.dblquad(_surfaceIntegrand,-bound,bound,lambda x: R**self._beta-bound, 
+                                 lambda x: R**self._beta+bound,(R,self,lognorm))[0]*sc.exp(lognorm)
 
-def _surfaceIntegrand(vR,vT,R,df):
+def _surfaceIntegrand(vR,vT,R,df,lognorm):
     """Internal function that is the integrand for the surface mass integration"""
     E,L= vRvTRToEL(vR,vT,R,df._beta)
-    return df.eval(E,L)
-
+    return sc.exp(df.eval(E,L,log=True)-lognorm)
 
 
 class DFcorrection:
