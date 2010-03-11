@@ -2,6 +2,7 @@
 #   interpret_as_df.py: module that interprets (E,Lz) pairs in terms of a 
 #                        distribution function
 ###############################################################################
+import copy
 import os, os.path
 import cPickle as pickle
 import scipy as sc
@@ -32,7 +33,7 @@ class distF:
         self._beta= beta
         if dftype == 'corrected-dehnen':
             #Load corrections
-            corr= DFcorrection(**kwargs)
+            self._corr= DFcorrection(**kwargs)
         return None
 
     def eval(self,E,L,log=False):
@@ -66,8 +67,9 @@ class distF:
             xE= (2.*E/(1.+1./self._beta))**(1./2./self._beta)
             LE= xE**(self._beta+1.)
             OmegaE= xE**(self._beta-1.)
-        SRE2= self._dfparams[2]**2.*sc.exp(-2.*(xE-1.)/self._dfparams[1])
-        if log:#BOVY: IS THIS CORRECT?
+        SRE2= self._eval_SR2(xE)
+        #BOVY: REPLACE SURFACE MASS WITH FUNCTION
+        if log:
             return -sc.log(2.*sc.pi*SRE2)+.5*sc.log(2./(1.+self._beta))-xE/self._dfparams[0]+OmegaE*(L-LE)/SRE2
         else:
             return 1./2./sc.pi*sc.sqrt(2./(1.+self._beta))*sc.exp(-xE/self._dfparams[0])/SRE2*sc.exp(OmegaE*(L-LE)/SRE2)
@@ -83,23 +85,100 @@ class distF:
             xE= (2.*E/(1.+1./self._beta))**(1./2./self._beta)
             LE= xE**(self._beta+1.)
             OmegaE= xE*(self._beta-1.)
-        correction= corr.correct(xE)
-        SRE2= self._dfparams[2]**2.*sc.exp(-2.*(xE-1.)/self._dfparams[1])*correction[1]
+        correction= self._corr.correct(xE)
+        SRE2= self._eval_SR2(xE)*correction[1]
+        #BOVY: REPLACE SURFACE MASS WITH FUNCTION
         return 1./2./sc.pi*sc.sqrt(2./(1.+self._beta))*sc.exp(-xE/self._dfparams[0])/SRE2*sc.exp(OmegaE*(L-LE)/SRE2)*correction[0]
         
-    def _calc_surfacemass(self,R):
-        """Internal function that calculates the surface mass for a given DF at R"""
-        bound= 1.
-        lognorm= self.eval(*vRvTRToEL(0.,R**self._beta,R,self._beta),log=True)
-        print sc.exp(lognorm)
-        #BOVY: ALSO ADJUST BOUNDS BASED ON SHRINKING SIGMAR? + USE GAMMA HERE TO GO TO VT
-        return integrate.dblquad(_surfaceIntegrand,-bound,bound,lambda x: R**self._beta-bound, 
-                                 lambda x: R**self._beta+bound,(R,self,lognorm))[0]*sc.exp(lognorm)
+    def _eval_SR2(self,R,log=False):
+        """Internal function that evaluates sigmaR^2 for an exponential profile"""
+        if log:
+            return 2.*sc.log(self._dfparams[2])-2.*(R-1.)/self._dfparams[1]
+        else:
+            return self._dfparams[2]**2.*sc.exp(-2.*(R-1.)/self._dfparams[1])
 
-def _surfaceIntegrand(vR,vT,R,df,lognorm):
+    def _eval_surfacemass(self,R,log=False):
+        """Internal function that evaluates Sigma(R) for an exponential profile"""
+        if log:
+            return -R/self._dfparams[0]
+        else:
+            return sc.exp(-R/self._dfparams[0])
+
+    def _calc_surfacemass(self,R,romberg=False,nsigma=None):
+        """Internal function that calculates the surface mass for a given DF at R"""
+        if nsigma == None:
+            nsigma= 4.
+        logSigmaR= self._eval_surfacemass(R,log=True)
+        sigmaR2= self._eval_SR2(R)
+        sigmaR1= sc.sqrt(sigmaR2)
+        logsigmaR2= sc.log(sigmaR2)
+        gamma= sc.sqrt(2./(1.+self._beta))
+        if romberg:
+            return bovy_dblquad(_surfaceIntegrand,gamma*R**self._beta/sigmaR1-nsigma,
+                                gamma*R**self._beta/sigmaR1+nsigma,
+                                lambda x: 0., lambda x: nsigma,
+                                [R,self,logSigmaR,logsigmaR2,sigmaR1,gamma],
+                                tol=10.**-8)/sc.pi*sc.exp(logSigmaR)
+        else:
+            return integrate.dblquad(_surfaceIntegrand,gamma*R**self._beta/sigmaR1-nsigma,
+                                     gamma*R**self._beta/sigmaR1+nsigma,
+                                     lambda x: 0., lambda x: nsigma,
+                                     (R,self,logSigmaR,logsigmaR2,sigmaR1,gamma),
+                                     epsrel=10.**-15)[0]/sc.pi*sc.exp(logSigmaR)
+
+    def _eval_surfaceIntegrand(self,E,L,logSigmaR,logsigmaR2):
+        """Internal function that has the normalized DF for the surface mass integral"""
+        if self._dftype == 'dehnen':
+            return self._eval_surfaceIntegrand_dehnen(E,L,logSigmaR,logsigmaR2)
+        #elif self._dftype == 'corrected-dehnen':
+        #    return self._eval_surfaceIntegrand_corrected_dehnen(E,L,logSigmaR,logsigmaR2)
+        
+    def _eval_surfaceIntegrand_dehnen(self,E,L,logSigmaR,logsigmaR2):
+        """Internal function that has the normalized DF for the surface mass integral for the uncorrected Dehnen DF"""
+        #Calculate Re,LE, OmegaE
+        if self._beta == 0.:
+            xE= sc.exp(E-.5)
+            logOLLE= sc.log(L/xE-1.)
+            #LE= xE
+            #OmegaE= 1./xE
+        else: #non-flat rotation curve
+            xE= (2.*E/(1.+1./self._beta))**(1./2./self._beta)
+            logOLLE= self._beta*sc.log(xE)+sc.log(L/xE-xE**self._beta)
+        SRE2= self._eval_SR2(xE,log=True)
+        return sc.exp(logsigmaR2-SRE2+self._eval_surfacemass(xE,log=True)-logSigmaR+sc.exp(logOLLE-SRE2))
+
+def _surfaceIntegrand(vR,vT,R,df,logSigmaR,logsigmaR2,sigmaR1,gamma):
     """Internal function that is the integrand for the surface mass integration"""
-    E,L= vRvTRToEL(vR,vT,R,df._beta)
-    return sc.exp(df.eval(E,L,log=True)-lognorm)
+    E,L= _vRpvTpRToEL(vR,vT,R,df._beta,sigmaR1,gamma)
+    return df._eval_surfaceIntegrand(E,L,logSigmaR,logsigmaR2)
+
+def _vRpvTpRToEL(vR,vT,R,beta,sigmaR1,gamma):
+    """Internal function that calculates E and L given velocities normalized by the velocity dispersion"""
+    vR*= sigmaR1
+    vT*= sigmaR1/gamma
+    return vRvTRToEL(vR,vT,R,beta)
+
+def _oned_intFunc(x,twodfunc,gfun,hfun,tol,args):
+    """Internal function for bovy_dblquad"""
+    thisargs= copy.deepcopy(args)
+    thisargs.insert(0,x)
+    return integrate.romberg(twodfunc,gfun(x),hfun(x),args=thisargs,tol=tol)
+
+def bovy_dblquad(func, a, b, gfun, hfun, args=(), tol=1.48e-08):
+    """
+    NAME:
+       bovy_dblquad
+    PURPOSE:
+       like scipy.integrate's dblquad, but using Romberg integration for the one-d integrals and using tol
+    INPUT:
+       same as scipy.integrate.dblquad except for tol and epsrel,epsabs
+    OUTPUT:
+       value
+    HISTORY:
+       2010-03-11 - Written - Bpvy (NYU)
+    """
+    return integrate.romberg(_oned_intFunc,a,b,args=(func,gfun,hfun,tol,args),tol=tol)
+
 
 
 class DFcorrection:
