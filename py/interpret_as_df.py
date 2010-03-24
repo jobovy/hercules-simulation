@@ -147,10 +147,45 @@ class distF:
         SRE2= self._eval_SR2(xE,log=True)
         return sc.exp(logsigmaR2-SRE2+self._eval_surfacemass(xE,log=True)-logSigmaR+sc.exp(logOLLE-SRE2))
 
+    def _calc_sigma2surfacemass(self,R,romberg=False,nsigma=None):
+        """Internal function that calculates the velocity variance * surface 
+        mass for a given DF at R"""
+        if nsigma == None:
+            nsigma= 4.
+        logSigmaR= self._eval_surfacemass(R,log=True)
+        sigmaR2= self._eval_SR2(R)
+        sigmaR1= sc.sqrt(sigmaR2)
+        logsigmaR2= sc.log(sigmaR2)
+        gamma= sc.sqrt(2./(1.+self._beta))
+        if romberg:
+            return bovy_dblquad(_sigma2surfaceIntegrand,
+                                gamma*R**self._beta/sigmaR1-nsigma,
+                                gamma*R**self._beta/sigmaR1+nsigma,
+                                lambda x: 0., lambda x: nsigma,
+                                [R,self,logSigmaR,logsigmaR2,sigmaR1,gamma],
+                                tol=10.**-8)/sc.pi*sc.exp(logSigmaR+logsigmaR2)
+        else:
+            return integrate.dblquad(_sigma2surfaceIntegrand,
+                                     gamma*R**self._beta/sigmaR1-nsigma,
+                                     gamma*R**self._beta/sigmaR1+nsigma,
+                                     lambda x: 0., lambda x: nsigma,
+                                     (R,self,logSigmaR,logsigmaR2,sigmaR1,gamma),
+                                     epsrel=10.**-15)[0]/sc.pi*sc.exp(logSigmaR+logsigmaR2)
+
+    def _calc_sigma2(self,R,romberg=False,nsigma=None):
+        """Shortcut to calculate sigma2(R)"""
+        return self._calc_sigma2surfacemass(R,romberg,nsigma)/self._calc_surfacemass(R,romberg,nsigma)
+
 def _surfaceIntegrand(vR,vT,R,df,logSigmaR,logsigmaR2,sigmaR1,gamma):
     """Internal function that is the integrand for the surface mass integration"""
     E,L= _vRpvTpRToEL(vR,vT,R,df._beta,sigmaR1,gamma)
     return df._eval_surfaceIntegrand(E,L,logSigmaR,logsigmaR2)
+
+def _sigma2surfaceIntegrand(vR,vT,R,df,logSigmaR,logsigmaR2,sigmaR1,gamma):
+    """Internal function that is the integrand for the sigma-squared times
+    surface mass integration"""
+    E,L= _vRpvTpRToEL(vR,vT,R,df._beta,sigmaR1,gamma)
+    return vR**2.*df._eval_surfaceIntegrand(E,L,logSigmaR,logsigmaR2)
 
 def _vRpvTpRToEL(vR,vT,R,beta,sigmaR1,gamma):
     """Internal function that calculates E and L given velocities normalized by the velocity dispersion"""
