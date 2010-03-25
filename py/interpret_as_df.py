@@ -9,7 +9,6 @@
 import copy
 import os, os.path
 import cPickle as pickle
-import numpy as nu
 import scipy as sc
 import scipy.integrate as integrate
 from integrate_orbits import vRvTRToEL
@@ -312,7 +311,7 @@ class DFcorrection:
         """
         if R > self._rmax:
             return [1.,1.]
-        nearR= nu.rint(R/self._rmax) #BOVY: INTERPOLATE?
+        nearR= round(R/self._rmax) #BOVY: INTERPOLATE?
         return self._corrections[nearR,:]
 
     def _calc_corrections(self):
