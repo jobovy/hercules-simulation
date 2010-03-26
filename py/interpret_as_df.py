@@ -10,9 +10,12 @@
 #        to 'public' procedure; propagate to test_interpret_as_df.py
 #      Allow more general surfacemass and sigma2 functions be specified
 ###############################################################################
+_EPSREL=10.**-14.
+_NSIGMA= 4.
 import copy
 import os, os.path
 import cPickle as pickle
+import math as m
 import scipy as sc
 import scipy.integrate as integrate
 from integrate_orbits import vRvTRToEL
@@ -84,33 +87,23 @@ class distF:
         return 1./2./sc.pi*sc.sqrt(2./(1.+self._beta))*sc.exp(-xE/self._dfparams[0])/SRE2*sc.exp(OmegaE*(L-LE)/SRE2)*correction[0]
         
     def _eval_SR2(self,R,log=False):
-        """Internal function that evaluates sigmaR^2 for a (corrected)
-        exponential profile"""
-        if hasattr(self,'_corr'):
-            correction= self._corr.correct(R)
-        else:
-            correction= sc.ones(2)
+        """Internal function that evaluates sigmaR^2 for an exponential profile"""
         if log:
-            return 2.*sc.log(self._dfparams[2])-2.*(R-1.)/self._dfparams[1]+sc.log(correction[1])
+            return 2.*sc.log(self._dfparams[2])-2.*(R-1.)/self._dfparams[1]
         else:
-            return self._dfparams[2]**2.*sc.exp(-2.*(R-1.)/self._dfparams[1])*correction[1]
+            return self._dfparams[2]**2.*sc.exp(-2.*(R-1.)/self._dfparams[1])
 
     def _eval_surfacemass(self,R,log=False):
-        """Internal function that evaluates Sigma(R) for a (corrected)
-        exponential profile"""
-        if hasattr(self,'_corr'):
-            correction= self._corr.correct(R)
-        else:
-            correction= sc.ones(2)
+        """Internal function that evaluates Sigma(R) for an exponential profile"""
         if log:
-            return -R/self._dfparams[0]+sc.log(correction[0])
+            return -R/self._dfparams[0]
         else:
-            return sc.exp(-R/self._dfparams[0])*correction[0]
+            return sc.exp(-R/self._dfparams[0])
 
     def _calc_surfacemass(self,R,romberg=False,nsigma=None,relative=False):
         """Internal function that calculates the surface mass for a given DF at R"""
         if nsigma == None:
-            nsigma= 4.
+            nsigma= _NSIGMA
         logSigmaR= self._eval_surfacemass(R,log=True)
         sigmaR2= self._eval_SR2(R)
         sigmaR1= sc.sqrt(sigmaR2)
@@ -121,7 +114,8 @@ class distF:
         else:
             norm= sc.exp(logSigmaR)
         if romberg:
-            return bovy_dblquad(_surfaceIntegrand,gamma*R**self._beta/sigmaR1-nsigma,
+            return bovy_dblquad(_surfaceIntegrand,
+                                gamma*R**self._beta/sigmaR1-nsigma,
                                 gamma*R**self._beta/sigmaR1+nsigma,
                                 lambda x: 0., lambda x: nsigma,
                                 [R,self,logSigmaR,logsigmaR2,sigmaR1,gamma],
@@ -133,7 +127,7 @@ class distF:
                                      lambda x: 0., lambda x: nsigma,
                                      (R,self,logSigmaR,logsigmaR2,sigmaR1,
                                       gamma),
-                                     epsrel=10.**-14)[0]/sc.pi*norm
+                                     epsrel=_EPSREL)[0]/sc.pi*norm
 
     def _eval_surfaceIntegrand(self,E,L,logSigmaR,logsigmaR2):
         """Internal function that has the normalized DF for the surface mass integral"""
@@ -151,15 +145,19 @@ class distF:
         else: #non-flat rotation curve
             xE= (2.*E/(1.+1./self._beta))**(1./2./self._beta)
             logOLLE= self._beta*sc.log(xE)+sc.log(L/xE-xE**self._beta)
-        SRE2= self._eval_SR2(xE,log=True)
-        return sc.exp(logsigmaR2-SRE2+self._eval_surfacemass(xE,log=True)-logSigmaR+sc.exp(logOLLE-SRE2))
+        if hasattr(self,'_corr'):
+            correction= self._corr.correct(xE)
+        else:
+            correction= sc.ones(2)
+        SRE2= self._eval_SR2(xE,log=True)+sc.log(correction[1])
+        return sc.exp(logsigmaR2-SRE2+self._eval_surfacemass(xE,log=True)-logSigmaR+sc.exp(logOLLE-SRE2))*correction[0]
 
     def _calc_sigma2surfacemass(self,R,romberg=False,nsigma=None,
                                 relative=False):
         """Internal function that calculates the velocity variance * surface 
         mass for a given DF at R"""
         if nsigma == None:
-            nsigma= 4.
+            nsigma= _NSIGMA
         logSigmaR= self._eval_surfacemass(R,log=True)
         sigmaR2= self._eval_SR2(R)
         sigmaR1= sc.sqrt(sigmaR2)
@@ -183,7 +181,7 @@ class distF:
                                      lambda x: 0., lambda x: nsigma,
                                      (R,self,logSigmaR,logsigmaR2,sigmaR1,
                                       gamma),
-                                     epsrel=10.**-14)[0]/sc.pi*norm
+                                     epsrel=_EPSREL)[0]/sc.pi*norm
 
     def _calc_sigma2(self,R,romberg=False,nsigma=None):
         """Shortcut to calculate sigma2(R)"""
@@ -319,8 +317,13 @@ class DFcorrection:
         """
         if R > self._rmax:
             return [1.,1.]
-        nearR= round(R/self._rmax) #BOVY: INTERPOLATE?
-        return self._corrections[nearR,:]
+        #nearR= round(R/self._rmax*(self._npoints-1.)) #BOVY: INTERPOLATE?
+        #return self._corrections[nearR,:]
+        thisR= R/self._rmax*(self._npoints-1.)
+        lowR= m.floor(thisR)
+        highR= m.ceil(thisR)
+        #return self._corrections[lowR,:]+(thisR-lowR)/(highR-lowR)*(self._corrections[highR,:]-self._corrections[lowR,:]) #BOVY: CLEAN UP, interpolate log?
+        return sc.exp(sc.log(self._corrections[lowR,:])+(thisR-lowR)/(highR-lowR)*(sc.log(self._corrections[highR,:])-sc.log(self._corrections[lowR,:]))) #BOVY: CLEAN UP, interpolate log?
 
     def _calc_corrections(self):
         """Internal function that calculates the corrections"""     
@@ -349,8 +352,9 @@ class DFcorrection:
                              beta=self._beta,corrections=corrections)
             newcorrections= sc.zeros((self._npoints,2))
             for jj in range(self._npoints):
-                newcorrections[jj,0]= 1./currentDF._calc_surfacemass(rs[jj],relative=True)
-                newcorrections[jj,1]= 1./currentDF._calc_sigma2surfacemass(rs[jj],relative=True)
+                thisSurface= currentDF._calc_surfacemass(rs[jj])
+                newcorrections[jj,0]= currentDF._eval_surfacemass(rs[jj])/thisSurface
+                newcorrections[jj,1]= currentDF._eval_SR2(rs[jj])*thisSurface/currentDF._calc_sigma2surfacemass(rs[jj])
                 print jj, newcorrections[jj,:]
             corrections*= newcorrections
         #Save
