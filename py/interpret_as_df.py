@@ -3,6 +3,7 @@
 #                        distribution function
 #
 #   ToDo:
+#      Take epsrel constant out of the code and into a _VARIABLE
 #      Implement searching for smaller iterations-savefiles
 #      Is it faster to split all functions between correct and don't correct?
 #      upgrade _calc_surfacemass, _calc_sigma2surfacemass, and _calc_sigma2
