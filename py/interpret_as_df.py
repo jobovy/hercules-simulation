@@ -3,7 +3,10 @@
 #                        distribution function
 #
 #   ToDo:
-#      Look at 'BOVY' remarks
+#      Implement searching for smaller iterations-savefiles
+#      Is it faster to split all functions between correct and don't correct?
+#      upgrade _calc_surfacemass, _calc_sigma2surfacemass, and _calc_sigma2
+#        to 'public' procedure; propagate to test_interpret_as_df.py
 #      Allow more general surfacemass and sigma2 functions be specified
 ###############################################################################
 import copy
@@ -103,31 +106,33 @@ class distF:
         else:
             return sc.exp(-R/self._dfparams[0])*correction[0]
 
-    def _calc_surfacemass(self,R,romberg=False,nsigma=None):
+    def _calc_surfacemass(self,R,romberg=False,nsigma=None,relative=False):
         """Internal function that calculates the surface mass for a given DF at R"""
         if nsigma == None:
             nsigma= 4.
-        if self._dftype == 'corrected-dehnen':
-            correction= sc.log(self._corr.correct(R))
-        else:
-            correction= sc.zeros(2)
-        logSigmaR= self._eval_surfacemass(R,log=True)+correction[0]
+        logSigmaR= self._eval_surfacemass(R,log=True)
         sigmaR2= self._eval_SR2(R)
-        sigmaR1= sc.sqrt(sigmaR2)*sc.exp(correction[1]/2.)
-        logsigmaR2= sc.log(sigmaR2)+correction[1]
+        sigmaR1= sc.sqrt(sigmaR2)
+        logsigmaR2= sc.log(sigmaR2)
         gamma= sc.sqrt(2./(1.+self._beta))
+        if relative:
+            norm= 1.
+        else:
+            norm= sc.exp(logSigmaR)
         if romberg:
             return bovy_dblquad(_surfaceIntegrand,gamma*R**self._beta/sigmaR1-nsigma,
                                 gamma*R**self._beta/sigmaR1+nsigma,
                                 lambda x: 0., lambda x: nsigma,
                                 [R,self,logSigmaR,logsigmaR2,sigmaR1,gamma],
-                                tol=10.**-8)/sc.pi*sc.exp(logSigmaR)
+                                tol=10.**-8)/sc.pi*norm
         else:
-            return integrate.dblquad(_surfaceIntegrand,gamma*R**self._beta/sigmaR1-nsigma,
+            return integrate.dblquad(_surfaceIntegrand,
+                                     gamma*R**self._beta/sigmaR1-nsigma,
                                      gamma*R**self._beta/sigmaR1+nsigma,
                                      lambda x: 0., lambda x: nsigma,
-                                     (R,self,logSigmaR,logsigmaR2,sigmaR1,gamma),
-                                     epsrel=10.**-15)[0]/sc.pi*sc.exp(logSigmaR)
+                                     (R,self,logSigmaR,logsigmaR2,sigmaR1,
+                                      gamma),
+                                     epsrel=10.**-14)[0]/sc.pi*norm
 
     def _eval_surfaceIntegrand(self,E,L,logSigmaR,logsigmaR2):
         """Internal function that has the normalized DF for the surface mass integral"""
@@ -148,34 +153,36 @@ class distF:
         SRE2= self._eval_SR2(xE,log=True)
         return sc.exp(logsigmaR2-SRE2+self._eval_surfacemass(xE,log=True)-logSigmaR+sc.exp(logOLLE-SRE2))
 
-    def _calc_sigma2surfacemass(self,R,romberg=False,nsigma=None):
+    def _calc_sigma2surfacemass(self,R,romberg=False,nsigma=None,
+                                relative=False):
         """Internal function that calculates the velocity variance * surface 
         mass for a given DF at R"""
         if nsigma == None:
             nsigma= 4.
-        if self._dftype == 'corrected-dehnen':
-            correction= sc.log(self._corr.correct(R))
-        else:
-            correction= sc.zeros(2)
-        logSigmaR= self._eval_surfacemass(R,log=True)+correction[0]
+        logSigmaR= self._eval_surfacemass(R,log=True)
         sigmaR2= self._eval_SR2(R)
-        sigmaR1= sc.sqrt(sigmaR2)*sc.exp(correction[1]/2.)
-        logsigmaR2= sc.log(sigmaR2)+correction[1]
+        sigmaR1= sc.sqrt(sigmaR2)
+        logsigmaR2= sc.log(sigmaR2)
         gamma= sc.sqrt(2./(1.+self._beta))
+        if relative:
+            norm= 1.
+        else:
+            norm= sc.exp(logSigmaR+logsigmaR2)
         if romberg:
             return bovy_dblquad(_sigma2surfaceIntegrand,
                                 gamma*R**self._beta/sigmaR1-nsigma,
                                 gamma*R**self._beta/sigmaR1+nsigma,
                                 lambda x: 0., lambda x: nsigma,
                                 [R,self,logSigmaR,logsigmaR2,sigmaR1,gamma],
-                                tol=10.**-8)/sc.pi*sc.exp(logSigmaR+logsigmaR2)
+                                tol=10.**-8)/sc.pi*norm
         else:
             return integrate.dblquad(_sigma2surfaceIntegrand,
                                      gamma*R**self._beta/sigmaR1-nsigma,
                                      gamma*R**self._beta/sigmaR1+nsigma,
                                      lambda x: 0., lambda x: nsigma,
-                                     (R,self,logSigmaR,logsigmaR2,sigmaR1,gamma),
-                                     epsrel=10.**-15)[0]/sc.pi*sc.exp(logSigmaR+logsigmaR2)
+                                     (R,self,logSigmaR,logsigmaR2,sigmaR1,
+                                      gamma),
+                                     epsrel=10.**-14)[0]/sc.pi*norm
 
     def _calc_sigma2(self,R,romberg=False,nsigma=None):
         """Shortcut to calculate sigma2(R)"""
@@ -315,37 +322,42 @@ class DFcorrection:
         return self._corrections[nearR,:]
 
     def _calc_corrections(self):
-        """Internal function that calculates the corrections"""
-        self._uncorrdf= distF(dfparams=self._dfparams,dftype=self._dftype,beta=self._beta)
-        corrections= sc.ones((self._npoints,2))
+        """Internal function that calculates the corrections"""     
+        searchIter= self._niter-1
+        while searchIter > 0:
+            trySavefilename= os.path.join(self._savedir,'dfcorrection_'+
+                                          self._dftype+
+                                          '_%4.2f_%4.2f_%4.2f_%i_%4.2f_%i.sav'
+                                          % (self._dfparams[0],
+                                             self._dfparams[1],
+                                             self._dfparams[2],self._npoints,
+                                             self._rmax,searchIter))
+            if os.path.exists(trySavefilename):
+                trySavefile= open(trySavefilename,'r')
+                corrections= pickle.load(trySavefile)
+                trySavefile.close()
+                break
+            else:
+                searchIter-= 1
+        if searchIter == 0:
+            corrections= sc.ones((self._npoints,2))
         rs= sc.linspace(1./10**8.,self._rmax,self._npoints)
-        for ii in range(self._niter):
+        for ii in range(searchIter,self._niter):
             currentDF= distF(dftype='corrected-'+self._dftype,
                              dfparams=self._dfparams,
                              beta=self._beta,corrections=corrections)
             newcorrections= sc.zeros((self._npoints,2))
             for jj in range(self._npoints):
-                this_surface= currentDF._calc_surfacemass(rs[jj])
-                #BOVY: THE DENOMINATOR HERE IS NOT RIGHT!
-                newcorrections[jj,0]= corrections[jj,0]/this_surface*self._surfacemass(rs[jj])
-                thisSigma2= currentDF._calc_sigma2surfacemass(rs[jj])/this_surface
-                newcorrections[jj,1]= corrections[jj,1]/thisSigma2*self._sigma2(rs[jj])
+                newcorrections[jj,0]= 1./currentDF._calc_surfacemass(rs[jj],relative=True)
+                newcorrections[jj,1]= 1./currentDF._calc_sigma2surfacemass(rs[jj],relative=True)
                 print jj, newcorrections[jj,:]
-            corrections= newcorrections
+            corrections*= newcorrections
         #Save
         savefile= open(self._savefilename,'w')
         pickle.dump(corrections,savefile)
         savefile.close()
         return corrections
     
-    def _surfacemass(self,R):
-        """Internal function that gives the surface mass at R"""
-        return sc.exp(-R/self._dfparams[0])
-
-    def _sigma2(self,R):
-        """Internal function that gives the R-velocity variance at R"""
-        return self._dfparams[2]**2.*sc.exp(-2.*(R-1.)/self._dfparams[1])
-
 class DFcorrectionError(Exception):
     def __init__(self, value):
         self.value = value
