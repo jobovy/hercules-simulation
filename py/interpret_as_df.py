@@ -3,11 +3,10 @@
 #                        distribution function
 #
 #   ToDo:
-#      Take epsrel constant out of the code and into a _VARIABLE
-#      Implement searching for smaller iterations-savefiles
+#      Look at BOVY: e.g., INTERPOLATE 2nd
 #      Is it faster to split all functions between correct and don't correct?
 #      upgrade _calc_surfacemass, _calc_sigma2surfacemass, and _calc_sigma2
-#        to 'public' procedure; propagate to test_interpret_as_df.py
+#        to 'public' procedures; propagate to test_interpret_as_df.py
 #      Allow more general surfacemass and sigma2 functions be specified
 ###############################################################################
 _EPSREL=10.**-14.
@@ -324,6 +323,7 @@ class DFcorrection:
         highR= m.ceil(thisR)
         #return self._corrections[lowR,:]+(thisR-lowR)/(highR-lowR)*(self._corrections[highR,:]-self._corrections[lowR,:]) #BOVY: CLEAN UP, interpolate log?
         return sc.exp(sc.log(self._corrections[lowR,:])+(thisR-lowR)/(highR-lowR)*(sc.log(self._corrections[highR,:])-sc.log(self._corrections[lowR,:]))) #BOVY: CLEAN UP, interpolate log?
+    #BOVY: SECOND ORDER INTERPOLATE?
 
     def _calc_corrections(self):
         """Internal function that calculates the corrections"""     
