@@ -11,12 +11,14 @@
 ###############################################################################
 _EPSREL=10.**-14.
 _NSIGMA= 4.
+_INTERPDEGREE= 3
 import copy
 import os, os.path
 import cPickle as pickle
 import math as m
 import scipy as sc
 import scipy.integrate as integrate
+import scipy.interpolate as interpolate
 from integrate_orbits import vRvTRToEL
 class distF:
     """Class that represents a DF"""
@@ -145,11 +147,11 @@ class distF:
             xE= (2.*E/(1.+1./self._beta))**(1./2./self._beta)
             logOLLE= self._beta*sc.log(xE)+sc.log(L/xE-xE**self._beta)
         if hasattr(self,'_corr'):
-            correction= self._corr.correct(xE)
+            correction= self._corr.correct(xE,log=True)
         else:
             correction= sc.ones(2)
-        SRE2= self._eval_SR2(xE,log=True)+sc.log(correction[1])
-        return sc.exp(logsigmaR2-SRE2+self._eval_surfacemass(xE,log=True)-logSigmaR+sc.exp(logOLLE-SRE2))*correction[0]
+        SRE2= self._eval_SR2(xE,log=True)+correction[1]
+        return sc.exp(logsigmaR2-SRE2+self._eval_surfacemass(xE,log=True)-logSigmaR+sc.exp(logOLLE-SRE2)+correction[0])
 
     def _calc_sigma2surfacemass(self,R,romberg=False,nsigma=None,
                                 relative=False):
@@ -277,31 +279,42 @@ class DFcorrection:
             self._beta= kwargs['beta']
         else:
             self._beta= 0.
+        self._rs= sc.linspace(1./10**8.,self._rmax,self._npoints)
         if kwargs.has_key('corrections'):
             self._corrections= kwargs['corrections']
             if not len(self._corrections) == self._npoints:
                 raise DFcorrectionError("Number of corrections has to be equal to the number of points npoints")
-            return None
-        if kwargs.has_key('savedir'):
-            self._savedir= kwargs['savedir']
         else:
-            self._savedir= '.'
-        self._savefilename= os.path.join(self._savedir,'dfcorrection_'+
-                                         self._dftype+
-                                         '_%4.2f_%4.2f_%4.2f_%i_%4.2f_%i.sav'
-                                         % (self._dfparams[0],self._dfparams[1],
-                                            self._dfparams[2],self._npoints,
-                                            self._rmax,self._niter))
-        if os.path.exists(self._savefilename):
-            savefile= open(self._savefilename,'r')
-            self._corrections= pickle.load(savefile)
-            savefile.close()
-            return None
-        #Calculate the corrections
-        self._corrections= self._calc_corrections()
+            if kwargs.has_key('savedir'):
+                self._savedir= kwargs['savedir']
+            else:
+                self._savedir= '.'
+            self._savefilename= os.path.join(self._savedir,'dfcorrection_'+
+                                             self._dftype+
+                                             '_%4.2f_%4.2f_%4.2f_%4.2f_%i_%4.2f_%i.sav'
+                                             % (self._dfparams[0],self._dfparams[1],
+                                                self._dfparams[2],self._beta,
+                                                self._npoints,
+                                                self._rmax,self._niter))
+            if os.path.exists(self._savefilename):
+                savefile= open(self._savefilename,'r')
+                self._corrections= pickle.load(savefile)
+                savefile.close()
+            else: #Calculate the corrections
+                self._corrections= self._calc_corrections()
+        self._surfaceInterpolate= interpolate.interp1d(self._rs,
+                                                       sc.log(self._corrections[:,0]),
+                                                       kind=_INTERPDEGREE,
+                                                       bounds_error=False,
+                                                       fill_value=0.)
+        self._sigma2Interpolate= interpolate.interp1d(self._rs,
+                                                              sc.log(self._corrections[:,1]),
+                                                              kind=_INTERPDEGREE,
+                                                              bounds_error=False,
+                                                              fill_value=0.)
         return None
 
-    def correct(self,R):
+    def correct(self,R,log=False):
         """
         NAME:
            correct
@@ -309,21 +322,19 @@ class DFcorrection:
            calculate the correction in Sigma and sigma2 at R
         INPUT:
            R - Galactocentric radius(/ro)
+           log - if True, return the log of the correction
         OUTPUT:
            [Sigma correction, sigma2 correction]
         HISTORY:
            2010-03-10 - Written - Bovy (NYU)
         """
-        if R > self._rmax:
-            return [1.,1.]
-        #nearR= round(R/self._rmax*(self._npoints-1.)) #BOVY: INTERPOLATE?
-        #return self._corrections[nearR,:]
-        thisR= R/self._rmax*(self._npoints-1.)
-        lowR= m.floor(thisR)
-        highR= m.ceil(thisR)
-        #return self._corrections[lowR,:]+(thisR-lowR)/(highR-lowR)*(self._corrections[highR,:]-self._corrections[lowR,:]) #BOVY: CLEAN UP, interpolate log?
-        return sc.exp(sc.log(self._corrections[lowR,:])+(thisR-lowR)/(highR-lowR)*(sc.log(self._corrections[highR,:])-sc.log(self._corrections[lowR,:]))) #BOVY: CLEAN UP, interpolate log?
-    #BOVY: SECOND ORDER INTERPOLATE?
+        if log:
+            return sc.array([self._surfaceInterpolate(R),
+                             self._sigma2Interpolate(R)])
+        else:
+            return sc.exp(sc.array([self._surfaceInterpolate(R),
+                                    self._sigma2Interpolate(R)]))
+            
 
     def _calc_corrections(self):
         """Internal function that calculates the corrections"""     
@@ -331,10 +342,12 @@ class DFcorrection:
         while searchIter > 0:
             trySavefilename= os.path.join(self._savedir,'dfcorrection_'+
                                           self._dftype+
-                                          '_%4.2f_%4.2f_%4.2f_%i_%4.2f_%i.sav'
+                                          '_%4.2f_%4.2f_%4.2f_%4.2f_%i_%4.2f_%i.sav'
                                           % (self._dfparams[0],
                                              self._dfparams[1],
-                                             self._dfparams[2],self._npoints,
+                                             self._dfparams[2],
+                                             self._beta,
+                                             self._npoints,
                                              self._rmax,searchIter))
             if os.path.exists(trySavefilename):
                 trySavefile= open(trySavefilename,'r')
@@ -345,16 +358,16 @@ class DFcorrection:
                 searchIter-= 1
         if searchIter == 0:
             corrections= sc.ones((self._npoints,2))
-        rs= sc.linspace(1./10**8.,self._rmax,self._npoints)
         for ii in range(searchIter,self._niter):
             currentDF= distF(dftype='corrected-'+self._dftype,
                              dfparams=self._dfparams,
                              beta=self._beta,corrections=corrections)
             newcorrections= sc.zeros((self._npoints,2))
+            #for jj in range(10,90):
             for jj in range(self._npoints):
-                thisSurface= currentDF._calc_surfacemass(rs[jj])
-                newcorrections[jj,0]= currentDF._eval_surfacemass(rs[jj])/thisSurface
-                newcorrections[jj,1]= currentDF._eval_SR2(rs[jj])*thisSurface/currentDF._calc_sigma2surfacemass(rs[jj])
+                thisSurface= currentDF._calc_surfacemass(self._rs[jj])
+                newcorrections[jj,0]= currentDF._eval_surfacemass(self._rs[jj])/thisSurface
+                newcorrections[jj,1]= currentDF._eval_SR2(self._rs[jj])*thisSurface/currentDF._calc_sigma2surfacemass(self._rs[jj])
                 print jj, newcorrections[jj,:]
             corrections*= newcorrections
         #Save
