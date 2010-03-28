@@ -303,6 +303,7 @@ class DFcorrection:
                 savefile.close()
             else: #Calculate the corrections
                 self._corrections= self._calc_corrections()
+        #Interpolation; smoothly go to zero
         interpRs= sc.append(self._rs,2.*self._rmax)
         self._surfaceInterpolate= interpolate.interp1d(interpRs,
                                                        sc.log(sc.append(self._corrections[:,0],1.)),
@@ -314,11 +315,11 @@ class DFcorrection:
                                                       kind=_INTERPDEGREE,
                                                       bounds_error=False,
                                                       fill_value=0.)
+        #Interpolation for R < _RMIN
         surfaceInterpolateSmallR= interpolate.UnivariateSpline(interpRs[0:_INTERPDEGREE+2],sc.log(self._corrections[0:_INTERPDEGREE+2,0]),k=_INTERPDEGREE)
         self._surfaceDerivSmallR= surfaceInterpolateSmallR.derivatives(interpRs[0])[1]
         sigma2InterpolateSmallR= interpolate.UnivariateSpline(interpRs[0:_INTERPDEGREE+2],sc.log(self._corrections[0:_INTERPDEGREE+2,1]),k=_INTERPDEGREE)
         self._sigma2DerivSmallR= sigma2InterpolateSmallR.derivatives(interpRs[0])[1]
-        #print self._surfaceDerivSmallR, self._sigma2DerivSmallR
         return None
 
     def correct(self,R,log=False):
@@ -374,9 +375,7 @@ class DFcorrection:
                              dfparams=self._dfparams,
                              beta=self._beta,corrections=corrections)
             newcorrections= sc.zeros((self._npoints,2))
-            #for jj in range(10,90):
             for jj in range(self._npoints):
-            #for jj in range(self._npoints-1,0,-1):
                 thisSurface= currentDF._calc_surfacemass(self._rs[jj])
                 newcorrections[jj,0]= currentDF._eval_surfacemass(self._rs[jj])/thisSurface
                 newcorrections[jj,1]= currentDF._eval_SR2(self._rs[jj])*thisSurface/currentDF._calc_sigma2surfacemass(self._rs[jj])
