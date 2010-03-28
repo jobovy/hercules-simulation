@@ -262,7 +262,7 @@ class DFcorrection:
         else:
             self._rmax= kwargs['rmax']
         if not kwargs.has_key('niter'):
-            self._niter= 4
+            self._niter= 1
         else:
             self._niter= kwargs['niter']
         if not kwargs.has_key('npoints'):
