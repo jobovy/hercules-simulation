@@ -16,7 +16,6 @@ _RMIN=10.**-10.
 import copy
 import os, os.path
 import cPickle as pickle
-import math as m
 import scipy as sc
 import scipy.integrate as integrate
 import scipy.interpolate as interpolate
