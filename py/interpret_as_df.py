@@ -3,15 +3,15 @@
 #                        distribution function
 #
 #   ToDo:
-#      Look at BOVY: e.g., INTERPOLATE 2nd
 #      Is it faster to split all functions between correct and don't correct?
 #      upgrade _calc_surfacemass, _calc_sigma2surfacemass, and _calc_sigma2
 #        to 'public' procedures; propagate to test_interpret_as_df.py
-#      Allow more general surfacemass and sigma2 functions be specified
+#      Allow more general surfacemass and sigma2 functions to be specified
 ###############################################################################
 _EPSREL=10.**-14.
 _NSIGMA= 4.
 _INTERPDEGREE= 3
+_RMIN=10.**-10.
 import copy
 import os, os.path
 import cPickle as pickle
@@ -22,7 +22,8 @@ import scipy.interpolate as interpolate
 from integrate_orbits import vRvTRToEL
 class distF:
     """Class that represents a DF"""
-    def __init__(self,dftype='dehnen',dfparams=(0.33,1.0,0.2),beta=0.,**kwargs):
+    def __init__(self,dftype='dehnen',dfparams=(0.33,1.0,0.2),beta=0.,
+                 **kwargs):
         """
         NAME:
            __init__
@@ -279,7 +280,7 @@ class DFcorrection:
             self._beta= kwargs['beta']
         else:
             self._beta= 0.
-        self._rs= sc.linspace(1./10**8.,self._rmax,self._npoints)
+        self._rs= sc.linspace(_RMIN,self._rmax,self._npoints)
         if kwargs.has_key('corrections'):
             self._corrections= kwargs['corrections']
             if not len(self._corrections) == self._npoints:
@@ -302,16 +303,22 @@ class DFcorrection:
                 savefile.close()
             else: #Calculate the corrections
                 self._corrections= self._calc_corrections()
-        self._surfaceInterpolate= interpolate.interp1d(self._rs,
-                                                       sc.log(self._corrections[:,0]),
+        interpRs= sc.append(self._rs,2.*self._rmax)
+        self._surfaceInterpolate= interpolate.interp1d(interpRs,
+                                                       sc.log(sc.append(self._corrections[:,0],1.)),
                                                        kind=_INTERPDEGREE,
                                                        bounds_error=False,
                                                        fill_value=0.)
-        self._sigma2Interpolate= interpolate.interp1d(self._rs,
-                                                              sc.log(self._corrections[:,1]),
-                                                              kind=_INTERPDEGREE,
-                                                              bounds_error=False,
-                                                              fill_value=0.)
+        self._sigma2Interpolate= interpolate.interp1d(interpRs,
+                                                      sc.log(sc.append(self._corrections[:,1],1.)),
+                                                      kind=_INTERPDEGREE,
+                                                      bounds_error=False,
+                                                      fill_value=0.)
+        surfaceInterpolateSmallR= interpolate.UnivariateSpline(interpRs[0:_INTERPDEGREE+2],sc.log(self._corrections[0:_INTERPDEGREE+2,0]),k=_INTERPDEGREE)
+        self._surfaceDerivSmallR= surfaceInterpolateSmallR.derivatives(interpRs[0])[1]
+        sigma2InterpolateSmallR= interpolate.UnivariateSpline(interpRs[0:_INTERPDEGREE+2],sc.log(self._corrections[0:_INTERPDEGREE+2,1]),k=_INTERPDEGREE)
+        self._sigma2DerivSmallR= sigma2InterpolateSmallR.derivatives(interpRs[0])[1]
+        #print self._surfaceDerivSmallR, self._sigma2DerivSmallR
         return None
 
     def correct(self,R,log=False):
@@ -328,12 +335,16 @@ class DFcorrection:
         HISTORY:
            2010-03-10 - Written - Bovy (NYU)
         """
-        if log:
-            return sc.array([self._surfaceInterpolate(R),
-                             self._sigma2Interpolate(R)])
+        if R < _RMIN:
+            out= sc.array([self._corrections[0,0]+self._surfaceDerivSmallR*(R-_RMIN),
+                           self._corrections[0,1]+self._sigma2DerivSmallR*(R-_RMIN)])
         else:
-            return sc.exp(sc.array([self._surfaceInterpolate(R),
-                                    self._sigma2Interpolate(R)]))
+            out= sc.array([self._surfaceInterpolate(R),
+                           self._sigma2Interpolate(R)])
+        if log:
+            return out
+        else:
+            return sc.exp(out)
             
 
     def _calc_corrections(self):
@@ -365,6 +376,7 @@ class DFcorrection:
             newcorrections= sc.zeros((self._npoints,2))
             #for jj in range(10,90):
             for jj in range(self._npoints):
+            #for jj in range(self._npoints-1,0,-1):
                 thisSurface= currentDF._calc_surfacemass(self._rs[jj])
                 newcorrections[jj,0]= currentDF._eval_surfacemass(self._rs[jj])/thisSurface
                 newcorrections[jj,1]= currentDF._eval_SR2(self._rs[jj])*thisSurface/currentDF._calc_sigma2surfacemass(self._rs[jj])
