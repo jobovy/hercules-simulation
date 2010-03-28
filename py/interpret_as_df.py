@@ -4,8 +4,6 @@
 #
 #   ToDo:
 #      1)nCreate 'dehnen' class that inherits from distF, make API more generic
-#      3) upgrade _calc_surfacemass, _calc_sigma2surfacemass, and _calc_sigma2
-#        to 'public' procedures; propagate to test_interpret_as_df.py
 #      4) Allow more general surfacemass and sigma2 functions to be specified
 ###############################################################################
 _EPSREL=10.**-14.
@@ -101,8 +99,23 @@ class distF:
         else:
             return sc.exp(-R/self._dfparams[0])
 
-    def _calc_surfacemass(self,R,romberg=False,nsigma=None,relative=False):
-        """Internal function that calculates the surface mass for a given DF at R"""
+    def surfacemass(self,R,romberg=False,nsigma=None,relative=False):
+        """
+        NAME:
+           surfacemass
+        PURPOSE:
+           calculate the surface-mass at R by marginalizing over velocity
+        INPUT:
+           R - radius at which to calculate the surfacemass density (/ro)
+        OPTIONAL INPUT:
+           nsigma - number of sigma to integrate the velocities over
+        KEYWORDS:
+           romberg - if True, use a romberg integrator (default: False)
+        OUTPUT:
+           surface mass at R
+        HISTORY:
+           2010-03-XX - Written - Bovy (NYU)
+        """
         if nsigma == None:
             nsigma= _NSIGMA
         logSigmaR= self._eval_surfacemass(R,log=True)
@@ -149,14 +162,30 @@ class distF:
         if hasattr(self,'_corr'):
             correction= self._corr.correct(xE,log=True)
         else:
-            correction= sc.ones(2)
+            correction= sc.zeros(2)
         SRE2= self._eval_SR2(xE,log=True)+correction[1]
         return sc.exp(logsigmaR2-SRE2+self._eval_surfacemass(xE,log=True)-logSigmaR+sc.exp(logOLLE-SRE2)+correction[0])
 
-    def _calc_sigma2surfacemass(self,R,romberg=False,nsigma=None,
+    def sigma2surfacemass(self,R,romberg=False,nsigma=None,
                                 relative=False):
-        """Internal function that calculates the velocity variance * surface 
-        mass for a given DF at R"""
+        """
+        NAME:
+           sigma2surfacemass
+        PURPOSE:
+           calculate the product sigma_R^2 x surface-mass at R by 
+           marginalizing over velocity
+        INPUT:
+           R - radius at which to calculate the sigma_R^2 x surfacemass 
+               density (/ro)
+        OPTIONAL INPUT:
+           nsigma - number of sigma to integrate the velocities over
+        KEYWORDS:
+           romberg - if True, use a romberg integrator (default: False)
+        OUTPUT:
+           sigma_R^2 x surface-mass at R
+        HISTORY:
+           2010-03-XX - Written - Bovy (NYU)
+        """
         if nsigma == None:
             nsigma= _NSIGMA
         logSigmaR= self._eval_surfacemass(R,log=True)
@@ -184,9 +213,24 @@ class distF:
                                       gamma),
                                      epsrel=_EPSREL)[0]/sc.pi*norm
 
-    def _calc_sigma2(self,R,romberg=False,nsigma=None):
-        """Shortcut to calculate sigma2(R)"""
-        return self._calc_sigma2surfacemass(R,romberg,nsigma)/self._calc_surfacemass(R,romberg,nsigma)
+    def sigma2(self,R,romberg=False,nsigma=None):
+        """
+        NAME:
+           sigma2
+        PURPOSE:
+           calculate sigma_R^2 at R by marginalizing over velocity
+        INPUT:
+           R - radius at which to calculate sigma_R^2 density (/ro)
+        OPTIONAL INPUT:
+           nsigma - number of sigma to integrate the velocities over
+        KEYWORDS:
+           romberg - if True, use a romberg integrator (default: False)
+        OUTPUT:
+           sigma_R^2 at R
+        HISTORY:
+           2010-03-XX - Written - Bovy (NYU)
+        """
+        return self.sigma2surfacemass(R,romberg,nsigma)/self.surfacemass(R,romberg,nsigma)
 
 def _surfaceIntegrand(vR,vT,R,df,logSigmaR,logsigmaR2,sigmaR1,gamma):
     """Internal function that is the integrand for the surface mass integration"""
@@ -381,9 +425,9 @@ class DFcorrection:
                              beta=self._beta,corrections=corrections)
             newcorrections= sc.zeros((self._npoints,2))
             for jj in range(self._npoints):
-                thisSurface= currentDF._calc_surfacemass(self._rs[jj])
+                thisSurface= currentDF.surfacemass(self._rs[jj])
                 newcorrections[jj,0]= currentDF._eval_surfacemass(self._rs[jj])/thisSurface
-                newcorrections[jj,1]= currentDF._eval_SR2(self._rs[jj])*thisSurface/currentDF._calc_sigma2surfacemass(self._rs[jj])
+                newcorrections[jj,1]= currentDF._eval_SR2(self._rs[jj])*thisSurface/currentDF.sigma2surfacemass(self._rs[jj])
                 print jj, newcorrections[jj,:]
             corrections*= newcorrections
         #Save

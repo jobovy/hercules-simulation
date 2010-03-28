@@ -28,7 +28,7 @@ def test_calc_surfacemass(baseplotfilename,format='png',ngrid=101):
         xs= sc.linspace(0.00001,10./3.,ngrid)
         sigma= sc.zeros(ngrid)
         for ii in range(ngrid):
-            sigma[ii]= sc.log(distF._calc_surfacemass(xs[ii]))+xs[ii]*3.
+            sigma[ii]= sc.log(distF.surfacemass(xs[ii]))+xs[ii]*3.
         plot.bovy_print(fig_width=5,fig_height=2.5)
         plot.bovy_plot(xs*3.,sigma,'k',xlabel=r'R/R_s',
                        ylabel=r'\ln \Sigma_f - \ln \Sigma',xrange=[0,10],
@@ -49,7 +49,7 @@ def test_calc_surfacemass(baseplotfilename,format='png',ngrid=101):
         xs= sc.linspace(0.00001,10./3.,ngrid)
         sigma= sc.zeros(ngrid)
         for ii in range(ngrid):
-            sigma[ii]= sc.log(distF._calc_surfacemass(xs[ii]))+xs[ii]*3.
+            sigma[ii]= sc.log(distF.surfacemass(xs[ii]))+xs[ii]*3.
         plot.bovy_print(fig_width=5,fig_height=2.5)
         plot.bovy_plot(xs*3.,sigma,'k',xlabel=r'R/R_s',
                        ylabel=r'\ln \Sigma_f - \ln \Sigma',xrange=[0,10],
@@ -70,7 +70,7 @@ def test_calc_surfacemass(baseplotfilename,format='png',ngrid=101):
         xs= sc.linspace(0.00001,10./3.,ngrid)
         sigma= sc.zeros(ngrid)
         for ii in range(ngrid):
-            sigma[ii]= sc.log(distF._calc_surfacemass(xs[ii]))+xs[ii]*3.
+            sigma[ii]= sc.log(distF.surfacemass(xs[ii]))+xs[ii]*3.
         plot.bovy_print(fig_width=5,fig_height=2.5)
         plot.bovy_plot(xs*3.,sigma,'k',xlabel=r'R/R_s',
                        ylabel=r'\ln \Sigma_f - \ln \Sigma',xrange=[0,10],
@@ -91,7 +91,7 @@ def test_calc_surfacemass(baseplotfilename,format='png',ngrid=101):
         xs= sc.linspace(0.00001,10./3.,ngrid)
         sigma= sc.zeros(ngrid)
         for ii in range(ngrid):
-            sigma[ii]= sc.log(distF._calc_surfacemass(xs[ii]))+xs[ii]*3.
+            sigma[ii]= sc.log(distF.surfacemass(xs[ii]))+xs[ii]*3.
         plot.bovy_print(fig_width=5,fig_height=2.5)
         plot.bovy_plot(xs*3.,sigma,'k',xlabel=r'R/R_s',
                        ylabel=r'\ln \Sigma_f - \ln \Sigma',xrange=[0,10],
@@ -129,7 +129,7 @@ def test_calc_sigma(baseplotfilename,format='png',ngrid=101):
         xs= sc.linspace(0.00001,10./3.,ngrid)
         sigma= sc.zeros(ngrid)
         for ii in range(ngrid):
-            sigma[ii]= 0.5*sc.log(distF._calc_sigma2(xs[ii]))+xs[ii]-sc.log(0.5)
+            sigma[ii]= 0.5*sc.log(distF.sigma2(xs[ii]))+xs[ii]-sc.log(0.5)
         plot.bovy_print(fig_width=5,fig_height=2.5)
         plot.bovy_plot(xs*3.,sigma,'k',xlabel=r'R/R_s',
                        ylabel=r'\ln \sigma_f - \ln \sigma',xrange=[0,10],
@@ -150,7 +150,7 @@ def test_calc_sigma(baseplotfilename,format='png',ngrid=101):
         xs= sc.linspace(0.00001,10./3.,ngrid)
         sigma= sc.zeros(ngrid)
         for ii in range(ngrid):
-            sigma[ii]= 0.5*sc.log(distF._calc_sigma2(xs[ii]))+xs[ii]-sc.log(0.5)
+            sigma[ii]= 0.5*sc.log(distF.sigma2(xs[ii]))+xs[ii]-sc.log(0.5)
         plot.bovy_print(fig_width=5,fig_height=2.5)
         plot.bovy_plot(xs*3.,sigma,'k',xlabel=r'R/R_s',
                        ylabel=r'\ln \sigma_f - \ln \sigma',xrange=[0,10],
@@ -171,7 +171,7 @@ def test_calc_sigma(baseplotfilename,format='png',ngrid=101):
         xs= sc.linspace(0.00001,10./3.,ngrid)
         sigma= sc.zeros(ngrid)
         for ii in range(ngrid):
-            sigma[ii]= 0.5*sc.log(distF._calc_sigma2(xs[ii]))+xs[ii]-sc.log(0.5)
+            sigma[ii]= 0.5*sc.log(distF.sigma2(xs[ii]))+xs[ii]-sc.log(0.5)
         plot.bovy_print(fig_width=5,fig_height=2.5)
         plot.bovy_plot(xs*3.,sigma,'k',xlabel=r'R/R_s',
                        ylabel=r'\ln \sigma_f - \ln \sigma',xrange=[0,10],
@@ -192,7 +192,7 @@ def test_calc_sigma(baseplotfilename,format='png',ngrid=101):
         xs= sc.linspace(0.00001,10./3.,ngrid)
         sigma= sc.zeros(ngrid)
         for ii in range(ngrid):
-            sigma[ii]= 0.5*sc.log(distF._calc_sigma2(xs[ii]))+xs[ii]
+            sigma[ii]= 0.5*sc.log(distF.sigma2(xs[ii]))+xs[ii]
         plot.bovy_print(fig_width=5,fig_height=2.5)
         plot.bovy_plot(xs*3.,sigma,'k',xlabel=r'R/R_s',
                        ylabel=r'\ln \sigma_f - \ln \sigma',xrange=[0,10],
