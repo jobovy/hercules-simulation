@@ -3,10 +3,11 @@
 #                        distribution function
 #
 #   ToDo:
-#      Is it faster to split all functions between correct and don't correct?
-#      upgrade _calc_surfacemass, _calc_sigma2surfacemass, and _calc_sigma2
+#      1)nCreate 'dehnen' class that inherits from distF, make API more generic
+#      2) Add interpolation keywords to DFcorrection
+#      3) upgrade _calc_surfacemass, _calc_sigma2surfacemass, and _calc_sigma2
 #        to 'public' procedures; propagate to test_interpret_as_df.py
-#      Allow more general surfacemass and sigma2 functions to be specified
+#      4) Allow more general surfacemass and sigma2 functions to be specified
 ###############################################################################
 _EPSREL=10.**-14.
 _NSIGMA= 4.
