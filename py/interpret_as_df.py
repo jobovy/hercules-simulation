@@ -4,7 +4,6 @@
 #
 #   ToDo:
 #      1)nCreate 'dehnen' class that inherits from distF, make API more generic
-#      2) Add interpolation keywords to DFcorrection
 #      3) upgrade _calc_surfacemass, _calc_sigma2surfacemass, and _calc_sigma2
 #        to 'public' procedures; propagate to test_interpret_as_df.py
 #      4) Allow more general surfacemass and sigma2 functions to be specified
@@ -249,6 +248,7 @@ class DFcorrection:
            beta - power-law index of the rotation curve (when calculating)
            dftype - 'dehnen'
            niter - number of iterations to perform to calculate the corrections
+           interp1d_kind - 'kind' keyword to give to interp1d
         OUTPUT:
         HISTORY:
            2010-03-10 - Written - Bovy (NYU)
@@ -304,15 +304,20 @@ class DFcorrection:
             else: #Calculate the corrections
                 self._corrections= self._calc_corrections()
         #Interpolation; smoothly go to zero
+        if kwargs.has_key('interp1d_kind'):
+            self._interp1d_kind= kwargs['interp1d_kind']
+        else:
+            self._interp1d_kind= _INTERPDEGREE
+            
         interpRs= sc.append(self._rs,2.*self._rmax)
         self._surfaceInterpolate= interpolate.interp1d(interpRs,
                                                        sc.log(sc.append(self._corrections[:,0],1.)),
-                                                       kind=_INTERPDEGREE,
+                                                       kind=self._interp1d_kind,
                                                        bounds_error=False,
                                                        fill_value=0.)
         self._sigma2Interpolate= interpolate.interp1d(interpRs,
                                                       sc.log(sc.append(self._corrections[:,1],1.)),
-                                                      kind=_INTERPDEGREE,
+                                                      kind=self._interp1d_kind,
                                                       bounds_error=False,
                                                       fill_value=0.)
         #Interpolation for R < _RMIN
