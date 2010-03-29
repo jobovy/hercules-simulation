@@ -23,12 +23,13 @@ def test_calc_surfacemass(baseplotfilename,format='png',ngrid=101):
     """
     #Test 1: beta= 0., sigma_0= 0.5, Rsigma= 3 x Rscale, Rscale= Ro/3.
     if not os.path.exists(basefilename+'_1.png'):
-        distF= df.distF(dftype='dehnen',dfparams=(1./3.,1.,0.5*sc.exp(-1.)),
-                        beta=0.)
+        distFunc= df.distFunc(dftype='dehnen',
+                              profileParams=(1./3.,1.,0.5*sc.exp(-1.)),
+                              beta=0.)
         xs= sc.linspace(0.00001,10./3.,ngrid)
         sigma= sc.zeros(ngrid)
         for ii in range(ngrid):
-            sigma[ii]= sc.log(distF.surfacemass(xs[ii]))+xs[ii]*3.
+            sigma[ii]= sc.log(distFunc.surfacemass(xs[ii]))+xs[ii]*3.
         plot.bovy_print(fig_width=5,fig_height=2.5)
         plot.bovy_plot(xs*3.,sigma,'k',xlabel=r'R/R_s',
                        ylabel=r'\ln \Sigma_f - \ln \Sigma',xrange=[0,10],
@@ -44,12 +45,12 @@ def test_calc_surfacemass(baseplotfilename,format='png',ngrid=101):
 
     #Test 2: beta= 0.2, sigma_0= 0.5, Rsigma= 3 x Rscale, Rscale= Ro/3.
     if not os.path.exists(basefilename+'_2.png'):
-        distF= df.distF(dftype='dehnen',dfparams=(1./3.,1.,0.5*sc.exp(-1.)),
+        distFunc= df.distFunc(dftype='dehnen',profileParams=(1./3.,1.,0.5*sc.exp(-1.)),
                         beta=0.2)
         xs= sc.linspace(0.00001,10./3.,ngrid)
         sigma= sc.zeros(ngrid)
         for ii in range(ngrid):
-            sigma[ii]= sc.log(distF.surfacemass(xs[ii]))+xs[ii]*3.
+            sigma[ii]= sc.log(distFunc.surfacemass(xs[ii]))+xs[ii]*3.
         plot.bovy_print(fig_width=5,fig_height=2.5)
         plot.bovy_plot(xs*3.,sigma,'k',xlabel=r'R/R_s',
                        ylabel=r'\ln \Sigma_f - \ln \Sigma',xrange=[0,10],
@@ -65,12 +66,12 @@ def test_calc_surfacemass(baseplotfilename,format='png',ngrid=101):
 
     #Test 3: beta= -0.2, sigma_0= 0.5, Rsigma= 3 x Rscale, Rscale= Ro/3.
     if not os.path.exists(basefilename+'_3.png'):
-        distF= df.distF(dftype='dehnen',dfparams=(1./3.,1.,0.5*sc.exp(-1.)),
+        distFunc= df.distFunc(dftype='dehnen',profileParams=(1./3.,1.,0.5*sc.exp(-1.)),
                         beta=-0.2)
         xs= sc.linspace(0.00001,10./3.,ngrid)
         sigma= sc.zeros(ngrid)
         for ii in range(ngrid):
-            sigma[ii]= sc.log(distF.surfacemass(xs[ii]))+xs[ii]*3.
+            sigma[ii]= sc.log(distFunc.surfacemass(xs[ii]))+xs[ii]*3.
         plot.bovy_print(fig_width=5,fig_height=2.5)
         plot.bovy_plot(xs*3.,sigma,'k',xlabel=r'R/R_s',
                        ylabel=r'\ln \Sigma_f - \ln \Sigma',xrange=[0,10],
@@ -86,12 +87,12 @@ def test_calc_surfacemass(baseplotfilename,format='png',ngrid=101):
 
     #Test 4: beta= 0., sigma_0= 1, Rsigma= 3 x Rscale, Rscale= Ro/3.
     if not os.path.exists(basefilename+'_4.png'):
-        distF= df.distF(dftype='dehnen',dfparams=(1./3.,1.,sc.exp(-1.)),
+        distFunc= df.distFunc(dftype='dehnen',profileParams=(1./3.,1.,sc.exp(-1.)),
                         beta=0.)
         xs= sc.linspace(0.00001,10./3.,ngrid)
         sigma= sc.zeros(ngrid)
         for ii in range(ngrid):
-            sigma[ii]= sc.log(distF.surfacemass(xs[ii]))+xs[ii]*3.
+            sigma[ii]= sc.log(distFunc.surfacemass(xs[ii]))+xs[ii]*3.
         plot.bovy_print(fig_width=5,fig_height=2.5)
         plot.bovy_plot(xs*3.,sigma,'k',xlabel=r'R/R_s',
                        ylabel=r'\ln \Sigma_f - \ln \Sigma',xrange=[0,10],
@@ -124,12 +125,12 @@ def test_calc_sigma(baseplotfilename,format='png',ngrid=101):
     """
     #Test 1: beta= 0., sigma_0= 0.5, Rsigma= 3 x Rscale, Rscale= Ro/3.
     if not os.path.exists(basefilename+'_1.png'):
-        distF= df.distF(dftype='dehnen',dfparams=(1./3.,1.,0.5*sc.exp(-1.)),
+        distFunc= df.distFunc(dftype='dehnen',profileParams=(1./3.,1.,0.5*sc.exp(-1.)),
                         beta=0.)
         xs= sc.linspace(0.00001,10./3.,ngrid)
         sigma= sc.zeros(ngrid)
         for ii in range(ngrid):
-            sigma[ii]= 0.5*sc.log(distF.sigma2(xs[ii]))+xs[ii]-sc.log(0.5)
+            sigma[ii]= 0.5*sc.log(distFunc.sigma2(xs[ii]))+xs[ii]-sc.log(0.5)
         plot.bovy_print(fig_width=5,fig_height=2.5)
         plot.bovy_plot(xs*3.,sigma,'k',xlabel=r'R/R_s',
                        ylabel=r'\ln \sigma_f - \ln \sigma',xrange=[0,10],
@@ -145,12 +146,12 @@ def test_calc_sigma(baseplotfilename,format='png',ngrid=101):
 
     #Test 2: beta= 0.2, sigma_0= 0.5, Rsigma= 3 x Rscale, Rscale= Ro/3.
     if not os.path.exists(basefilename+'_2.png'):
-        distF= df.distF(dftype='dehnen',dfparams=(1./3.,1.,0.5*sc.exp(-1.)),
+        distFunc= df.distFunc(dftype='dehnen',profileParams=(1./3.,1.,0.5*sc.exp(-1.)),
                         beta=0.2)
         xs= sc.linspace(0.00001,10./3.,ngrid)
         sigma= sc.zeros(ngrid)
         for ii in range(ngrid):
-            sigma[ii]= 0.5*sc.log(distF.sigma2(xs[ii]))+xs[ii]-sc.log(0.5)
+            sigma[ii]= 0.5*sc.log(distFunc.sigma2(xs[ii]))+xs[ii]-sc.log(0.5)
         plot.bovy_print(fig_width=5,fig_height=2.5)
         plot.bovy_plot(xs*3.,sigma,'k',xlabel=r'R/R_s',
                        ylabel=r'\ln \sigma_f - \ln \sigma',xrange=[0,10],
@@ -166,12 +167,12 @@ def test_calc_sigma(baseplotfilename,format='png',ngrid=101):
 
     #Test 3: beta= -0.2, sigma_0= 0.5, Rsigma= 3 x Rscale, Rscale= Ro/3.
     if not os.path.exists(basefilename+'_3.png'):
-        distF= df.distF(dftype='dehnen',dfparams=(1./3.,1.,0.5*sc.exp(-1.)),
+        distFunc= df.distFunc(dftype='dehnen',profileParams=(1./3.,1.,0.5*sc.exp(-1.)),
                         beta=-0.2)
         xs= sc.linspace(0.00001,10./3.,ngrid)
         sigma= sc.zeros(ngrid)
         for ii in range(ngrid):
-            sigma[ii]= 0.5*sc.log(distF.sigma2(xs[ii]))+xs[ii]-sc.log(0.5)
+            sigma[ii]= 0.5*sc.log(distFunc.sigma2(xs[ii]))+xs[ii]-sc.log(0.5)
         plot.bovy_print(fig_width=5,fig_height=2.5)
         plot.bovy_plot(xs*3.,sigma,'k',xlabel=r'R/R_s',
                        ylabel=r'\ln \sigma_f - \ln \sigma',xrange=[0,10],
@@ -187,12 +188,12 @@ def test_calc_sigma(baseplotfilename,format='png',ngrid=101):
 
     #Test 4: beta= 0., sigma_0= 1, Rsigma= 3 x Rscale, Rscale= Ro/3.
     if not os.path.exists(basefilename+'_4.png'):
-        distF= df.distF(dftype='dehnen',dfparams=(1./3.,1.,sc.exp(-1.)),
+        distFunc= df.distFunc(dftype='dehnen',profileParams=(1./3.,1.,sc.exp(-1.)),
                         beta=0.)
         xs= sc.linspace(0.00001,10./3.,ngrid)
         sigma= sc.zeros(ngrid)
         for ii in range(ngrid):
-            sigma[ii]= 0.5*sc.log(distF.sigma2(xs[ii]))+xs[ii]
+            sigma[ii]= 0.5*sc.log(distFunc.sigma2(xs[ii]))+xs[ii]
         plot.bovy_print(fig_width=5,fig_height=2.5)
         plot.bovy_plot(xs*3.,sigma,'k',xlabel=r'R/R_s',
                        ylabel=r'\ln \sigma_f - \ln \sigma',xrange=[0,10],
