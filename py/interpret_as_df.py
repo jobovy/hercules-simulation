@@ -5,6 +5,7 @@
 #   This module contains the following classes:
 #
 #      distFunc - top-level class that represents a distribution function
+#      dehnenDF - inherits from distFunc, implements Dehnen's 'new' DF
 #      surfaceSigmaProfile - top-level class that represents a surface 
 #                            density profile and a sigma_R profile
 #      expSurfaceSigmaProfile - class that represents an exponential surface
@@ -12,10 +13,6 @@
 #                               profile
 #      DFcorrection - class that represents corrections to the input Sigma(R)
 #                     and sigma_R(R) to get closer to the targets
-#
-#   ToDo:
-#      1) Create 'dehnen' class that inherits from distF, make API more generic
-#      4) Allow more general surfacemass and sigma2 functions to be specified
 ###############################################################################
 _EPSREL=10.**-14.
 _NSIGMA= 4.
@@ -164,6 +161,7 @@ class distFunc:
     def __init__(self,dftype='dehnen',
                  surfaceSigma=expSurfaceSigmaProfile,
                  profileParams=(1./3.,1.0,0.2),
+                 correct=False,
                  beta=0.,**kwargs):
         """
         NAME:
@@ -183,6 +181,7 @@ class distFunc:
                         Directly given to the 'surfaceSigmaProfile class, so
                         could be anything that class takes
            beta - power-law index of the rotation curve
+           correct - correct the DF (i.e., DFcorrection kwargs are also given)
            + DFcorrection kwargs (except for those already specified)
         OUTPUT:
         HISTORY:
@@ -193,53 +192,17 @@ class distFunc:
             self._surfaceSigmaProfile= surfaceSigma
         else:
             self._surfaceSigmaProfile= surfaceSigma(profileParams)
-        #self._dfparams= profileParams
         self._beta= beta
-        if dftype == 'corrected-dehnen':
+        if correct or kwargs.has_key('corrections') or kwargs.has_key('rmax') or kwargs.has_key('niter') or kwargs.has_key('npoints'):
+            self._correct= True
             #Load corrections
-            self._corr= DFcorrection(dftype='dehnen',
+            self._corr= DFcorrection(dftype=self.__class__,
                                      surfaceSigmaProfile=self._surfaceSigmaProfile,
                                      beta=beta,**kwargs)
-        return None
-
-    def eval(self,E,L,log=False):
-        """
-        NAME:
-           eval
-        PURPOSE:
-           evaluate the distribution function
-        INPUT:
-           E - energy (/vo^2)
-           L - angular momentun (/ro/vo)
-           log - return the log (default: false)
-        OUTPUT:
-           DF(E,L)
-        HISTORY:
-           2010-03-10 - Written - Bovy (NYU)
-        """
-        if self._dftype == 'dehnen':
-            return self._eval_dehnen(E,L,log)
-        elif self._dftype == 'corrected-dehnen':
-            return self._eval_dehnen(E,L,log,correct=True)
-    
-    def _eval_dehnen(self,E,L,log,correct=False):
-        """Internal function that evaluates the (corrected) Dehnen DF"""
-        #Calculate Re,LE, OmegaE
-        if self._beta == 0.:
-            xE= sc.exp(E-.5)
-            LE= xE
-            OmegaE= 1./xE
-        else: #non-flat rotation curve
-            xE= (2.*E/(1.+1./self._beta))**(1./2./self._beta)
-            LE= xE**(self._beta+1.)
-            OmegaE= xE*(self._beta-1.)
-        if correct:
-            correction= self._corr.correct(xE)
         else:
-            correction= sc.ones(2)
-        SRE2= self.targetSigma2(xE)*correction[1]
-        return 1./2./sc.pi*sc.sqrt(2./(1.+self._beta))*self.targetSurfacemass(xE)/SRE2*sc.exp(OmegaE*(L-LE)/SRE2)*correction[0]
-        
+            self._correct= False
+        return None
+    
     def targetSigma2(self,R,log=False):
         """
         NAME:
@@ -316,29 +279,6 @@ class distFunc:
                                       gamma),
                                      epsrel=_EPSREL)[0]/sc.pi*norm
 
-    def _eval_surfaceIntegrand(self,E,L,logSigmaR,logsigmaR2):
-        """Internal function that has the normalized DF for the surface mass integral"""
-        if self._dftype == 'dehnen' or self._dftype == 'corrected-dehnen':
-            return self._eval_surfaceIntegrand_dehnen(E,L,logSigmaR,logsigmaR2)
-        
-    def _eval_surfaceIntegrand_dehnen(self,E,L,logSigmaR,logsigmaR2):
-        """Internal function that has the normalized DF for the surface mass integral for the uncorrected Dehnen DF"""
-        #Calculate Re,LE, OmegaE
-        if self._beta == 0.:
-            xE= sc.exp(E-.5)
-            logOLLE= sc.log(L/xE-1.)
-            #LE= xE
-            #OmegaE= 1./xE
-        else: #non-flat rotation curve
-            xE= (2.*E/(1.+1./self._beta))**(1./2./self._beta)
-            logOLLE= self._beta*sc.log(xE)+sc.log(L/xE-xE**self._beta)
-        if hasattr(self,'_corr'):
-            correction= self._corr.correct(xE,log=True)
-        else:
-            correction= sc.zeros(2)
-        SRE2= self.targetSigma2(xE,log=True)+correction[1]
-        return sc.exp(logsigmaR2-SRE2+self.targetSurfacemass(xE,log=True)-logSigmaR+sc.exp(logOLLE-SRE2)+correction[0])
-
     def sigma2surfacemass(self,R,romberg=False,nsigma=None,
                                 relative=False):
         """
@@ -361,9 +301,7 @@ class distFunc:
         """
         if nsigma == None:
             nsigma= _NSIGMA
-        #logSigmaR= self._eval_surfacemass(R,log=True)
         logSigmaR= self.targetSurfacemass(R,log=True)
-        #sigmaR2= self._eval_SR2(R)
         sigmaR2= self.targetSigma2(R)
         sigmaR1= sc.sqrt(sigmaR2)
         logsigmaR2= sc.log(sigmaR2)
@@ -407,16 +345,81 @@ class distFunc:
         """
         return self.sigma2surfacemass(R,romberg,nsigma)/self.surfacemass(R,romberg,nsigma)
 
+
+class dehnenDF(distFunc):
+    """Dehnen's 'new' df"""
+    def __init__(self,surfaceSigma=expSurfaceSigmaProfile,
+                 profileParams=(1./3.,1.0,0.2),
+                 correct=False,
+                 beta=0.,**kwargs):
+        """
+        NAME:
+           __init__
+        PURPOSE:
+           Initialize a Dehnen 'new' DF
+        INPUT:
+           surfaceSigma - instance or class name of the target 
+                      surface density and sigma_R profile 
+                      (default: both exponential)
+           profileParams - parameters of the surface and sigma_R profile:
+                      (xD,xS,Sro) where
+                        xD - disk surface mass scalelength / Ro
+                        xS - disk velocity dispersion scalelength / Ro
+                        Sro - disk velocity dispersion at Ro (/vo)
+                        Directly given to the 'surfaceSigmaProfile class, so
+                        could be anything that class takes
+           beta - power-law index of the rotation curve
+           correct - if True, correct the DF
+           + DFcorrection kwargs (except for those already specified)
+        OUTPUT:
+        HISTORY:
+            2010-03-10 - Written - Bovy (NYU)
+        """
+        return distFunc.__init__(self,surfaceSigma=surfaceSigma,
+                                 profileParams=profileParams,
+                                 correct=correct,
+                                 beta=beta,**kwargs)
+        
+    def eval(self,E,L,logSigmaR=0.,logsigmaR2=0.):
+        """
+        NAME:
+           eval
+        PURPOSE:
+           evaluate the distribution function
+        INPUT:
+           E - energy (/vo^2)
+           L - angular momentun (/ro/vo)
+       OUTPUT:
+           DF(E,L)
+        HISTORY:
+           2010-03-10 - Written - Bovy (NYU)
+           2010-03-28 - Moved to dehnenDF - Bovy (NYU)
+        """
+        #Calculate Re,LE, OmegaE
+        if self._beta == 0.:
+            xE= sc.exp(E-.5)
+            logOLLE= sc.log(L/xE-1.)
+        else: #non-flat rotation curve
+            xE= (2.*E/(1.+1./self._beta))**(1./2./self._beta)
+            logOLLE= self._beta*sc.log(xE)+sc.log(L/xE-xE**self._beta)
+        if self._correct: 
+            correction= self._corr.correct(xE,log=True)
+        else:
+            correction= sc.zeros(2)
+        SRE2= self.targetSigma2(xE,log=True)+correction[1]
+        return sc.exp(logsigmaR2-SRE2+self.targetSurfacemass(xE,log=True)-logSigmaR+sc.exp(logOLLE-SRE2)+correction[0])
+
+
 def _surfaceIntegrand(vR,vT,R,df,logSigmaR,logsigmaR2,sigmaR1,gamma):
     """Internal function that is the integrand for the surface mass integration"""
     E,L= _vRpvTpRToEL(vR,vT,R,df._beta,sigmaR1,gamma)
-    return df._eval_surfaceIntegrand(E,L,logSigmaR,logsigmaR2)
+    return df.eval(E,L,logSigmaR,logsigmaR2)
 
 def _sigma2surfaceIntegrand(vR,vT,R,df,logSigmaR,logsigmaR2,sigmaR1,gamma):
     """Internal function that is the integrand for the sigma-squared times
     surface mass integration"""
     E,L= _vRpvTpRToEL(vR,vT,R,df._beta,sigmaR1,gamma)
-    return vR**2.*df._eval_surfaceIntegrand(E,L,logSigmaR,logsigmaR2)
+    return vR**2.*df.eval(E,L,logSigmaR,logsigmaR2)
 
 def _vRpvTpRToEL(vR,vT,R,beta,sigmaR1,gamma):
     """Internal function that calculates E and L given velocities normalized by the velocity dispersion"""
@@ -465,7 +468,7 @@ class DFcorrection:
            savedir - save the corrections in this directory
            surfaceSigmaProfile - target surfacemass and sigma_R^2 instance
            beta - power-law index of the rotation curve (when calculating)
-           dftype - 'dehnen'
+           dftype - classname of the DF
            niter - number of iterations to perform to calculate the corrections
            interp1d_kind - 'kind' keyword to give to interp1d
         OUTPUT:
@@ -494,7 +497,7 @@ class DFcorrection:
         if kwargs.has_key('dftype'):
             self._dftype= kwargs['dftype']
         else:
-            self._dftype= 'dehnen'
+            self._dftype= dehnenDF
         if kwargs.has_key('beta'):
             self._beta= kwargs['beta']
         else:
@@ -546,12 +549,10 @@ class DFcorrection:
         for format in sspFormat:
             sspString+= format+'_'
         return os.path.join(self._savedir,'dfcorrection_'+
-                            self._dftype+'_'+
+                            self._dftype.__name__+'_'+
                             self._surfaceSigmaProfile.__class__.__name__+'_'+
                             sspString % self._surfaceSigmaProfile.outputParams()+
                             '%4.2f_%i_%4.2f_%i.sav'
-                            #'_%4.2f_%4.2f_%4.2f_%4.2f_%i_%4.2f_%i.sav'
-                            #% (self._dfparams[0],self._dfparams[1],
                             % (self._beta,self._npoints,self._rmax,niter))
 
     def correct(self,R,log=False):
@@ -585,15 +586,6 @@ class DFcorrection:
         searchIter= self._niter-1
         while searchIter > 0:
             trySavefilename= self._createSavefilename(searchIter)
-            #os.path.join(self._savedir,'dfcorrection_'+
-            #                              self._dftype+
-            #                              '_%4.2f_%4.2f_%4.2f_%4.2f_%i_%4.2f_%i.sav'
-            #                              % (self._dfparams[0],
-            #                                 self._dfparams[1],
-            #                                 self._dfparams[2],
-            #                                 self._beta,
-            #                                 self._npoints,
-            #                                 self._rmax,searchIter))
             if os.path.exists(trySavefilename):
                 trySavefile= open(trySavefilename,'r')
                 corrections= pickle.load(trySavefile)
@@ -605,22 +597,22 @@ class DFcorrection:
             corrections= sc.ones((self._npoints,2))
         for ii in range(searchIter,self._niter):
             if ii == 0:
-                currentDF= distFunc(dftype=self._dftype,
-                                    surfaceSigma=self._surfaceSigmaProfile,
-                                    beta=self._beta)
+                currentDF= self._dftype(surfaceSigma=self._surfaceSigmaProfile,
+                                        beta=self._beta)
             else:
-                currentDF= distFunc(dftype='corrected-'+self._dftype,
-                                    surfaceSigma=self._surfaceSigmaProfile,
-                                    beta=self._beta,corrections=corrections,
-                                    npoints=self._npoints,rmax=self._rmax,
-                                    savedir=self._savedir,
-                                    interp1d_kind=self._interp1d_kind)
+                currentDF= self._dftype(surfaceSigma=self._surfaceSigmaProfile,
+                                        beta=self._beta,
+                                        corrections=corrections,
+                                        npoints=self._npoints,
+                                        rmax=self._rmax,
+                                        savedir=self._savedir,
+                                        interp1d_kind=self._interp1d_kind)
             newcorrections= sc.zeros((self._npoints,2))
             for jj in range(self._npoints):
                 thisSurface= currentDF.surfacemass(self._rs[jj])
                 newcorrections[jj,0]= currentDF.targetSurfacemass(self._rs[jj])/thisSurface
                 newcorrections[jj,1]= currentDF.targetSigma2(self._rs[jj])*thisSurface/currentDF.sigma2surfacemass(self._rs[jj])
-                #print jj, newcorrections[jj,:]
+                print jj, newcorrections[jj,:]
             corrections*= newcorrections
         #Save
         savefile= open(self._savefilename,'w')

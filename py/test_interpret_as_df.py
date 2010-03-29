@@ -1,5 +1,6 @@
 ###############################################################################
 #   test_interpret_as_df.py: module that tests the interpret_as_df module
+# ToDo: Make it work with new dehnenDF class
 ###############################################################################
 import interpret_as_df as df
 import scipy as sc
@@ -23,8 +24,7 @@ def test_calc_surfacemass(baseplotfilename,format='png',ngrid=101):
     """
     #Test 1: beta= 0., sigma_0= 0.5, Rsigma= 3 x Rscale, Rscale= Ro/3.
     if not os.path.exists(basefilename+'_1.png'):
-        distFunc= df.distFunc(dftype='dehnen',
-                              profileParams=(1./3.,1.,0.5*sc.exp(-1.)),
+        distFunc= df.dehnenDF(profileParams=(1./3.,1.,0.5*sc.exp(-1.)),
                               beta=0.)
         xs= sc.linspace(0.00001,10./3.,ngrid)
         sigma= sc.zeros(ngrid)
@@ -45,7 +45,7 @@ def test_calc_surfacemass(baseplotfilename,format='png',ngrid=101):
 
     #Test 2: beta= 0.2, sigma_0= 0.5, Rsigma= 3 x Rscale, Rscale= Ro/3.
     if not os.path.exists(basefilename+'_2.png'):
-        distFunc= df.distFunc(dftype='dehnen',profileParams=(1./3.,1.,0.5*sc.exp(-1.)),
+        distFunc= df.dehnenDF(profileParams=(1./3.,1.,0.5*sc.exp(-1.)),
                         beta=0.2)
         xs= sc.linspace(0.00001,10./3.,ngrid)
         sigma= sc.zeros(ngrid)
@@ -66,7 +66,7 @@ def test_calc_surfacemass(baseplotfilename,format='png',ngrid=101):
 
     #Test 3: beta= -0.2, sigma_0= 0.5, Rsigma= 3 x Rscale, Rscale= Ro/3.
     if not os.path.exists(basefilename+'_3.png'):
-        distFunc= df.distFunc(dftype='dehnen',profileParams=(1./3.,1.,0.5*sc.exp(-1.)),
+        distFunc= df.dehnenDF(profileParams=(1./3.,1.,0.5*sc.exp(-1.)),
                         beta=-0.2)
         xs= sc.linspace(0.00001,10./3.,ngrid)
         sigma= sc.zeros(ngrid)
@@ -87,7 +87,7 @@ def test_calc_surfacemass(baseplotfilename,format='png',ngrid=101):
 
     #Test 4: beta= 0., sigma_0= 1, Rsigma= 3 x Rscale, Rscale= Ro/3.
     if not os.path.exists(basefilename+'_4.png'):
-        distFunc= df.distFunc(dftype='dehnen',profileParams=(1./3.,1.,sc.exp(-1.)),
+        distFunc= df.dehnenDF(profileParams=(1./3.,1.,sc.exp(-1.)),
                         beta=0.)
         xs= sc.linspace(0.00001,10./3.,ngrid)
         sigma= sc.zeros(ngrid)
@@ -125,7 +125,7 @@ def test_calc_sigma(baseplotfilename,format='png',ngrid=101):
     """
     #Test 1: beta= 0., sigma_0= 0.5, Rsigma= 3 x Rscale, Rscale= Ro/3.
     if not os.path.exists(basefilename+'_1.png'):
-        distFunc= df.distFunc(dftype='dehnen',profileParams=(1./3.,1.,0.5*sc.exp(-1.)),
+        distFunc= df.dehnenDF(profileParams=(1./3.,1.,0.5*sc.exp(-1.)),
                         beta=0.)
         xs= sc.linspace(0.00001,10./3.,ngrid)
         sigma= sc.zeros(ngrid)
@@ -146,7 +146,7 @@ def test_calc_sigma(baseplotfilename,format='png',ngrid=101):
 
     #Test 2: beta= 0.2, sigma_0= 0.5, Rsigma= 3 x Rscale, Rscale= Ro/3.
     if not os.path.exists(basefilename+'_2.png'):
-        distFunc= df.distFunc(dftype='dehnen',profileParams=(1./3.,1.,0.5*sc.exp(-1.)),
+        distFunc= df.dehnenDF(profileParams=(1./3.,1.,0.5*sc.exp(-1.)),
                         beta=0.2)
         xs= sc.linspace(0.00001,10./3.,ngrid)
         sigma= sc.zeros(ngrid)
@@ -167,7 +167,7 @@ def test_calc_sigma(baseplotfilename,format='png',ngrid=101):
 
     #Test 3: beta= -0.2, sigma_0= 0.5, Rsigma= 3 x Rscale, Rscale= Ro/3.
     if not os.path.exists(basefilename+'_3.png'):
-        distFunc= df.distFunc(dftype='dehnen',profileParams=(1./3.,1.,0.5*sc.exp(-1.)),
+        distFunc= df.dehnenDF(profileParams=(1./3.,1.,0.5*sc.exp(-1.)),
                         beta=-0.2)
         xs= sc.linspace(0.00001,10./3.,ngrid)
         sigma= sc.zeros(ngrid)
@@ -188,7 +188,7 @@ def test_calc_sigma(baseplotfilename,format='png',ngrid=101):
 
     #Test 4: beta= 0., sigma_0= 1, Rsigma= 3 x Rscale, Rscale= Ro/3.
     if not os.path.exists(basefilename+'_4.png'):
-        distFunc= df.distFunc(dftype='dehnen',profileParams=(1./3.,1.,sc.exp(-1.)),
+        distFunc= df.dehnenDF(profileParams=(1./3.,1.,sc.exp(-1.)),
                         beta=0.)
         xs= sc.linspace(0.00001,10./3.,ngrid)
         sigma= sc.zeros(ngrid)
