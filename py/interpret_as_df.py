@@ -612,7 +612,7 @@ class DFcorrection:
                 thisSurface= currentDF.surfacemass(self._rs[jj])
                 newcorrections[jj,0]= currentDF.targetSurfacemass(self._rs[jj])/thisSurface
                 newcorrections[jj,1]= currentDF.targetSigma2(self._rs[jj])*thisSurface/currentDF.sigma2surfacemass(self._rs[jj])
-                print jj, newcorrections[jj,:]
+                #print jj, newcorrections[jj,:]
             corrections*= newcorrections
         #Save
         savefile= open(self._savefilename,'w')
