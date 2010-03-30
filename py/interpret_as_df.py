@@ -515,7 +515,7 @@ class DFcorrection:
             if kwargs.has_key('savedir'):
                 self._savedir= kwargs['savedir']
             else:
-                self._savedir= '.'
+                self._savedir= '../corrections'
             self._savefilename= self._createSavefilename(self._niter)
             if os.path.exists(self._savefilename):
                 savefile= open(self._savefilename,'r')

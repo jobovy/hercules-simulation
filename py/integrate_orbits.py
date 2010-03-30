@@ -70,10 +70,11 @@ def uvToELz(UV=(0.,0.),R=1.,t=-4.,pot='bar',beta=0.,
     v+= R**beta #Add circular velocity
     vR= u * OmegaoOmegab
     vT= v * OmegaoOmegab
-    (vR,vT,R) = integrate_orbit((vR,vT,R),t=t,pot=pot,beta=beta,potparams=potparams)
+    (vR,vT,R) = integrate_orbit((vR,vT,R),t=t,pot=pot,beta=beta,
+                                potparams=potparams)
     vR/= OmegaoOmegab
     vT/= OmegaoOmegab
-    return vRvTRToEL(vR,vT,R)
+    return vRvTRToEL(vR,vT,R,beta)
 
 def vRvTRToEL(vR,vT,R,beta):
     """
