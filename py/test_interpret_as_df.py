@@ -400,7 +400,7 @@ def test_sigma_corrections(baseplotfilename,format='png'):
 
     #Test 2: beta= 0., sigma_0= 1, Rsigma= 3 x Rscale, Rscale= Ro/3.
     if not os.path.exists(basefilename+'_sigma0_1.0.png'):
-        profileParams= (1./3.,1.,sc.epx(-1.))
+        profileParams= (1./3.,1.,sc.exp(-1.))
         xs= sc.linspace(0,15,151)
         df1= df.dehnenDF(profileParams=profileParams,savedir=savedir,
                         beta=0.,niter=1)
