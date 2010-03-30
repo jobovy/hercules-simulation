@@ -272,7 +272,7 @@ def test_surfacemass_corrections(baseplotfilename,format='png'):
         plot.bovy_end_print(basefilename+'_sigma0_0.5.'+format)
         print "Wrote "+basefilename+'_sigma0_0.5.'+format
     else:
-        print basefilename+'_sigma0_0.5'+format+' exists'
+        print basefilename+'_sigma0_0.5.'+format+' exists'
         print 'Move or delete this file to execute the test'
 
     #Test 2: beta= 0., sigma_0= 1, Rsigma= 3 x Rscale, Rscale= Ro/3.
@@ -325,7 +325,7 @@ def test_surfacemass_corrections(baseplotfilename,format='png'):
         plot.bovy_end_print(basefilename+'_sigma0_1.0.'+format)
         print "Wrote "+basefilename+'_sigma0_1.0.'+format
     else:
-        print basefilename+'_sigma0_1.0'+format+' exists'
+        print basefilename+'_sigma0_1.0.'+format+' exists'
         print 'Move or delete this file to execute the test'
 
 
@@ -395,7 +395,7 @@ def test_sigma_corrections(baseplotfilename,format='png'):
         plot.bovy_end_print(basefilename+'_sigma0_0.5.'+format)
         print "Wrote "+basefilename+'_sigma0_0.5.'+format
     else:
-        print basefilename+'_sigma0_0.5'+format+' exists'
+        print basefilename+'_sigma0_0.5.'+format+' exists'
         print 'Move or delete this file to execute the test'
 
     #Test 2: beta= 0., sigma_0= 1, Rsigma= 3 x Rscale, Rscale= Ro/3.
@@ -448,7 +448,7 @@ def test_sigma_corrections(baseplotfilename,format='png'):
         plot.bovy_end_print(basefilename+'_sigma0_1.0.'+format)
         print "Wrote "+basefilename+'_sigma0_1.0.'+format
     else:
-        print basefilename+'_sigma0_1.0'+format+' exists'
+        print basefilename+'_sigma0_1.0.'+format+' exists'
         print 'Move or delete this file to execute the test'
 
 
