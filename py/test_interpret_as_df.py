@@ -301,6 +301,10 @@ def test_surfacemass_corrections(baseplotfilename,format='png'):
                          beta=0.,niter=19)
         df20= df.dehnenDF(profileParams=profileParams,savedir=savedir,
                          beta=0.,niter=20)
+        df24= df.dehnenDF(profileParams=profileParams,savedir=savedir,
+                         beta=0.,niter=24)
+        df25= df.dehnenDF(profileParams=profileParams,savedir=savedir,
+                         beta=0.,niter=25)
         plot.bovy_print(fig_width=10,fig_height=4.5)
         plot.bovy_plot(xs,-sc.log(df1._corr._corrections[:,0]),
                        'k',xlabel=r'R/R_s',
@@ -319,6 +323,8 @@ def test_surfacemass_corrections(baseplotfilename,format='png'):
         plot.bovy_plot(xs,-sc.log(df15._corr._corrections[:,0]/df14._corr._corrections[:,0]),
                        overplot=True)
         plot.bovy_plot(xs,-sc.log(df20._corr._corrections[:,0]/df19._corr._corrections[:,0]),
+                       overplot=True)
+        plot.bovy_plot(xs,-sc.log(df25._corr._corrections[:,0]/df24._corr._corrections[:,0]),
                        overplot=True)
         plot.bovy_text(r'$\beta = 0.0\,,\quad \sigma_0 = v_0\,,\quad R_{\sigma} = 3 R_s$',
                        bottom_right=True)
@@ -424,6 +430,10 @@ def test_sigma_corrections(baseplotfilename,format='png'):
                          beta=0.,niter=19)
         df20= df.dehnenDF(profileParams=profileParams,savedir=savedir,
                          beta=0.,niter=20)
+        df24= df.dehnenDF(profileParams=profileParams,savedir=savedir,
+                         beta=0.,niter=24)
+        df25= df.dehnenDF(profileParams=profileParams,savedir=savedir,
+                         beta=0.,niter=25)
         plot.bovy_print(fig_width=10,fig_height=4.5)
         plot.bovy_plot(xs,-sc.log(df1._corr._corrections[:,1])/2.,
                        'k',xlabel=r'R/R_s',
@@ -442,6 +452,8 @@ def test_sigma_corrections(baseplotfilename,format='png'):
         plot.bovy_plot(xs,-sc.log(df15._corr._corrections[:,1]/df14._corr._corrections[:,1])/2.,
                        overplot=True)
         plot.bovy_plot(xs,-sc.log(df20._corr._corrections[:,1]/df19._corr._corrections[:,1])/2.,
+                       overplot=True)
+        plot.bovy_plot(xs,-sc.log(df25._corr._corrections[:,1]/df24._corr._corrections[:,1])/2.,
                        overplot=True)
         plot.bovy_text(r'$\beta = 0.0\,,\quad \sigma_0 = v_0\,,\quad R_{\sigma} = 3 R_s$',
                        bottom_right=True)
