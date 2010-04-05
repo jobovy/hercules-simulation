@@ -29,6 +29,7 @@ def plot_veldist_2d(ulinspace=(-0.9,0.9,201),
        potparams - parameters for this potential
        dfparams - parameters of the DF (xD,xS,Sro)
        dftype - type of DF ('dehnen' or 'shu')
+       correct - If True, correct the DF
        savefilename - filename for savefile
        plotfilename - filename for plot
     OUTPUT:
