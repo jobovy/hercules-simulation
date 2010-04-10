@@ -48,7 +48,7 @@ def uvToELz(UV=(0.,0.),R=1.,t=-4.,pot='bar',beta=0.,
        calculate initial (E.Lz) for final (u,v)
     INPUT:
        (u,v) - final radial and tangential velocity, divided by vcirc
-               ACTUALLY -U!!
+               ACTUALLY -U; U towards GC!!
        R = Galactocentric radius
        t - time to integrate backwards for 
            (interpretation depends on potential)
@@ -137,7 +137,7 @@ def integrate_orbit(vRvTR= (0.,1.,1.),t=-4.,pot='bar',beta=0.,
     vR, vT, R= vRvTR
     h= R*vT #specific angular momentum
     #Integrate the orbit
-    Rb= chi*OmegaoOmegab**(1./(1.-beta))
+    Rb= chi*OmegaoOmegab**(1./(1.-beta)) #OmegabOmegao**-1. folded in
     if t1 == None:
         t1= sc.fabs(t)/2.
     t1*= 2.*sc.pi
