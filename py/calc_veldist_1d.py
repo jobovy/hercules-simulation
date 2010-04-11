@@ -94,7 +94,7 @@ def marginalizeAngle(vlos,alpha,R=1.,t=-4.,pot='bar',beta=0.,
 def integrandSinAlphaLarge(u,sinalpha,cotalpha,vlos,R,t,potparams,beta,df,pot):
     return df.eval(*uvToELz(UV=(-u,-cotalpha*u+vlos/sinalpha),R=R,t=t,pot=pot,potparams=potparams,beta=beta))
 
-def  integrandSinAlphaSmall(u,cosalpha,tanalpha,vlos,R,t,potparams,beta,df,
+def integrandSinAlphaSmall(u,cosalpha,tanalpha,vlos,R,t,potparams,beta,df,
                             pot):
     return df.eval(*uvToELz(UV=(tanalpha*u-vlos/cosalpha,u),R=R,t=t,pot=pot,potparams=potparams,beta=beta))
 
