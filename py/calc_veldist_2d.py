@@ -12,7 +12,8 @@ def plot_veldist_2d(ulinspace=(-0.9,0.9,201),
                     potparams=(0.9,0.01,20.*_degtorad,.8,None),
                     dfparams=(1./3.,1.,0.2),dftype='dehnen',
                     correct=True,plotfilename='../bar/veldist.ps',
-                    savefilename='../bar/veldist.sav'):
+                    savefilename='../bar/veldist.sav',
+                    label=None):
     """
     NAME:
        plot_veldist_2d
@@ -32,6 +33,7 @@ def plot_veldist_2d(ulinspace=(-0.9,0.9,201),
        correct - If True, correct the DF
        savefilename - filename for savefile
        plotfilename - filename for plot
+       label - a label to put in the upper-left corner of the plot
     OUTPUT:
        f(u,v) on the grid
     HISTORY:
@@ -58,6 +60,8 @@ def plot_veldist_2d(ulinspace=(-0.9,0.9,201),
                      contours=True,cntrmass=True,
                      levels=levels,cntrcolors=cntrcolors,
                      xlabel=r'$u/v_0$',ylabel='$v/v_0$')
+    if not label == None:
+        plot.bovy_text(label,top_left=True)
     plot.bovy_end_print(plotfilename)
 
 def calc_veldist_2d(ulinspace,vlinspace,R=1.,t=-4.,pot='bar',beta=0.,
