@@ -206,7 +206,7 @@ if __name__ == '__main__':
 
     import timeit
     
-    s="""r=uvToELz((numpy.random.random()-.5,numpy.random.random()-.5))"""
+    s="""r=uvToELz((2.*numpy.random.random()-1.,2.*numpy.random.random()-1.))"""
     t = timeit.Timer(stmt=s,setup="from __main__ import uvToELz\nimport numpy")
     print "uvToELz: %.4f sec/pass" % (t.timeit(number=500)/500)
 
