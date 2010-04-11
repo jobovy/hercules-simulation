@@ -2,6 +2,7 @@
 #   integrate_orbits.py: module that integrates orbits in a given 
 #                        non-axisymmetric, time-dependent potential
 ###############################################################################
+import math as m
 import scipy as sc
 import scipy.integrate as integrate
 _degtorad= sc.pi/180.
@@ -64,7 +65,7 @@ def uvToELz(UV=(0.,0.),R=1.,t=-4.,pot='bar',beta=0.,
     """
     #For now assume pot == 'bar'
     (Rolr,alpha,phi,chi,t1) = potparams
-    OmegaoOmegab= (Rolr**(1.-beta))/(1.+sc.sqrt((1.+beta)/2.))
+    OmegaoOmegab= (Rolr**(1.-beta))/(1.+m.sqrt((1.+beta)/2.))
     #Final conditions
     u,v= UV
     v+= R**beta #Add circular velocity
@@ -107,7 +108,7 @@ def axipotential(R,beta=0.):
        2010-03-01 - Written - Bovy (NYU)
     """
     if beta == 0.:
-        return sc.log(R)
+        return m.log(R)
     else: #non-flat rotation curve
         return R**(2.*beta)/2./beta
 
@@ -133,24 +134,23 @@ def integrate_orbit(vRvTR= (0.,1.,1.),t=-4.,pot='bar',beta=0.,
     """
     #For now assume pot == 'bar'
     (Rolr,alpha,phi,chi,t1) = potparams
-    OmegaoOmegab= (Rolr**(1.-beta))/(1.+sc.sqrt((1.+beta)/2.))
+    OmegaoOmegab= (Rolr**(1.-beta))/(1.+m.sqrt((1.+beta)/2.))
     vR, vT, R= vRvTR
-    h= R*vT #specific angular momentum
+    vphi= vT/R #Angular velocity
     #Integrate the orbit
     Rb= chi*OmegaoOmegab**(1./(1.-beta)) #OmegabOmegao**-1. folded in
     if t1 == None:
-        t1= sc.fabs(t)/2.
+        t1= m.fabs(t)/2.
     t1*= 2.*sc.pi
-    phi+= t*2.*sc.pi
     tend= 2.*sc.pi*t
-    args= (h,OmegaoOmegab,beta,alpha,phi,Rb,t1,tend)
+    args= (OmegaoOmegab,beta,alpha,Rb,t1,tend)
     time= [0.,tend]
-    initCond= [R,vR]
+    initCond= [R,vR,-phi,vphi]
     intOut= integrate.odeint(barEOM,initCond,time,args=args,
                              rtol=10.**-15.,mxstep=100000000)
     vRF= intOut[1,1]
     RF= intOut[1,0]
-    vTF= h/RF
+    vTF= RF*intOut[1,3]
     return (vRF,vTF,RF)
 
 def barEOM(y,t,*args):
@@ -168,20 +168,30 @@ def barEOM(y,t,*args):
     HISTORY:
        2010-03-01 - Written - Bovy (NYU)
     """
-    h, OmegaoOmegab,beta,alpha,phi,Rb, t1, tend= args
+    OmegaoOmegab,beta,alpha,Rb, t1, tend= args
     x= y[0]
-    deltat= sc.fabs(t-tend)
+    deltat= m.fabs(t-tend)
     if deltat < t1:
         xi= 2.*deltat/t1-1.
         smooth= (3./16.*xi**5.-5./8*xi**3.+15./16.*xi+.5)
     else: #bar is fully on
         smooth= 1.
+    vx= y[1]
+    phi= y[2]
+    vphi= y[3]
+    h= x**2.*vphi
     if x <= Rb:
-        return [y[1],h**2./x**3.-OmegaoOmegab**2.*x**(2.*beta-1.)
-                -alpha*OmegaoOmegab**2.*sc.cos(2.*(phi-t))*smooth*x**2./Rb**6.]
+        return [vx,h**2./x**3.-OmegaoOmegab**2.*x**(2.*beta-1.)
+                -alpha*OmegaoOmegab**2.*m.cos(2.*(phi-t))*smooth*x**2./Rb**6.,
+                vphi,
+                2./3.*alpha*OmegaoOmegab**2.*smooth*m.sin(2.*(phi-t))*
+                1./Rb**3.*((x/Rb)**3.-2)/x**2.-2.*vx*vphi/x]
     else: #outside of bar
-        return [y[1],h**2./x**3.-OmegaoOmegab**2.*x**(2.*beta-1.)
-                -alpha*OmegaoOmegab**2.*sc.cos(2.*(phi-t))*smooth/x**4.]
+        return [vx,h**2./x**3.-OmegaoOmegab**2.*x**(2.*beta-1.)
+                -alpha*OmegaoOmegab**2.*m.cos(2.*(phi-t))*smooth/x**4.,
+                vphi,
+                -2./3.*alpha*OmegaoOmegab**2.*smooth*m.sin(2.*(phi-t))/x**5.
+                -2.*vx*vphi/x]
             
 
 if __name__ == '__main__':

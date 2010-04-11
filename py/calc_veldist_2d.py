@@ -93,7 +93,7 @@ def calc_veldist_2d(ulinspace,vlinspace,R=1.,t=-4.,pot='bar',beta=0.,
     if dftype == 'dehnen':
         thisDF= dehnenDF
     df= thisDF(profileParams=dfparams,beta=beta,correct=correct,
-               niter=_NCORRECT,beta=beta)
+               niter=_NCORRECT)
     for ii in range(nus):
         for jj in range(nvs):
             E,L= uvToELz(UV=(-us[ii],vs[jj]),R=R,t=t,pot=pot,potparams=potparams,beta=beta)
