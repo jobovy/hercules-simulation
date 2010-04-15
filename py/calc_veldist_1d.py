@@ -1,14 +1,150 @@
+import os, os.path
+import cPickle as pickle
 import math as m
+import numpy as nu
 import scipy as sc
 import scipy.integrate as integrate
 from integrate_orbits import uvToELz
 from interpret_as_df import dehnenDF
+import bovy_plot as plot
+_DEBUG=True
 _degtorad= sc.pi/180.
 _NCORRECT=20
-_MAXITER= 50
+_MAXITER= 10
 _NSIGMA=5.
+def plotVlos(vloslinspace,l=0.,d=1.,t=-4.,distCoord='GC',
+             pot='bar',beta=0.,potparams=(0.9,0.01,20.*_degtorad,.8,None),
+             dfparams=(1./3.,1.,0.2),dftype='dehnen',correct=True,
+             plotfilename='../bar/vlosdist.ps',
+             savefilename='../bar/vlosdist.sav',
+             normalize=True,overplotAxiDF=True,labelPos=True):
+    """
+    NAME:
+       plotVlos
+    PURPOSE:
+       predict and plot the line-of-sight velocity distribution in a given 
+       direction and at a given distance
+    INPUT:
+       plotfilename - filename for plot
+       savefilename - filename to save the vlos distribution
+       normalize - if True, normalize to integrate to 1
+       overplotAxiDF - if True, overplot the distribution of the axisymmetric 
+                        DF
+       labelPos - label the position of this direction in the Galaxy
+       vloslinspace - los velocity grid to get the marginalized probability at
+       l - Galactic longitude (rad)
+       d - distance (from Sun or from GC)
+       distCoord - 'GC' or 'Sun' (origin of d)
+       t - time to integrate backwards for 
+           (interpretation depends on potential)
+       pot - type of non-axisymmetric, time-dependent potential
+       beta - power-law index of rotation curve
+       potparams - parameters for this potential
+       dfparams - parameters of the DF (xD,xS,Sro)
+       dftype - type of DF ('dehnen' or 'shu')
+       correct - If True, correct the DF
+    OUTPUT:
+       [nvlos] array with the predicted vlos-distribution
+    HISTORY:
+       2010-04-14 - Written - Bovy (NYU)
+    """
+    if os.path.exists(savefilename):
+        savefile= open(savefilename,'r')
+        vlosd= pickle.load(savefile)
+        savefile.close()
+    else:
+        vlosd= predictVlos(vloslinspace,l=l,d=d,t=t,distCoord=distCoord,
+                           pot=pot,beta=beta,potparams=potparams,
+                           dfparams=dfparams,dftype=dftype,correct=correct)
+        savefile= open(savefilename,'w')
+        pickle.dump(vlosd,savefile)
+        savefile.close()
+    vloss= sc.linspace(*vloslinspace)
+    if normalize:
+        vlosd= vlosd/(nu.sum(vlosd)*(vloss[1]-vloss[0]))
+    if overplotAxiDF:
+        Rolr,alpha,phi,chi,t1= potparams
+        alpha= 0.
+        potparams= (Rolr,alpha,phi,chi,t1)
+        vlosdAxi= predictVlos(vloslinspace,l=l,d=d,t=0.0000001,
+                              distCoord=distCoord,
+                              pot=pot,beta=beta,potparams=potparams,
+                              dfparams=dfparams,dftype=dftype,correct=correct)
+        if normalize:
+            vlosdAxi= vlosdAxi/(nu.sum(vlosdAxi)*(vloss[1]-vloss[0]))
+    plot.bovy_print()
+    plot.bovy_plot(vloss,vlosd,xlabel=r'$v_r/v_0$',
+                   ylabel=r'$p(v_r)$',color='k',zorder=2)
+    plot.bovy_plot(vloss,vlosdAxi,color='k',ls='--',zorder=1,overplot=True)
+    if labelPos:
+        if distCoord.lower() == 'gc':
+            R= d
+            if R < 1.:
+                theta= m.asin(m.sin(l)/R)-l
+            else:
+                theta= m.pi-m.asin(m.sin(l)/R)-l
+            d= m.sqrt(1.+R**2.-2.*R*m.cos(theta))
+        llabel= nu.round(l/m.pi*180.)
+        plot.bovy_text(r'$l=%i^\circ$' % llabel+'\n'+r'$d/R_0 = %.1f$' % d,
+                       top_left=True)
+    plot.bovy_end_print(plotfilename)
+
+def predictVlos(vloslinspace,l=0.,d=1.,t=-4.,distCoord='GC',
+                pot='bar',beta=0.,potparams=(0.9,0.01,20.*_degtorad,.8,None),
+                dfparams=(1./3.,1.,0.2),dftype='dehnen',correct=True):
+    """
+    NAME:
+       predictVlos
+    PURPOSE:
+       predict the line-of-sight velocity distribution in a given direction
+       and at a given distance
+    INPUT:
+       vloslinspace - los velocity grid to get the marginalized probability at
+       l - Galactic longitude (rad)
+       d - distance (from Sun or from GC)
+       distCoord - 'GC' or 'Sun' (origin of d)
+       t - time to integrate backwards for 
+           (interpretation depends on potential)
+       pot - type of non-axisymmetric, time-dependent potential
+       beta - power-law index of rotation curve
+       potparams - parameters for this potential
+       dfparams - parameters of the DF (xD,xS,Sro)
+       dftype - type of DF ('dehnen' or 'shu')
+       correct - If True, correct the DF
+    OUTPUT:
+       [nvlos] array with the predicted vlos-distribution
+    HISTORY:
+       2010-04-14 - Written - Bovy (NYU)
+    """
+    if distCoord.lower() == 'sun':
+        R= m.sqrt(1.+d**2.-2.*d*m.cos(l))
+        if 1./m.cos(l) < d and m.cos(l) > 0.:
+            theta= m.pi-m.asin(d/R*m.sin(l))
+        else:
+            theta= m.asin(d/R*m.sin(l))
+    else:
+        R= d
+        if R < 1.:
+            if m.cos(l) < 0.:
+                raise ValueError("Cannot probe R < 1. for 90. < l < 270.")
+            theta= m.asin(m.sin(l)/R)-l
+        else:
+            theta= m.pi-m.asin(m.sin(l)/R)-l
+    alphalos= theta+l
+    Rolr,alpha,phi,chi,t1= potparams
+    phi-=theta
+    if _DEBUG:
+        print "Theta: ", theta
+        print "alpha: ", alphalos
+        print "R: ", R
+    potparams= (Rolr,alpha,phi,chi,t1)
+    return marginalizeAngleGrid(vloslinspace,alphalos,R=R,t=t,pot=pot,
+                                beta=beta,potparams=potparams,
+                                dfparams=dfparams,dftype=dftype,
+                                correct=correct)
+
 def marginalizeAngleGrid(vloslinspace,alpha,R=1.,t=-4.,pot='bar',beta=0.,
-                         potparams=(0.9,0.01,20.*_degtorad,.8,None),
+                         potparams=(0.9,0.01,25.*_degtorad,.8,None),
                          dfparams=(1./3.,1.,0.2),dftype='dehnen',
                          correct=True):
     """
@@ -41,11 +177,12 @@ def marginalizeAngleGrid(vloslinspace,alpha,R=1.,t=-4.,pot='bar',beta=0.,
                                   potparams=potparams,
                                   dfparams=dfparams,dftype=dftype,
                                   correct=correct)
-        print ii, out[ii]
+        if _DEBUG:
+            print ii, out[ii]
     return out
 
 def marginalizeAngle(vlos,alpha,R=1.,t=-4.,pot='bar',beta=0.,
-                    potparams=(0.9,0.01,20.*_degtorad,.8,None),
+                    potparams=(0.9,0.01,25.*_degtorad,.8,None),
                     dfparams=(1./3.,1.,0.2),dftype='dehnen',
                     correct=True):
     """
