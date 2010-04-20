@@ -65,7 +65,7 @@ def plot_veldist_2d(ulinspace=(-0.9,0.9,201),
     plot.bovy_end_print(plotfilename)
 
 def calc_veldist_2d(ulinspace,vlinspace,R=1.,t=-4.,pot='bar',beta=0.,
-                    potparams=(0.9,0.01,20.*_degtorad,.8,None),
+                    potparams=(0.9,0.01,25.*_degtorad,.8,None),
                     dfparams=(1./3.,1.,0.2),dftype='dehnen',
                     correct=True):
     """
