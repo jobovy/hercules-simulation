@@ -12,8 +12,8 @@ from calc_veldist_2d import calc_veldist_2d
 _degtorad= m.pi/180.
 _XWIDTH= 1.8*8/10/1.8
 _YWIDTH= 1.15*8/10/1.8
-def veldist_2d_Rphi(plotfilename,nx=10,ny=6,dx=_XWIDTH/20.,dy=_YWIDTH/20.,
-                    nsx=2,nsy=2,ngrid=51,rrange=[0.7,1.3],
+def veldist_2d_Rphi(plotfilename,nx=10,ny=8,dx=_XWIDTH/20.,dy=_YWIDTH/20.,
+                    nsx=2,nsy=2,ngrid=101,rrange=[0.6,1.4],
                     phirange=[-m.pi/2.,m.pi/2.],
                     saveDir='../bar/2d/'):
     """
