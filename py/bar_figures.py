@@ -38,7 +38,7 @@ def veldist_2d_Rphi(plotfilename,nx=10,ny=8,dx=_XWIDTH/20.,dy=_YWIDTH/20.,
        2010-04-19 - Written - Bovy (NYU)
     """
     #levels= sc.array([2,6,12,21,33,50,68,80,90,95,99,99.9])/100.
-    levels= sc.array([2,12,33,50,80,95,99.9])/100.
+    levels= sc.array([2,12,33,50,68,80,95,99.9])/100.
     cntrcolors= ['w' for ii in range(len(levels)) if levels[ii] <= .5]
     cntrcolors+= ['k' for ii in range(len(levels)) if levels[ii] > .5]
 
