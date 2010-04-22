@@ -102,7 +102,8 @@ def predictVlos(vloslinspace,l=0.,d=1.,t=-4.,distCoord='GC',
        vloslinspace - los velocity grid to get the marginalized probability at
        l - Galactic longitude (rad)
        d - distance (from Sun or from GC)
-       distCoord - 'GC' or 'Sun' (origin of d)
+       distCoord - 'GC', 'GCGC' or 'Sun' (origin of d, if GCGC l is Galactic 
+                    too)
        t - time to integrate backwards for 
            (interpretation depends on potential)
        pot - type of non-axisymmetric, time-dependent potential
@@ -122,6 +123,14 @@ def predictVlos(vloslinspace,l=0.,d=1.,t=-4.,distCoord='GC',
             theta= m.pi-m.asin(d/R*m.sin(l))
         else:
             theta= m.asin(d/R*m.sin(l))
+    elif distCoord.lower() == 'gcgc':
+        R= d
+        theta= l
+        d= m.sqrt(R**2.+1.-2.*R*m.cos(theta))
+        if 1./m.cos(theta) < R and m.cos(theta) > 0.:
+            l= m.pi-m.asin(R/d*m.sin(theta))
+        else:
+            l= m.asin(R/d*m.sin(theta))
     else:
         R= d
         if R < 1.:

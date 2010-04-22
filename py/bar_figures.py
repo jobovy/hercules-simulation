@@ -9,6 +9,7 @@ import scipy as sc
 import bovy_plot as plot
 from matplotlib import pyplot
 from calc_veldist_2d import calc_veldist_2d
+from calc_veldist_1d import predictVlos
 _degtorad= m.pi/180.
 _XWIDTH= 1.8*8/10/1.8
 _YWIDTH= 1.15*8/10/1.8
@@ -105,8 +106,86 @@ def veldist_2d_Rphi(plotfilename,nx=10,ny=8,dx=_XWIDTH/20.,dy=_YWIDTH/20.,
             thisax.yaxis.set_ticklabels('')
     plot.bovy_end_print(plotfilename)
 
+def veldist_1d_Rphi(plotfilename,nx=10,ny=8,dx=_XWIDTH/20.,dy=_YWIDTH/20.,
+                    nsx=2,nsy=2,ngrid=3,rrange=[0.6,1.4],
+                    phirange=[-m.pi/2.,m.pi/2.],
+                    saveDir='../bar/1d/',normalize=True):
+    """
+    NAME:
+       veldist_1d_Rphi
+    PURPOSE:
+       plot how the los-velocity distribution changes as a function of 
+       R and phi
+    INPUT:
+       nx - number of plots in the x-direction
+       ny - number of plots in the y direction
+       dx - x-spacing
+       dy - y-spacing
+       nsx, nsy - number of subplots in the middle plot
+       ngrid - number of gridpoints to evaluate the density on
+       rrange - range of Galactocentric radii to consider
+       phirange - range of Galactic azimuths to consider
+       saveDir - directory to save the pickles in
+       normalize - if True (default), normalize the los-vd to integrate to one
+    OUTPUT:
+       plot!
+    HISTORY:
+       2010-04-21 - Written - Bovy (NYU)
+    """
+    vloslinspace= (-1.,1.,ngrid)
+    vloss= sc.linspace(*vloslinspace)
+
+    picklebasename= '1d_%i_%i_%i_%i_%i_%.1f_%.1f_%.1f_%.1f' % (nx,ny,nsx,nsy,ngrid,rrange[0],rrange[1],phirange[0],phirange[1])
+    if not os.path.exists(saveDir):
+        os.mkdir(saveDir)
+    left, bottom = 0.1, 0.1
+    width= nx*_XWIDTH+(nx-1)*dx+2*left
+    height= ny*_YWIDTH+(ny-1)*dy+2*bottom
+    plot.bovy_print(fig_width=width,fig_height=height,
+                    xtick_major_size=2.,ytick_major_size=2.,
+                    xtick_minor_size=0.,ytick_minor_size=0.)
+    fig= pyplot.figure()
+    for ii in range(nx):
+        for jj in range(ny):
+            thisax= fig.add_axes([(left+ii*(_XWIDTH+dx))/width,
+                                  (bottom+jj*(_YWIDTH+dy))/height,
+                                  _XWIDTH/width,_YWIDTH/height])
+            thisR= (rrange[0]+(rrange[1]-rrange[0])/
+                    (ny*_YWIDTH+(ny-1)*dy)*(jj*(_YWIDTH+dy)+_YWIDTH/2.))
+            thisphi= (phirange[0]+(phirange[1]-phirange[0])/
+                      (nx*_XWIDTH+(nx-1)*dx)*(ii*(_XWIDTH+dx)+_XWIDTH/2.))
+            thissavefilename= os.path.join(saveDir,picklebasename+'_%i_%i.sav' %(ii,jj))
+            if os.path.exists(thissavefilename):
+                print "Restoring los-velocity distribution at %.1f, %.1f ..." %(thisR,thisphi)
+                savefile= open(thissavefilename,'r')
+                vlosd= pickle.load(savefile)
+                savefile.close()
+            else:
+                print "Calculating los-velocity distribution at %.1f, %.1f ..." %(thisR,thisphi)
+                vlosd= predictVlos(vloslinspace,
+                                   l=thisphi,
+                                   d=thisR,
+                                   distCoord='GCGC',
+                                   pot='bar',beta=0.,
+                                   potparams=(0.9,0.01,25.*_degtorad,.8,None))
+                if normalize:
+                    vlosd= vlosd/(sc.sum(vlosd)*(vloss[1]-vloss[0]))
+                savefile= open(thissavefilename,'w')
+                pickle.dump(vlosd,savefile)
+                savefile.close()
+            fig.sca(thisax)
+            plot.bovy_plot(vloss,vlosd,'k',
+                           overplot=True)
+            thisax.set_xlim(vloslinspace[0],vloslinspace[1])
+            thisax.xaxis.set_ticklabels('')
+            thisax.yaxis.set_ticklabels('')
+    plot.bovy_end_print(plotfilename)
+
 if __name__ == '__main__':
     if len(sys.argv) < 2:
         print "Must provide a filename for the figure"
         sys.exit(-1)
-    veldist_2d_Rphi(sys.argv[1])
+    if len(sys.argv) < 3:
+        veldist_2d_Rphi(sys.argv[1])
+    else:
+        veldist_1d_Rphi(sys.argv[1])
