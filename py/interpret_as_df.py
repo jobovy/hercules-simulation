@@ -519,7 +519,7 @@ class DFcorrection:
             self._savefilename= self._createSavefilename(self._niter)
             if os.path.exists(self._savefilename):
                 savefile= open(self._savefilename,'r')
-                self._corrections= pickle.load(savefile)
+                self._corrections= sc.array(pickle.load(savefile))
                 savefile.close()
             else: #Calculate the corrections
                 self._corrections= self._calc_corrections()
@@ -588,7 +588,7 @@ class DFcorrection:
             trySavefilename= self._createSavefilename(searchIter)
             if os.path.exists(trySavefilename):
                 trySavefile= open(trySavefilename,'r')
-                corrections= pickle.load(trySavefile)
+                corrections= sc.array(pickle.load(trySavefile))
                 trySavefile.close()
                 break
             else:
@@ -616,7 +616,10 @@ class DFcorrection:
             corrections*= newcorrections
         #Save
         savefile= open(self._savefilename,'w')
-        pickle.dump(corrections,savefile)
+        picklethis= []
+        for arr in list(corrections):
+            picklethis.append([float(a) for a in arr])
+        pickle.dump(picklethis,savefile)#We pickle a list for platform-independence
         savefile.close()
         return corrections
     
