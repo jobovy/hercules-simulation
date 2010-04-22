@@ -110,7 +110,8 @@ def veldist_2d_Rphi(plotfilename,nx=10,ny=8,dx=_XWIDTH/20.,dy=_YWIDTH/20.,
 def veldist_1d_Rphi(plotfilename,nx=10,ny=8,dx=_XWIDTH/20.,dy=_YWIDTH/20.,
                     ngrid=201,rrange=[0.6,1.4],
                     phirange=[-m.pi/2.,m.pi/2.],
-                    saveDir='../bar/1d/',normalize=True):
+                    saveDir='../bar/1d/',normalize=True,
+                    row=None):
     """
     NAME:
        veldist_1d_Rphi
@@ -127,11 +128,22 @@ def veldist_1d_Rphi(plotfilename,nx=10,ny=8,dx=_XWIDTH/20.,dy=_YWIDTH/20.,
        phirange - range of Galactic azimuths to consider
        saveDir - directory to save the pickles in
        normalize - if True (default), normalize the los-vd to integrate to one
+       row - if set to a row number, calculate the los-velocity distributions 
+             for this row only, and do not plot anything (just save for later)
     OUTPUT:
        plot!
     HISTORY:
        2010-04-21 - Written - Bovy (NYU)
     """
+    if row == None:
+        rowStart= 0
+        rowEnd= nx
+        calcOnly= False
+    else:
+        rowStart= row
+        rowEnd= rowStart+1
+        calcOnly= True
+
     vloslinspace= (-.9,.9,ngrid)
     vloss= sc.linspace(*vloslinspace)
 
@@ -144,12 +156,14 @@ def veldist_1d_Rphi(plotfilename,nx=10,ny=8,dx=_XWIDTH/20.,dy=_YWIDTH/20.,
     plot.bovy_print(fig_width=width,fig_height=height,
                     xtick_major_size=2.,ytick_major_size=2.,
                     xtick_minor_size=0.,ytick_minor_size=0.)
-    fig= pyplot.figure()
-    for ii in range(nx):
+    if not calcOnly:
+        fig= pyplot.figure()
+    for ii in range(rowStart,rowEnd):
         for jj in range(ny):
-            thisax= fig.add_axes([(left+ii*(_XWIDTH+dx))/width,
-                                  (bottom+jj*(_YWIDTH+dy))/height,
-                                  _XWIDTH/width,_YWIDTH/height])
+            if not calcOnly:
+                thisax= fig.add_axes([(left+ii*(_XWIDTH+dx))/width,
+                                      (bottom+jj*(_YWIDTH+dy))/height,
+                                      _XWIDTH/width,_YWIDTH/height])
             thisR= (rrange[0]+(rrange[1]-rrange[0])/
                     (ny*_YWIDTH+(ny-1)*dy)*(jj*(_YWIDTH+dy)+_YWIDTH/2.))
             thisphi= (phirange[0]+(phirange[1]-phirange[0])/
@@ -182,6 +196,8 @@ def veldist_1d_Rphi(plotfilename,nx=10,ny=8,dx=_XWIDTH/20.,dy=_YWIDTH/20.,
                 pickle.dump(vlosd,savefile)
                 pickle.dump(axivlosd,savefile)
                 savefile.close()
+            if calcOnly:
+                continue
             fig.sca(thisax)
             plot.bovy_plot(vloss,vlosd,'k',
                            overplot=True,zorder=3)
@@ -191,13 +207,25 @@ def veldist_1d_Rphi(plotfilename,nx=10,ny=8,dx=_XWIDTH/20.,dy=_YWIDTH/20.,
             thisax.set_ylim(0.,sc.amax(sc.concatenate((axivlosd,vlosd)))*1.1)
             thisax.xaxis.set_ticklabels('')
             thisax.yaxis.set_ticklabels('')
-    plot.bovy_end_print(plotfilename)
+    if not calcOnly:
+        plot.bovy_end_print(plotfilename)
 
 if __name__ == '__main__':
+    """Call this code as follows:
+    
+    python bar_figures.py <filename>: plot 2d velocity distribution on a panel-grid
+
+    python bar_fiures.py <filename> None: plot 1d los-velocity distribution on a panel grid
+
+    python bar_figures.py <filename> <int>: just calculate the 1d los-velocity distribution for a single column (corresponding to the int)
+    """
     if len(sys.argv) < 2:
         print "Must provide a filename for the figure"
         sys.exit(-1)
     if len(sys.argv) < 3:
         veldist_2d_Rphi(sys.argv[1])
     else:
-        veldist_1d_Rphi(sys.argv[1])
+        try:
+            veldist_1d_Rphi(sys.argv[1],row=int(sys.argv[2]))
+        except ValueError:
+            veldist_1d_Rphi(sys.argv[1])
