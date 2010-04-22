@@ -7,10 +7,10 @@ import scipy.integrate as integrate
 from integrate_orbits import uvToELz
 from interpret_as_df import dehnenDF
 import bovy_plot as plot
-_DEBUG=True
+_DEBUG=False
 _degtorad= sc.pi/180.
 _NCORRECT=20
-_MAXITER= 10
+_MAXITER= 50
 _NSIGMA=5.
 def plotVlos(vloslinspace,l=0.,d=1.,t=-4.,distCoord='GC',
              pot='bar',beta=0.,potparams=(0.9,0.01,20.*_degtorad,.8,None),
