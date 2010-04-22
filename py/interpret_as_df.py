@@ -518,7 +518,7 @@ class DFcorrection:
                 self._savedir= '../corrections'
             self._savefilename= self._createSavefilename(self._niter)
             if os.path.exists(self._savefilename):
-                savefile= open(self._savefilename,'r')
+                savefile= open(self._savefilename,'rb')
                 self._corrections= sc.array(pickle.load(savefile))
                 savefile.close()
             else: #Calculate the corrections
@@ -587,7 +587,7 @@ class DFcorrection:
         while searchIter > 0:
             trySavefilename= self._createSavefilename(searchIter)
             if os.path.exists(trySavefilename):
-                trySavefile= open(trySavefilename,'r')
+                trySavefile= open(trySavefilename,'rb')
                 corrections= sc.array(pickle.load(trySavefile))
                 trySavefile.close()
                 break
