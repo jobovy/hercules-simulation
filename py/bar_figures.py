@@ -153,9 +153,10 @@ def veldist_1d_Rphi(plotfilename,nx=10,ny=8,dx=_XWIDTH/20.,dy=_YWIDTH/20.,
     left, bottom = 0.1, 0.1
     width= nx*_XWIDTH+(nx-1)*dx+2*left
     height= ny*_YWIDTH+(ny-1)*dy+2*bottom
-    plot.bovy_print(fig_width=width,fig_height=height,
-                    xtick_major_size=2.,ytick_major_size=2.,
-                    xtick_minor_size=0.,ytick_minor_size=0.)
+    if not calcOnly:
+        plot.bovy_print(fig_width=width,fig_height=height,
+                        xtick_major_size=2.,ytick_major_size=2.,
+                        xtick_minor_size=0.,ytick_minor_size=0.)
     if not calcOnly:
         fig= pyplot.figure()
     for ii in range(rowStart,rowEnd):
