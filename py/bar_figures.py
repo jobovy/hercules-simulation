@@ -227,7 +227,6 @@ if __name__ == '__main__':
         veldist_2d_Rphi(sys.argv[1])
     else:
         try:
-            print sys.argv[2]
             veldist_1d_Rphi(sys.argv[1],row=int(sys.argv[2]))
         except ValueError:
             veldist_1d_Rphi(sys.argv[1])
