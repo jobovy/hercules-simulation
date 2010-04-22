@@ -37,7 +37,8 @@ def veldist_2d_Rphi(plotfilename,nx=10,ny=8,dx=_XWIDTH/20.,dy=_YWIDTH/20.,
     HISTORY:
        2010-04-19 - Written - Bovy (NYU)
     """
-    levels= sc.array([2,6,12,21,33,50,68,80,90,95,99,99.9])/100.
+    #levels= sc.array([2,6,12,21,33,50,68,80,90,95,99,99.9])/100.
+    levels= sc.array([2,12,33,50,80,95,99.9])/100.
     cntrcolors= ['w' for ii in range(len(levels)) if levels[ii] <= .5]
     cntrcolors+= ['k' for ii in range(len(levels)) if levels[ii] > .5]
 
@@ -107,7 +108,7 @@ def veldist_2d_Rphi(plotfilename,nx=10,ny=8,dx=_XWIDTH/20.,dy=_YWIDTH/20.,
     plot.bovy_end_print(plotfilename)
 
 def veldist_1d_Rphi(plotfilename,nx=10,ny=8,dx=_XWIDTH/20.,dy=_YWIDTH/20.,
-                    nsx=2,nsy=2,ngrid=3,rrange=[0.6,1.4],
+                    nsx=2,nsy=2,ngrid=51,rrange=[0.6,1.4],
                     phirange=[-m.pi/2.,m.pi/2.],
                     saveDir='../bar/1d/',normalize=True):
     """
@@ -132,7 +133,7 @@ def veldist_1d_Rphi(plotfilename,nx=10,ny=8,dx=_XWIDTH/20.,dy=_YWIDTH/20.,
     HISTORY:
        2010-04-21 - Written - Bovy (NYU)
     """
-    vloslinspace= (-1.,1.,ngrid)
+    vloslinspace= (-.9,.9,ngrid)
     vloss= sc.linspace(*vloslinspace)
 
     picklebasename= '1d_%i_%i_%i_%i_%i_%.1f_%.1f_%.1f_%.1f' % (nx,ny,nsx,nsy,ngrid,rrange[0],rrange[1],phirange[0],phirange[1])
