@@ -225,17 +225,25 @@ def marginalizeAngle(vlos,alpha,R=1.,t=-4.,pot='bar',beta=0.,
     if m.fabs(m.sin(alpha)) < m.sqrt(1./2.):
         cosalpha= m.cos(alpha)
         tanalpha= m.tan(alpha)
-        return integrate.quadrature(integrandSinAlphaSmall,-intLimit,intLimit,
-                                    args=(cosalpha,tanalpha,vlos,R,t,potparams,
-                                          beta,df,pot),
-                                    vec_func=False,maxiter=_MAXITER)[0].real/m.fabs(cosalpha)
+        #return integrate.quadrature(integrandSinAlphaSmall,-intLimit,intLimit,
+        #                            args=(cosalpha,tanalpha,vlos,R,t,potparams,
+        #                                  beta,df,pot),
+        #                            vec_func=False,maxiter=_MAXITER)[0].real/m.fabs(cosalpha)
+        return integrate.quad(integrandSinAlphaSmall,-intLimit,intLimit,
+                              args=(cosalpha,tanalpha,vlos,R,t,potparams,
+                                    beta,df,pot),
+                              limit=_MAXITER)[0]/m.fabs(cosalpha)
     else:
         sinalpha= m.sin(alpha)
         cotalpha= 1./m.tan(alpha)
-        return integrate.quadrature(integrandSinAlphaLarge,-intLimit,intLimit,
-                                    args=(sinalpha,cotalpha,vlos,R,t,potparams,
-                                          beta,df,pot),
-                                    vec_func=False,maxiter=_MAXITER)[0].real/m.fabs(sinalpha)
+        #return integrate.quadrature(integrandSinAlphaLarge,-intLimit,intLimit,
+        #                            args=(sinalpha,cotalpha,vlos,R,t,potparams,
+        #                                  beta,df,pot),
+        #                            vec_func=False,maxiter=_MAXITER)[0].real/m.fabs(sinalpha)
+        return integrate.quad(integrandSinAlphaLarge,-intLimit,intLimit,
+                              args=(sinalpha,cotalpha,vlos,R,t,potparams,
+                                    beta,df,pot),
+                              limit=_MAXITER)[0]/m.fabs(sinalpha)
 
 def integrandSinAlphaLarge(u,sinalpha,cotalpha,vlos,R,t,potparams,beta,df,pot):
     return df.eval(*uvToELz(UV=(-u,-cotalpha*u+vlos/sinalpha),R=R,t=t,pot=pot,potparams=potparams,beta=beta))
