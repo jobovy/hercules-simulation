@@ -10,7 +10,9 @@ import bovy_plot as plot
 _DEBUG=True
 _degtorad= sc.pi/180.
 _NCORRECT=20
-_MAXITER= 50
+_MAXITER= 20
+_EPSREL= 1.e-02
+_EPSABS= 1.e-05
 _NSIGMA=5.
 def plotVlos(vloslinspace,l=0.,d=1.,t=-4.,distCoord='GC',
              pot='bar',beta=0.,potparams=(0.9,0.01,20.*_degtorad,.8,None),
@@ -231,7 +233,7 @@ def marginalizeAngle(vlos,alpha,R=1.,t=-4.,pot='bar',beta=0.,
         #                            vec_func=False,maxiter=_MAXITER)[0].real/m.fabs(cosalpha)
         return integrate.quad(integrandSinAlphaSmall,-intLimit,intLimit,
                               args=(cosalpha,tanalpha,vlos,R,t,potparams,
-                                    beta,df,pot),
+                                    beta,df,pot),epsrel=_EPSREL,epsabs=_EPSABS,
                               limit=_MAXITER)[0]/m.fabs(cosalpha)
     else:
         sinalpha= m.sin(alpha)
@@ -242,7 +244,7 @@ def marginalizeAngle(vlos,alpha,R=1.,t=-4.,pot='bar',beta=0.,
         #                            vec_func=False,maxiter=_MAXITER)[0].real/m.fabs(sinalpha)
         return integrate.quad(integrandSinAlphaLarge,-intLimit,intLimit,
                               args=(sinalpha,cotalpha,vlos,R,t,potparams,
-                                    beta,df,pot),
+                                    beta,df,pot),epsrel=_EPSREL,epsabs=_EPSABS,
                               limit=_MAXITER)[0]/m.fabs(sinalpha)
 
 def integrandSinAlphaLarge(u,sinalpha,cotalpha,vlos,R,t,potparams,beta,df,pot):

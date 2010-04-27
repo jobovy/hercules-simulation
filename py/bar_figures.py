@@ -107,10 +107,15 @@ def veldist_2d_Rphi(plotfilename,nx=10,ny=8,dx=_XWIDTH/20.,dy=_YWIDTH/20.,
             thisax.yaxis.set_ticklabels('')
     plot.bovy_end_print(plotfilename)
 
-def veldist_1d_Rphi(plotfilename,nx=10,ny=8,dx=_XWIDTH/20.,dy=_YWIDTH/20.,
-                    ngrid=201,rrange=[0.6,1.4],
+#def veldist_1d_Rphi(plotfilename,nx=10,ny=8,dx=_XWIDTH/20.,dy=_YWIDTH/20.,
+#                    ngrid=201,rrange=[0.6,1.4],
+#                    phirange=[-m.pi/2.,m.pi/2.],
+#                    saveDir='../bar/1d/',normalize=True,
+#                    row=None):
+def veldist_1d_Rphi(plotfilename,nx=100,ny=20,dx=_XWIDTH/20.,dy=_YWIDTH/20.,
+                    ngrid=201,rrange=[0.7,1.3],
                     phirange=[-m.pi/2.,m.pi/2.],
-                    saveDir='../bar/1d/',normalize=True,
+                    saveDir='../bar/1dLarge/',normalize=True,
                     row=None):
     """
     NAME:
