@@ -196,8 +196,8 @@ def veldist_1d_Rphi(plotfilename,nx=100,ny=20,dx=_XWIDTH/20.,dy=_YWIDTH/20.,
                                       pot='bar',beta=0.,t=-0.00001,
                                       potparams=(0.9,0.0,25.*_degtorad,.8,None))
                 if normalize:
-                    vlosd= vlosd/(sc.sum(vlosd)*(vloss[1]-vloss[0]))
-                    axivlosd= axivlosd/(sc.sum(axivlosd)*(vloss[1]-vloss[0]))
+                    vlosd= vlosd/(sc.nansum(vlosd)*(vloss[1]-vloss[0]))
+                    axivlosd= axivlosd/(sc.nansum(axivlosd)*(vloss[1]-vloss[0]))
                 savefile= open(thissavefilename,'w')
                 pickle.dump(vlosd,savefile)
                 pickle.dump(axivlosd,savefile)
