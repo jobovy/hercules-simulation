@@ -8,14 +8,17 @@ import math as m
 import scipy as sc
 import bovy_plot as plot
 from matplotlib import pyplot
+import matplotlib.ticker as ticker
 from calc_veldist_2d import calc_veldist_2d
 from calc_veldist_1d import predictVlos
 _degtorad= m.pi/180.
-#_XWIDTH= 1.8*8/10/1.8
-#_YWIDTH= 1.15*8/10/1.8
-_XWIDTH= 1.8*80/100/1.8
-_YWIDTH= 1.15*80/20/1.8
-def veldist_2d_Rphi(plotfilename,nx=10,ny=8,dx=_XWIDTH/20.,dy=_YWIDTH/20.,
+_radtodeg= 180./m.pi
+_XWIDTH= 1.8*8/10/1.8/1.23
+_YWIDTH= 1.15*8/10/1.8/1.23
+#_XWIDTH= 1.8*80/100/1.8
+#_YWIDTH= 1.15*80/20/1.8
+def veldist_2d_Rphi(plotfilename,nx=10,ny=8,dx=_XWIDTH/20.,
+                    dy=_YWIDTH/20.*1.8/1.15,
                     nsx=2,nsy=2,ngrid=101,rrange=[0.6,1.4],
                     phirange=[-m.pi/2.,m.pi/2.],
                     saveDir='../bar/2d/'):
@@ -51,18 +54,33 @@ def veldist_2d_Rphi(plotfilename,nx=10,ny=8,dx=_XWIDTH/20.,dy=_YWIDTH/20.,
     if not os.path.exists(saveDir):
         os.mkdir(saveDir)
     left, bottom = 0.1, 0.1
-    width= nx*_XWIDTH+(nx-1)*dx+2*left
-    height= ny*_YWIDTH+(ny-1)*dy+2*bottom
+    width= (nx*_XWIDTH+(nx-1)*dx)/(1.-2.*left)
+    height= (ny*_YWIDTH+(ny-1)*dy)/(1.-2.*bottom)
     plot.bovy_print(fig_width=width,fig_height=height,
                     xtick_major_size=2.,ytick_major_size=2.,
                     xtick_minor_size=0.,ytick_minor_size=0.)
     fig= pyplot.figure()
+
+    #Make theta-R axes
+    fudge= 8.0
+    thisax= fig.add_axes([left-_XWIDTH/width/fudge,
+                          bottom-_XWIDTH/height/fudge,
+                          1.+2*_XWIDTH/width/fudge-2*left,
+                          1.+2*_XWIDTH/height/fudge-2*bottom])
+    xrange= sc.array(phirange)*_radtodeg
+    yrange=rrange
+    thisax.xaxis.set_label_text(r'$\mathrm{Galactocentric\ azimuth}\ [\mathrm{deg}]$')
+    thisax.set_xlim(-90.01,90.01)
+    thisax.yaxis.set_label_text(r'$\mathrm{Galactocentric\ radius}\ / R_0$')
+    thisax.set_ylim(yrange[0],yrange[1])
+    thisax.xaxis.set_major_locator(ticker.MultipleLocator(10.))
+    
     for ii in range(nx):
         for jj in range(ny):
             #Middle plot
             if ii == nx/2-1 and jj == ny/2-1:
-                thisax= fig.add_axes([(left+ii*(_XWIDTH+dx))/width,
-                                      (bottom+jj*(_YWIDTH+dy))/height,
+                thisax= fig.add_axes([left+ii*(_XWIDTH+dx)/width,
+                                      bottom+jj*(_YWIDTH+dy)/height,
                                       (nsx*_XWIDTH+(nsx-1)*dx)/width,
                                       (nsy*_YWIDTH+(nsy-1)*dy)/height])
                 thisR= (rrange[0]+(rrange[1]-rrange[0])/
@@ -73,8 +91,8 @@ def veldist_2d_Rphi(plotfilename,nx=10,ny=8,dx=_XWIDTH/20.,dy=_YWIDTH/20.,
                   jj >= ny/2-1 and jj < ny/2 +nsy-1):
                 continue
             else:
-                thisax= fig.add_axes([(left+ii*(_XWIDTH+dx))/width,
-                                      (bottom+jj*(_YWIDTH+dy))/height,
+                thisax= fig.add_axes([left+ii*(_XWIDTH+dx)/width,
+                                      bottom+jj*(_YWIDTH+dy)/height,
                                       _XWIDTH/width,_YWIDTH/height])
                 thisR= (rrange[0]+(rrange[1]-rrange[0])/
                         (ny*_YWIDTH+(ny-1)*dy)*(jj*(_YWIDTH+dy)+_YWIDTH/2.))
@@ -109,16 +127,17 @@ def veldist_2d_Rphi(plotfilename,nx=10,ny=8,dx=_XWIDTH/20.,dy=_YWIDTH/20.,
             thisax.yaxis.set_ticklabels('')
     plot.bovy_end_print(plotfilename)
 
-#def veldist_1d_Rphi(plotfilename,nx=10,ny=8,dx=_XWIDTH/20.,dy=_YWIDTH/20.,
-#                    ngrid=201,rrange=[0.6,1.4],
-#                    phirange=[-m.pi/2.,m.pi/2.],
-#                    saveDir='../bar/1d/',normalize=True,
-#                    row=None):
-def veldist_1d_Rphi(plotfilename,nx=100,ny=20,dx=_XWIDTH/20.,dy=_YWIDTH/20.,
-                    ngrid=201,rrange=[0.7,1.3],
+def veldist_1d_Rphi(plotfilename,nx=10,ny=8,dx=_XWIDTH/20.,
+                    dy=_YWIDTH/20.*1.8/1.15,
+                    ngrid=201,rrange=[0.6,1.4],
                     phirange=[-m.pi/2.,m.pi/2.],
-                    saveDir='../bar/1dLarge/',normalize=True,
+                    saveDir='../bar/1d/',normalize=True,
                     row=None):
+#def veldist_1d_Rphi(plotfilename,nx=100,ny=20,dx=_XWIDTH/20.,dy=_YWIDTH/20.,
+#                    ngrid=201,rrange=[0.7,1.3],
+#                    phirange=[-m.pi/2.,m.pi/2.],
+#                    saveDir='../bar/1dLarge/',normalize=True,
+#                    row=None):
     """
     NAME:
        veldist_1d_Rphi
@@ -158,19 +177,32 @@ def veldist_1d_Rphi(plotfilename,nx=100,ny=20,dx=_XWIDTH/20.,dy=_YWIDTH/20.,
     if not os.path.exists(saveDir):
         os.mkdir(saveDir)
     left, bottom = 0.1, 0.1
-    width= nx*_XWIDTH+(nx-1)*dx+2*left
-    height= ny*_YWIDTH+(ny-1)*dy+2*bottom
+    width= (nx*_XWIDTH+(nx-1)*dx)/(1.-2.*left)
+    height= (ny*_YWIDTH+(ny-1)*dy)/(1.-2.*bottom)
     if not calcOnly:
         plot.bovy_print(fig_width=width,fig_height=height,
                         xtick_major_size=2.,ytick_major_size=2.,
                         xtick_minor_size=0.,ytick_minor_size=0.)
-    if not calcOnly:
         fig= pyplot.figure()
+        #Make theta-R axes
+        fudge= 8.0
+        thisax= fig.add_axes([left-_XWIDTH/width/fudge,
+                              bottom-_XWIDTH/height/fudge,
+                              1.+2*_XWIDTH/width/fudge-2*left,
+                              1.+2*_XWIDTH/height/fudge-2*bottom])
+        xrange= sc.array(phirange)*_radtodeg
+        yrange=rrange
+        thisax.xaxis.set_label_text(r'$\mathrm{Galactocentric\ azimuth}\ [\mathrm{deg}]$')
+        thisax.set_xlim(-90.01,90.01)
+        thisax.yaxis.set_label_text(r'$\mathrm{Galactocentric\ radius}\ / R_0$')
+        thisax.set_ylim(yrange[0],yrange[1])
+        thisax.xaxis.set_major_locator(ticker.MultipleLocator(10.))
+        
     for ii in range(rowStart,rowEnd):
         for jj in range(ny):
             if not calcOnly:
-                thisax= fig.add_axes([(left+ii*(_XWIDTH+dx))/width,
-                                      (bottom+jj*(_YWIDTH+dy))/height,
+                thisax= fig.add_axes([left+ii*(_XWIDTH+dx)/width,
+                                      bottom+jj*(_YWIDTH+dy)/height,
                                       _XWIDTH/width,_YWIDTH/height])
             thisR= (rrange[0]+(rrange[1]-rrange[0])/
                     (ny*_YWIDTH+(ny-1)*dy)*(jj*(_YWIDTH+dy)+_YWIDTH/2.))
