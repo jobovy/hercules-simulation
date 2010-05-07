@@ -11,8 +11,10 @@ from matplotlib import pyplot
 from calc_veldist_2d import calc_veldist_2d
 from calc_veldist_1d import predictVlos
 _degtorad= m.pi/180.
-_XWIDTH= 1.8*8/10/1.8
-_YWIDTH= 1.15*8/10/1.8
+#_XWIDTH= 1.8*8/10/1.8
+#_YWIDTH= 1.15*8/10/1.8
+_XWIDTH= 1.8*80/100/1.8
+_YWIDTH= 1.15*80/20/1.8
 def veldist_2d_Rphi(plotfilename,nx=10,ny=8,dx=_XWIDTH/20.,dy=_YWIDTH/20.,
                     nsx=2,nsy=2,ngrid=101,rrange=[0.6,1.4],
                     phirange=[-m.pi/2.,m.pi/2.],
