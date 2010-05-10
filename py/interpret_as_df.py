@@ -18,6 +18,7 @@ _EPSREL=10.**-14.
 _NSIGMA= 4.
 _INTERPDEGREE= 3
 _RMIN=10.**-10.
+_CORRECTIONSDIR='../corrections/'
 import copy
 import os, os.path
 import cPickle as pickle
@@ -169,7 +170,7 @@ class distFunc:
         PURPOSE:
            Initialize a DF
         INPUT:
-           dftype= 'dehnen' or 'corrected-dehnen'
+           dftype= 'dehnen' or 'corrected-dehnen', 'shu' or 'corrected-shu'
            surfaceSigma - instance or class name of the target 
                       surface density and sigma_R profile 
                       (default: both exponential)
@@ -377,7 +378,7 @@ class dehnenDF(distFunc):
         """
         return distFunc.__init__(self,surfaceSigma=surfaceSigma,
                                  profileParams=profileParams,
-                                 correct=correct,
+                                 correct=correct,dftype='dehnen',
                                  beta=beta,**kwargs)
         
     def eval(self,E,L,logSigmaR=0.,logsigmaR2=0.):
@@ -408,6 +409,69 @@ class dehnenDF(distFunc):
             correction= sc.zeros(2)
         SRE2= self.targetSigma2(xE,log=True)+correction[1]
         return sc.exp(logsigmaR2-SRE2+self.targetSurfacemass(xE,log=True)-logSigmaR+sc.exp(logOLLE-SRE2)+correction[0])
+
+
+class shuDF(distFunc):
+    """Shu's df (1969)"""
+    def __init__(self,surfaceSigma=expSurfaceSigmaProfile,
+                 profileParams=(1./3.,1.0,0.2),
+                 correct=False,
+                 beta=0.,**kwargs):
+        """
+        NAME:
+           __init__
+        PURPOSE:
+           Initialize a Shu DF
+        INPUT:
+           surfaceSigma - instance or class name of the target 
+                      surface density and sigma_R profile 
+                      (default: both exponential)
+           profileParams - parameters of the surface and sigma_R profile:
+                      (xD,xS,Sro) where
+                        xD - disk surface mass scalelength / Ro
+                        xS - disk velocity dispersion scalelength / Ro
+                        Sro - disk velocity dispersion at Ro (/vo)
+                        Directly given to the 'surfaceSigmaProfile class, so
+                        could be anything that class takes
+           beta - power-law index of the rotation curve
+           correct - if True, correct the DF
+           + DFcorrection kwargs (except for those already specified)
+        OUTPUT:
+        HISTORY:
+            2010-05-09 - Written - Bovy (NYU)
+        """
+        return distFunc.__init__(self,surfaceSigma=surfaceSigma,
+                                 profileParams=profileParams,
+                                 correct=correct,dftype='shu',
+                                 beta=beta,**kwargs)
+        
+    def eval(self,E,L,logSigmaR=0.,logsigmaR2=0.):
+        """
+        NAME:
+           eval
+        PURPOSE:
+           evaluate the distribution function
+        INPUT:
+           E - energy (/vo^2)
+           L - angular momentun (/ro/vo)
+       OUTPUT:
+           DF(E,L)
+        HISTORY:
+           2010-05-09 - Written - Bovy (NYU)
+        """
+        #Calculate RL,LL, OmegaL
+        if self._beta == 0.:
+            xL= L
+            logECLE= sc.log(sc.log(xL)+0.5-E)
+        else: #non-flat rotation curve
+            xL= L**(1./(self._beta+1.))
+            logECLE= sc.log(0.5*(1./self._beta+1.)*xL**(2.*self._beta)-E)
+        if self._correct: 
+            correction= self._corr.correct(xL,log=True)
+        else:
+            correction= sc.zeros(2)
+        SRE2= self.targetSigma2(xL,log=True)+correction[1]
+        return sc.exp(logsigmaR2-SRE2+self.targetSurfacemass(xL,log=True)-logSigmaR+sc.exp(logECLE-SRE2)+correction[0])
 
 
 def _surfaceIntegrand(vR,vT,R,df,logSigmaR,logsigmaR2,sigmaR1,gamma):
@@ -515,7 +579,7 @@ class DFcorrection:
             if kwargs.has_key('savedir'):
                 self._savedir= kwargs['savedir']
             else:
-                self._savedir= '../corrections'
+                self._savedir= _CORRECTIONSDIR
             self._savefilename= self._createSavefilename(self._niter)
             if os.path.exists(self._savefilename):
                 savefile= open(self._savefilename,'rb')
