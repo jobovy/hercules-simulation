@@ -1,4 +1,3 @@
-PYTHON=python
 BARDIR=../bar
 
 bar: $(BARDIR)/rphi2d.ps $(BARDIR)/rphi1d.ps $(BARDIR)/detecta.ps \
