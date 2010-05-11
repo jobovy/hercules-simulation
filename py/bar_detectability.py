@@ -108,7 +108,7 @@ def bar_detectability(parser,
                     rrange[0],rrange[1]))
     plot.bovy_end_print(args[0])
 
-def bar_detectability_convolve(parser,nconvsamples=10000,
+def bar_detectability_convolve(parser,nconvsamples=1000,
                                dx=_XWIDTH/20.,dy=_YWIDTH/20.,
                                nx=100,ny=20,
                                ngrid=201,rrange=[0.7,1.3],
@@ -281,10 +281,15 @@ def dlToRphi(d,l):
     """Convert los distance and Galactic longitude into Galactocentric 
     radius and azimuth"""
     R= m.sqrt(1.+d**2.-2.*d*m.cos(l))
+    asinarg= d/R*m.sin(l)
+    if asinarg < -1.:
+        asinarg= -1.
+    elif asinarg > 1.:
+        asinarg= 1.
     if 1./m.cos(l) < d and m.cos(l) > 0.:
-        theta= m.pi-m.asin(d/R*m.sin(l))
+        theta= m.pi-m.asin(asinarg)
     else:
-        theta= m.asin(d/R*m.sin(l))
+        theta= m.asin(asinarg)
     return (R,theta)
 
 def invdist2(r1,phi1,r2,phi2):
