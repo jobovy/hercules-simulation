@@ -6,6 +6,7 @@ import sys
 import cPickle as pickle
 import math as m
 import scipy as sc
+from optparse import OptionParser
 import bovy_plot as plot
 from matplotlib import pyplot
 import matplotlib.ticker as ticker
@@ -250,22 +251,41 @@ def veldist_1d_Rphi(plotfilename,nx=10,ny=8,dx=_XWIDTH/20.,
     if not calcOnly:
         plot.bovy_end_print(plotfilename)
 
-if __name__ == '__main__':
-    """Call this code as follows:
+def get_options():
+    usage = "usage: %prog [options] <plotfilename>\n\nplotfilename= name of the file that the figure will be saved to"
+    parser = OptionParser(usage=usage)
+    parser.add_option("--vlos",action="store_true", 
+                      default=False, dest="vlos",
+                      help="Make figure for the los distribution")
+    parser.add_option("--otherside",action="store_true", 
+                      default=False, dest="otherside",
+                      help="Make figure for the other side of the Galaxy")
+    parser.add_option("-c", "--col",dest="col",type='int',
+                      default=None,
+                      help="Only calculate one column of los")
+    parser.add_option("--saveDir",dest="saveDir",
+                      default='../bar/1d/',
+                      help="Only calculate one column of los")
+    parser.add_option("--convolve", dest="convolve",type='float',
+                      default=None,
+                      help="Convolve with relative distance uncertainties of this magnitude")
     
-    python bar_figures.py <filename>: plot 2d velocity distribution on a panel-grid
-
-    python bar_fiures.py <filename> None: plot 1d los-velocity distribution on a panel grid
-
-    python bar_figures.py <filename> <int>: just calculate the 1d los-velocity distribution for a single column (corresponding to the int)
-    """
-    if len(sys.argv) < 2:
-        print "Must provide a filename for the figure"
+    return parser
+if __name__ == '__main__':
+    parser= get_options()
+    (options,args)= parser.parse_args()
+    if len(args) == 0:
+        parser.print_help()
+        import sys
         sys.exit(-1)
-    if len(sys.argv) < 3:
-        veldist_2d_Rphi(sys.argv[1])
+    if options.otherside:
+        phirange=[m.pi/2.,3.*m.pi/2.]
     else:
-        try:
-            veldist_1d_Rphi(sys.argv[1],row=int(sys.argv[2]))
-        except ValueError:
-            veldist_1d_Rphi(sys.argv[1])
+        phirange=[-m.pi/2.,m.pi/2.]
+    if options.vlos:
+        if not options.col == None:
+            veldist_1d_Rphi(args[0],phirange=phirange,row=options.col)
+        else:
+            veldist_1d_Rphi(args[0],phirange=phirange)
+    else:
+        veldist_2d_Rphi(args[0])

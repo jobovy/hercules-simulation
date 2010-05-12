@@ -186,6 +186,8 @@ def bar_detectability_convolve(parser,nconvsamples=1000,
     losd= sc.zeros((nx,ny))
     for ii in range(nx):
         for jj in range(ny):
+            if ii == 45 and jj == 13:
+                continue#BOVY: FIX FOR NOW
             thisR= rs[jj]
             thisphi= phis[ii]
             thissavefilename= os.path.join(saveDirConv,picklebasename+'_%i_%i.sav' %(ii,jj))
@@ -207,15 +209,34 @@ def bar_detectability_convolve(parser,nconvsamples=1000,
                     thisl= m.asin(thisR/thislosd*m.sin(thisphi))
                 convvlosd= sc.zeros(ngrid)
                 convaxivlosd= sc.zeros(ngrid)
+                broke= False
                 for kk in range(ngrid):
                     weights= invdist2(bisplrs[ii*ny+jj],bisplphis[ii*ny+jj],
                                       bisplrs,bisplphis)
                     weights[sc.isinf(weights)]= sc.amax(weights[sc.isfinite(weights)])
                     splindx= (weights > 1./(thislosd*options.convolve*5.)**2.)
-                    tck= interpolate.bisplrep(bisplphis[splindx],
-                                              bisplrs[splindx],
-                                              vlosds[splindx,kk],
-                                              w=weights[splindx])
+                    try:
+                        tck= interpolate.bisplrep(bisplphis[splindx],
+                                                  bisplrs[splindx],
+                                                  vlosds[splindx,kk],
+                                                  w=weights[splindx])
+                    except TypeError:
+                        #Trye interp2d?
+                        broke= True
+                        break
+                    except ValueError:
+                        splindx= (weights > 1./(2.*thislosd*options.convolve*5.)**2.)
+                        try:
+                            tck= interpolate.bisplrep(bisplphis[splindx],
+                                                      bisplrs[splindx],
+                                                      vlosds[splindx,kk],
+                                                      w=weights[splindx])
+                        except TypeError:
+                            broke= True
+                            break                      
+                        except ValueError:
+                            broke= True
+                            break
                     #Now convolve
                     thisnsamples= 0
                     for ll in range(nconvsamples):
@@ -226,10 +247,27 @@ def bar_detectability_convolve(parser,nconvsamples=1000,
                         if not addvlos == 0.:
                             thisnsamples+= 1
                     convvlosd[kk]/= thisnsamples
-                    tck= interpolate.bisplrep(bisplphis[splindx],
-                                              bisplrs[splindx],
-                                              axivlosds[splindx,kk],
-                                              w=weights[splindx])
+                    try:
+                        tck= interpolate.bisplrep(bisplphis[splindx],
+                                                  bisplrs[splindx],
+                                                  axivlosds[splindx,kk],
+                                                  w=weights[splindx])
+                    except TypeError:
+                        broke= True
+                        break
+                    except ValueError:
+                        splindx= (weights > 1./(2.*thislosd*options.convolve*5.)**2.)
+                        try:
+                            tck= interpolate.bisplrep(bisplphis[splindx],
+                                                      bisplrs[splindx],
+                                                      axivlosds[splindx,kk],
+                                                      w=weights[splindx])
+                        except TypeError:
+                            broke= True
+                            break                      
+                        except ValueError:
+                            broke= True
+                            break
                     #Now convolve
                     thisnsamples= 0
                     for ll in range(nconvsamples):
@@ -244,6 +282,8 @@ def bar_detectability_convolve(parser,nconvsamples=1000,
                 pickle.dump(convvlosd,savefile)
                 pickle.dump(convaxivlosd,savefile)
                 savefile.close()
+                if broke:
+                    continue#BOVY: FIX FOR NOW
             ddx= 1./sc.sum(axivlosd)
             #skipCenter
             if not options.skipCenter == 0.:
@@ -261,6 +301,8 @@ def bar_detectability_convolve(parser,nconvsamples=1000,
             convaxivlosd[convaxivlosd_zeroindx]= 1.
             detect[ii,jj]= probDistance.kullbackLeibler(convvlosd,convaxivlosd,
                                                         ddx)
+    detect[(detect < 0)]= 0.
+    detect[(detect > 0.07)]= 0.
     #Now plot
     plot.bovy_print()
     plot.bovy_dens2d(detect.T,origin='lower',#interpolation='nearest',
