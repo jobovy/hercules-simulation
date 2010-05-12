@@ -263,9 +263,6 @@ def get_options():
     parser.add_option("-c", "--col",dest="col",type='int',
                       default=None,
                       help="Only calculate one column of los")
-    parser.add_option("--saveDir",dest="saveDir",
-                      default='../bar/1d/',
-                      help="Only calculate one column of los")
     parser.add_option("--convolve", dest="convolve",type='float',
                       default=None,
                       help="Convolve with relative distance uncertainties of this magnitude")

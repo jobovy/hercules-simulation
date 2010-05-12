@@ -5,13 +5,13 @@ bar: $(BARDIR)/rphi2d.ps $(BARDIR)/rphi1d.ps $(BARDIR)/detecta.ps \
 	$(BARDIR)/rphi1d2.ps
 
 $(BARDIR)/rphi2d.ps: bar_figures.py calc_veldist_2d.py
-	$(PYTHON) bar_figures.py $@ --saveDir='../bar/2d'
+	$(PYTHON) bar_figures.py $@
 
 $(BARDIR)/rphi1d.ps: bar_figures.py calc_veldist_1d.py
-	$(PYTHON) bar_figures.py $@ --vlos --saveDir="../bar/1d"
+	$(PYTHON) bar_figures.py $@ --vlos
 
 $(BARDIR)/rphi1d2.ps: bar_figures.py calc_veldist_1d.py
-	$(PYTHON) bar_figures.py $@ --vlos --saveDir="../bar/1d2" --otherside
+	$(PYTHON) bar_figures.py $@ --vlos --otherside
 
 $(BARDIR)/detecta.ps: bar_detectability.py
 	$(PYTHON) bar_detectability.py $@
