@@ -1,5 +1,5 @@
 import scipy as sc
-def kullbackLeibler(p,q,dx=1):
+def kullbackLeibler(p,q,dx=1,nan=False):
     """
     NAME:
        kullbackLeibler
@@ -9,14 +9,18 @@ def kullbackLeibler(p,q,dx=1):
        p - probability density at points i
        q - another probability density at points i
        dx - distance between points i (can be an array)
+       nan - ignore nans
     OUTPUT:
        D(p||q)
     HISTORY:
        2010-05-09 - Written - Bovy (NYU)
     """
-    return sc.sum(p*dx*sc.log(p/q))
+    if nan:
+        return sc.nansum(p*dx*sc.log(p/q))
+    else:
+        return sc.sum(p*dx*sc.log(p/q))
 
-def symmKullbackLeibler(p,q,dx=1):
+def symmKullbackLeibler(p,q,dx=1,nan=False):
     """
     NAME:
        symmKullbackLeibler
@@ -26,14 +30,15 @@ def symmKullbackLeibler(p,q,dx=1):
        p - probability density at points i
        q - another probability density at points i
        dx - distance between points i (can be an array)
+       nan - ignore nans
     OUTPUT:
        D(p||q) +D(q||p)
     HISTORY:
        2010-05-09 - Written - Bovy (NYU)
     """
-    return kullbackLeibler(p,q,dx)+kullbackLeibler(q,p,dx)
+    return kullbackLeibler(p,q,dx,nan=nan)+kullbackLeibler(q,p,dx,nan=nan)
 
-def jensenShannon(p,q,dx):
+def jensenShannon(p,q,dx,nan=False):
     """
     NAME:
        jensenShannon
@@ -43,10 +48,11 @@ def jensenShannon(p,q,dx):
        p - probability density at points i
        q - another probability density at points i
        dx - distance between points i (can be an array)
+       nan - ignore nans
     OUTPUT:
        D_JS(p||q)
     HISTORY:
        2010-05-09 - Written - Bovy (NYU)
     """
     m= (p+q)/2.
-    return 0.5*kullbackLeibler(p,m,dx)+0.5*kullbackLeibler(q,m,dx)
+    return 0.5*kullbackLeibler(p,m,dx,nan=nan)+0.5*kullbackLeibler(q,m,dx,nan=nan)

@@ -88,7 +88,7 @@ def bar_detectability(parser,
             axivlosd[vlosd_zeroindx]= 1.
             vlosd[axivlosd_zeroindx]= 1.
             axivlosd[axivlosd_zeroindx]= 1.
-            detect[ii,jj]= probDistance.kullbackLeibler(vlosd,axivlosd,ddx)
+            detect[ii,jj]= probDistance.kullbackLeibler(vlosd,axivlosd,ddx,nan=True)
             losd[ii,jj]= m.sqrt(thisR**2.+1.-2.*thisR*m.cos(thisphi))
 
 
@@ -300,7 +300,7 @@ def bar_detectability_convolve(parser,nconvsamples=1000,
             convvlosd[convaxivlosd_zeroindx]= 1.
             convaxivlosd[convaxivlosd_zeroindx]= 1.
             detect[ii,jj]= probDistance.kullbackLeibler(convvlosd,convaxivlosd,
-                                                        ddx)
+                                                        ddx,nan=True)
     detect[(detect < 0)]= 0.
     detect[(detect > 0.07)]= 0.
     #Now plot
