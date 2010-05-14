@@ -91,9 +91,81 @@ def plotVlos(vloslinspace,l=0.,d=1.,t=-4.,distCoord='GC',
                        top_left=True)
     plot.bovy_end_print(plotfilename)
 
+def predictVlosConvolve(vloslinspace,l=0.,d=1.,t=-4.,distCoord='GC',
+                pot='bar',beta=0.,potparams=(0.9,0.01,20.*_degtorad,.8,None),
+                dfparams=(1./3.,1.,0.2),dftype='dehnen',correct=True,
+                convolve=0.1,nconvolve=101,sigmaconvolve=3):
+    """
+    NAME:
+       predictVlosConvolve
+    PURPOSE:
+       predict the line-of-sight velocity distribution in a given direction
+       and at a given distance, convolving with distance uncertainties
+    INPUT:
+       vloslinspace - los velocity grid to get the marginalized probability at
+       l - Galactic longitude (rad)
+       d - distance (from Sun or from GC)
+       distCoord - 'GC', 'GCGC' or 'Sun' (origin of d, if GCGC l is Galactic 
+                    too)
+       t - time to integrate backwards for 
+           (interpretation depends on potential)
+       pot - type of non-axisymmetric, time-dependent potential
+       beta - power-law index of rotation curve
+       potparams - parameters for this potential
+       dfparams - parameters of the DF (xD,xS,Sro)
+       dftype - type of DF ('dehnen' or 'shu')
+       correct - If True, correct the DF
+       convolve - convolve with distance errors of this relative size 
+                  (fraction)
+       nconvolve - number of convolution gridpoints to use
+       sigmaconvolve - number of sigmas to go out in the convolution
+    OUTPUT:
+       [nvlos] array with the predicted vlos-distribution
+    HISTORY:
+       2010-05-13 - Written - Bovy (NYU)
+    """
+    if distCoord.lower() == 'sun':
+        R= m.sqrt(1.+d**2.-2.*d*m.cos(l))
+        if 1./m.cos(l) < d and m.cos(l) > 0.:
+            theta= m.pi-m.asin(d/R*m.sin(l))
+        else:
+            theta= m.asin(d/R*m.sin(l))
+    elif distCoord.lower() == 'gcgc':
+        R= d
+        theta= l
+        d= m.sqrt(R**2.+1.-2.*R*m.cos(theta))
+        if 1./m.cos(theta) < R and m.cos(theta) > 0.:
+            l= m.pi-m.asin(R/d*m.sin(theta))
+        else:
+            l= m.asin(R/d*m.sin(theta))
+    else:
+        R= d
+        if R < 1.:
+            if m.cos(l) < 0.:
+                raise ValueError("Cannot probe R < 1. for 90. < l < 270.")
+            theta= m.asin(m.sin(l)/R)-l
+        else:
+            theta= m.pi-m.asin(m.sin(l)/R)-l
+        d= m.sqrt(R**2.+1.-2.*R*m.cos(theta))
+    #d is now definitely the distance from the Sun, l is Galactic longitude
+    dgrid= sc.linspace(-sigmaconvolve,sigmaconvolve,nconvolve)
+    dgrid*= d*convolve
+    dgrid+= d
+    nvlos= vloslinspace[2]
+    vlosd= sc.zeros(nvlos)
+    norm= 0.
+    for ii in range(nconvolve):
+        vlosd+= (predictVlos(vloslinspace,l=l,d=dgrid[ii],t=t,distCoord='sun',
+                            pot=pot,beta=beta,potparams=potparams,
+                            dfparams=dfparams,dftype=dftype,correct=correct)
+                 *m.exp(-(d-dgrid[ii])**2./2./d**2./convolve**2.))
+        norm+= m.exp(-(d-dgrid[ii])**2./2./d**2./convolve**2.)
+    return vlosd/norm
+
 def predictVlos(vloslinspace,l=0.,d=1.,t=-4.,distCoord='GC',
                 pot='bar',beta=0.,potparams=(0.9,0.01,20.*_degtorad,.8,None),
-                dfparams=(1./3.,1.,0.2),dftype='dehnen',correct=True):
+                dfparams=(1./3.,1.,0.2),dftype='dehnen',correct=True,
+                convolve=None,nconvolve=101,sigmaconvolve=3):
     """
     NAME:
        predictVlos
@@ -141,6 +213,8 @@ def predictVlos(vloslinspace,l=0.,d=1.,t=-4.,distCoord='GC',
             theta= m.asin(m.sin(l)/R)-l
         else:
             theta= m.pi-m.asin(m.sin(l)/R)-l
+        d= m.sqrt(R**2.+1.-2.*R*m.cos(theta))
+    #d is now definitely the distance from the Sun
     alphalos= theta+l
     Rolr,alpha,phi,chi,t1= potparams
     phi-=theta
