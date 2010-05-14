@@ -84,16 +84,22 @@ def TRFlat(R,vR,vT,vc=1.,ro=1.,rap=None,rperi=None,**kwargs):
     """
     if rap == None or rperi == None:
         (rperi,rap)= calcRapRperiFlat(R,vR,vT,vc=vc,ro=ro)
-    if rap == rperi:
-        return 0.
+    if rap == rperi: #Rough limit
+        e= 10.**-6.
+        rap= R*(1+e)
+        rperi= R*(1-e)
     Rmean= m.exp((m.log(rperi)+m.log(rap))/2.)
-    TR= rperi*nu.array(integrate.quadrature(_TRFlatIntegrandSmall,
-                                            0.,m.sqrt(Rmean/rperi-1.),
-                                            args=((R*vT)**2/rperi**2.,),
-                                            **kwargs))
-    TR+= rap*nu.array(integrate.quadrature(_TRFlatIntegrandLarge,
-                                           0.,m.sqrt(1.-Rmean/rap),
-                                           args=((R*vT)**2/rap**2.,),**kwargs))
+    TR= 0.
+    if Rmean > rperi:
+        TR+= rperi*nu.array(integrate.quadrature(_TRFlatIntegrandSmall,
+                                                0.,m.sqrt(Rmean/rperi-1.),
+                                                args=((R*vT)**2/rperi**2.,),
+                                                **kwargs))
+    if Rmean < rap:
+        TR+= rap*nu.array(integrate.quadrature(_TRFlatIntegrandLarge,
+                                               0.,m.sqrt(1.-Rmean/rap),
+                                               args=((R*vT)**2/rap**2.,),
+                                               **kwargs))
     return m.sqrt(2.)*TR
 
 def TphiFlat(R,vR,vT,vc=1.,ro=1.,rap=None,rperi=None,TR=None,I=None,**kwargs):
@@ -122,7 +128,7 @@ def TphiFlat(R,vR,vT,vc=1.,ro=1.,rap=None,rperi=None,TR=None,I=None,**kwargs):
     if rap == None or rperi == None:
         (rperi,rap)= calcRapRperiFlat(R,vR,vT,vc=vc,ro=ro)
     if rap == rperi:
-        return 2.*m.pi*R/vT
+        return nu.array([2.*m.pi*R/vT,0.])
     if TR == None:
         TR= TRFlat(R,vR,vT,vc=1.,ro=1.,rap=rap,rperi=rperi,**kwargs)
     if I == None:
@@ -157,16 +163,21 @@ def IFlat(R,vR,vT,vc=1.,ro=1.,rap=None,rperi=None,**kwargs):
     if rap == None or rperi == None:
         (rperi,rap)= calcRapRperiFlat(R,vR,vT,vc=vc,ro=ro)
     Rmean= m.exp((m.log(rperi)+m.log(rap))/2.)
-    if R < Rmean:
-        I= nu.array(integrate.quadrature(_IFlatIntegrandSmall,
-                                         0.,m.sqrt(R/rperi-1.),
-                                         args=((R*vT)**2/rperi**2.,),
-                                         **kwargs))/rperi
-    else:
-        I= nu.array(integrate.quadrature(_IFlatIntegrandLarge,
-                                         0.,m.sqrt(1.-R/rap),
-                                         args=((R*vT)**2/rap**2.,),
-                                         **kwargs))/rap
+    if rap == rperi: #Rough limit
+        e= 10.**-6.
+        rap= R*(1+e)
+        rperi= R*(1-e)
+    I= 0.
+    if Rmean > rperi:
+        I+= nu.array(integrate.quadrature(_IFlatIntegrandSmall,
+                                          0.,m.sqrt(Rmean/rperi-1.),
+                                          args=((R*vT)**2/rperi**2.,),
+                                          **kwargs))/rperi
+    if Rmean < rap:
+        I+= nu.array(integrate.quadrature(_IFlatIntegrandLarge,
+                                          0.,m.sqrt(1.-Rmean/rap),
+                                          args=((R*vT)**2/rap**2.,),
+                                          **kwargs))/rap
     return I/m.sqrt(2.)*R*vT
 
 def Jphi(R,vR,vT):
@@ -248,18 +259,25 @@ def calcRapRperiFlat(R,vR,vT,vc=1.,ro=1.):
        2010-05-13 - Written - Bovy (NYU)
     """
     EL= calcELFlat(R,vR,vT,vc=vc,ro=ro)
-    rstart= _rapRperiFlatFindStart(R,*EL)
-    rperi= optimize.brentq(_rapRperiFlatEq,rstart,R,EL)
-    rend= _rapRperiFlatFindStart(R,*EL,rap=True)
-    rap= optimize.brentq(_rapRperiFlatEq,R,rend,EL)
-    if rap == rperi and not EL[1] == vc:#if we are smack on apo/peri, we fail
-        if EL[1] > vc: #near peri
-            rap= optimize.newton(_rapRperiFlatEq,rend,args=EL,
-                                 fprime=_rapRperiFlatDeriv)
-        else: #near apo
-            rperi= optimize.newton(_rapRperiFlatEq,rstart,args=EL,
-                                   fprime=_rapRperiFlatDeriv)
-            
+    E, L= EL
+    if vR == 0. and vT > vc: #We are exactly at pericenter
+        rperi= R
+        rend= _rapRperiFlatFindStart(R,E,L,rap=True)
+        rap= optimize.newton(_rapRperiFlatEq,rend,args=EL,
+                             fprime=_rapRperiFlatDeriv)
+    elif vR == 0. and vT < vc: #We are exactly at apocenter
+        rap= R
+        rstart= _rapRperiFlatFindStart(R,E,L)
+        rperi= optimize.newton(_rapRperiFlatEq,rstart,args=EL,
+                               fprime=_rapRperiFlatDeriv)
+    elif vR == 0. and vT == vc: #We are on a circular orbit
+        rperi= R
+        rap = R
+    else:
+        rstart= _rapRperiFlatFindStart(R,E,L)
+        rperi= optimize.brentq(_rapRperiFlatEq,rstart,R,EL)
+        rend= _rapRperiFlatFindStart(R,E,L,rap=True)
+        rap= optimize.brentq(_rapRperiFlatEq,R,rend,EL)
     return (rperi,rap)
 
 def calcELFlat(R,vR,vT,vc=1.,ro=1.):
