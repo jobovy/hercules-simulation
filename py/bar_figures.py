@@ -194,8 +194,6 @@ def veldist_1d_Rphi(plotfilename,nx=10,ny=8,dx=_XWIDTH/20.,
         xrange= sc.array(phirange)*_radtodeg
         yrange=rrange
         thisax.xaxis.set_label_text(r'$\mathrm{Galactocentric\ azimuth}\ [\mathrm{deg}]$')
-        #thisax.set_xlim(-90.01,90.01)
-        print phirange
         thisax.set_xlim(phirange[0]/m.pi*180.-0.01,phirange[1]/m.pi*180.+0.01)
         thisax.yaxis.set_label_text(r'$\mathrm{Galactocentric\ radius}\ / R_0$')
         thisax.set_ylim(yrange[0],yrange[1])
