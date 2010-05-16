@@ -11,7 +11,6 @@ from matplotlib.pyplot import contour, clabel
 _RADTODEG= 180./m.pi
 _XWIDTH= 1.8*80/100/1.8
 _YWIDTH= 1.15*80/20/1.8
-
 def bar_detectability(parser,
                       dx=_XWIDTH/20.,dy=_YWIDTH/20.,
                       nx=100,ny=20,
@@ -91,6 +90,16 @@ def bar_detectability(parser,
             detect[ii,jj]= probDistance.kullbackLeibler(vlosd,axivlosd,ddx,nan=True)
             losd[ii,jj]= m.sqrt(thisR**2.+1.-2.*thisR*m.cos(thisphi))
 
+    #Find maximum, further than 3 kpc away
+    detectformax= detect.flatten()
+    detectformax[losd.flatten() < 3./8.2]= 0.
+    x= sc.argmax(detectformax)
+    indx = sc.unravel_index(x,detect.shape)
+    maxR= (rrange[0]+(rrange[1]-rrange[0])/
+           (ny*_YWIDTH+(ny-1)*dy)*(indx[1]*(_YWIDTH+dy)+_YWIDTH/2.))
+    maxphi= (phirange[0]+(phirange[1]-phirange[0])/
+                      (nx*_XWIDTH+(nx-1)*dx)*(indx[0]*(_XWIDTH+dx)+_XWIDTH/2.))
+    print maxR, maxphi, losd[indx[0],indx[1]], detect[indx[0],indx[1]]
 
     #Now plot
     plot.bovy_print()

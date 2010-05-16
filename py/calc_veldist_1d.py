@@ -15,7 +15,7 @@ _EPSREL= 1.e-02
 _EPSABS= 1.e-05
 _NSIGMA=5.
 def plotVlos(vloslinspace,l=0.,d=1.,t=-4.,distCoord='GC',
-             pot='bar',beta=0.,potparams=(0.9,0.01,20.*_degtorad,.8,None),
+             pot='bar',beta=0.,potparams=(0.9,0.01,25.*_degtorad,.8,None),
              dfparams=(1./3.,1.,0.2),dftype='dehnen',correct=True,
              plotfilename='../bar/vlosdist.ps',
              savefilename='../bar/vlosdist.sav',
@@ -92,7 +92,7 @@ def plotVlos(vloslinspace,l=0.,d=1.,t=-4.,distCoord='GC',
     plot.bovy_end_print(plotfilename)
 
 def predictVlosConvolve(vloslinspace,l=0.,d=1.,t=-4.,distCoord='GC',
-                pot='bar',beta=0.,potparams=(0.9,0.01,20.*_degtorad,.8,None),
+                pot='bar',beta=0.,potparams=(0.9,0.01,25.*_degtorad,.8,None),
                 dfparams=(1./3.,1.,0.2),dftype='dehnen',correct=True,
                 convolve=0.1,nconvolve=101,sigmaconvolve=3):
     """
@@ -163,7 +163,7 @@ def predictVlosConvolve(vloslinspace,l=0.,d=1.,t=-4.,distCoord='GC',
     return vlosd/norm
 
 def predictVlos(vloslinspace,l=0.,d=1.,t=-4.,distCoord='GC',
-                pot='bar',beta=0.,potparams=(0.9,0.01,20.*_degtorad,.8,None),
+                pot='bar',beta=0.,potparams=(0.9,0.01,25.*_degtorad,.8,None),
                 dfparams=(1./3.,1.,0.2),dftype='dehnen',correct=True,
                 convolve=None,nconvolve=101,sigmaconvolve=3):
     """

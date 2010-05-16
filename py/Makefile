@@ -20,4 +20,16 @@ $(BARDIR)/detecta.ps: bar_detectability.py
 $(BARDIR)/detectb.ps: bar_detectability.py
 	$(PYTHON) bar_detectability.py $@ --skipCenter=0.15
 
+$(BARDIR)/barstrength.ps: bar_figures.py
+	$(PYTHON) bar_figures.py $@ --barstrength
+
+$(BARDIR)/df.ps: bar_figures.py
+	$(PYTHON) bar_figures.py $@ --df
+
+$(BARDIR)/slope.ps: bar_figures.py
+	$(PYTHON) bar_figures.py $@ --slope
+
+$(BARDIR)/distuncertain.ps: bar_figures.py
+	$(PYTHON) bar_figures.py $@ --convolve
+
 

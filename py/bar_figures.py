@@ -16,8 +16,8 @@ _degtorad= m.pi/180.
 _radtodeg= 180./m.pi
 _XWIDTH= 1.8*8/10/1.8/1.23
 _YWIDTH= 1.15*8/10/1.8/1.23
-_DEFAULTR= 1.
-_DEFAULTPHI=-1.
+_DEFAULTR= 1.07517899761
+_DEFAULTPHI= -0.361455276723
 def veldist_2d_Rphi(plotfilename,nx=10,ny=8,dx=_XWIDTH/20.,
                     dy=_YWIDTH/20.*1.8/1.15,
                     nsx=2,nsy=2,ngrid=101,rrange=[0.6,1.4],
@@ -273,7 +273,7 @@ def veldist_1d_barstrength(plotfilename,phi=_DEFAULTPHI,R=_DEFAULTR,
     vlosds= []
     basesavefilename= os.path.join(saveDir,'barstrength_')
     for bar_strength in bar_strengths:
-        savefilename= basesavefilename+'%.3f.sav' % bar_strength
+        thissavefilename= basesavefilename+'%.3f.sav' % bar_strength
         if os.path.exists(thissavefilename):
             print "Restoring los-velocity distribution at bar-strength %.3f" % bar_strength
             savefile= open(thissavefilename,'r')
@@ -289,16 +289,83 @@ def veldist_1d_barstrength(plotfilename,phi=_DEFAULTPHI,R=_DEFAULTR,
                                pot='bar',beta=0.,
                                potparams=potparams)
             vlosd= vlosd/(sc.nansum(vlosd)*(vloss[1]-vloss[0]))
+            savefile= open(thissavefilename,'w')
+            pickle.dump(vlosd,savefile)
+            savefile.close()
         vlosds.append(vlosd)
     #Plot
     plot.bovy_print()
     plot.bovy_plot(vloss,vlosds[1],'k-',zorder=3,
                    xrange=[vloslinspace[0],vloslinspace[1]],
-                   yrange=[0.,sc.amax(vlosds.flatten())*1.1],
+                   yrange=[0.,sc.amax(sc.array(vlosds).flatten())*1.1],
+                   xlabel=r'$v_{\mathrm{los}} / v_0$')
+    plot.bovy_plot(vloss,vlosds[0],ls='-',color='0.75',
+                   overplot=True,zorder=2,lw=2.)
+    plot.bovy_plot(vloss,vlosds[2],ls='-',color='0.5',
+                   overplot=True,zorder=2,lw=2.)
+    #BOVY: annotate
+    plot.bovy_end_print(plotfilename)
+
+def veldist_1d_slope(plotfilename,phi=_DEFAULTPHI,R=_DEFAULTR,
+                     ngrid=201,saveDir='../bar/1dvar/'):
+    """
+    NAME:
+       veldist_1d_slope
+    PURPOSE:
+       make a plot showing the influence of the shape of the rotation curve
+    INPUT:
+       plotfilename - filename for figure
+       phi - Galactocentric azimuth
+       R - Galactocentric radius
+       ngrid - number of grid-points to calculate the los velocity distribution
+               on
+       saveDir - save pickles here
+    OUTPUT:
+       Figure in plotfilename
+    HISTORY:
+       2010-05-15 - Written - Bovy (NYU)
+    """
+    slopes= [-0.2,-0.1,0.,0.1,0.2]
+
+    vloslinspace= (-.9,.9,ngrid)
+    vloss= sc.linspace(*vloslinspace)
+
+    vlosds= []
+    basesavefilename= os.path.join(saveDir,'slope_')
+    for slope in slopes:
+        thissavefilename= basesavefilename+'%.1f.sav' % slope
+        if os.path.exists(thissavefilename):
+            print "Restoring los-velocity distribution at slope %.1f" % slope
+            savefile= open(thissavefilename,'r')
+            vlosd= pickle.load(savefile)
+            savefile.close()
+        else:
+            print "Calculating los-velocity distribution at slope %.1f" % slope
+            potparams= (0.9,0.01,25.*_degtorad,.8,None)
+            vlosd= predictVlos(vloslinspace,
+                               l=phi,
+                               d=R,
+                               distCoord='GCGC',
+                               pot='bar',beta=slope,
+                               potparams=potparams)
+            vlosd= vlosd/(sc.nansum(vlosd)*(vloss[1]-vloss[0]))
+            savefile= open(thissavefilename,'w')
+            pickle.dump(vlosd,savefile)
+            savefile.close()
+        vlosds.append(vlosd)
+    #Plot
+    plot.bovy_print()
+    plot.bovy_plot(vloss,vlosds[2],'k-',zorder=3,
+                   xrange=[vloslinspace[0],vloslinspace[1]],
+                   yrange=[0.,sc.amax(sc.array(vlosds).flatten())*1.1],
                    xtitle='v_{\mathrm{los} / v_0')
     plot.bovy_plot(vloss,vlosds[0],ls='-',color='0.5',
                    overplot=True,zorder=2,lw=2.)
-    plot.bovy_plot(vloss,vlosds[2],ls='-',color='0.5',
+    plot.bovy_plot(vloss,vlosds[1],ls='-',color='0.5',
+                   overplot=True,zorder=2,lw=2.)
+    plot.bovy_plot(vloss,vlosds[3],ls='-',color='0.5',
+                   overplot=True,zorder=2,lw=2.)
+    plot.bovy_plot(vloss,vlosds[4],ls='-',color='0.5',
                    overplot=True,zorder=2,lw=2.)
     #BOVY: annotate
     plot.bovy_end_print(plotfilename)
@@ -353,5 +420,7 @@ if __name__ == '__main__':
             veldist_1d_Rphi(args[0],phirange=phirange)
     elif options.barstrength:
         veldist_1d_barstrength(args[0],phi=options.phi,R=options.R)
+    elif options.slope:
+        veldist_1d_slope(args[0],phi=options.phi,R=options.R)
     else:
         veldist_2d_Rphi(args[0])
