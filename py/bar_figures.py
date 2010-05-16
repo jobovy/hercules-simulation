@@ -16,8 +16,8 @@ _degtorad= m.pi/180.
 _radtodeg= 180./m.pi
 _XWIDTH= 1.8*8/10/1.8/1.23
 _YWIDTH= 1.15*8/10/1.8/1.23
-#_XWIDTH= 1.8*80/100/1.8
-#_YWIDTH= 1.15*80/20/1.8
+_DEFAULTR= 1.
+_DEFAULTPHI=-1.
 def veldist_2d_Rphi(plotfilename,nx=10,ny=8,dx=_XWIDTH/20.,
                     dy=_YWIDTH/20.*1.8/1.15,
                     nsx=2,nsy=2,ngrid=101,rrange=[0.6,1.4],
@@ -134,11 +134,6 @@ def veldist_1d_Rphi(plotfilename,nx=10,ny=8,dx=_XWIDTH/20.,
                     phirange=[-m.pi/2.,m.pi/2.],
                     saveDir='../bar/1d/',normalize=True,
                     row=None):
-#def veldist_1d_Rphi(plotfilename,nx=100,ny=20,dx=_XWIDTH/20.,dy=_YWIDTH/20.,
-#                    ngrid=201,rrange=[0.7,1.3],
-#                    phirange=[-m.pi/2.,m.pi/2.],
-#                    saveDir='../bar/1dLarge/',normalize=True,
-#                    row=None):
     """
     NAME:
        veldist_1d_Rphi
@@ -251,6 +246,63 @@ def veldist_1d_Rphi(plotfilename,nx=10,ny=8,dx=_XWIDTH/20.,
     if not calcOnly:
         plot.bovy_end_print(plotfilename)
 
+def veldist_1d_barstrength(plotfilename,phi=_DEFAULTPHI,R=_DEFAULTR,
+                           ngrid=201,saveDir='../bar/1dvar/'):
+    """
+    NAME:
+       veldist_1d_barstrength
+    PURPOSE:
+       make a plot showing the influence of the bar strength
+    INPUT:
+       plotfilename - filename for figure
+       phi - Galactocentric azimuth
+       R - Galactocentric radius
+       ngrid - number of grid-points to calculate the los velocity distribution
+               on
+       saveDir - save pickles here
+    OUTPUT:
+       Figure in plotfilename
+    HISTORY:
+       2010-05-15 - Written - Bovy (NYU)
+    """
+    bar_strengths= [0.007,0.01,0.013]
+
+    vloslinspace= (-.9,.9,ngrid)
+    vloss= sc.linspace(*vloslinspace)
+
+    vlosds= []
+    basesavefilename= os.path.join(saveDir,'barstrength_')
+    for bar_strength in bar_strengths:
+        savefilename= basesavefilename+'%.3f.sav' % bar_strength
+        if os.path.exists(thissavefilename):
+            print "Restoring los-velocity distribution at bar-strength %.3f" % bar_strength
+            savefile= open(thissavefilename,'r')
+            vlosd= pickle.load(savefile)
+            savefile.close()
+        else:
+            print "Calculating los-velocity distribution at bar-strength %.3f" % bar_strength
+            potparams= (0.9,bar_strength,25.*_degtorad,.8,None)
+            vlosd= predictVlos(vloslinspace,
+                               l=phi,
+                               d=R,
+                               distCoord='GCGC',
+                               pot='bar',beta=0.,
+                               potparams=potparams)
+            vlosd= vlosd/(sc.nansum(vlosd)*(vloss[1]-vloss[0]))
+        vlosds.append(vlosd)
+    #Plot
+    plot.bovy_print()
+    plot.bovy_plot(vloss,vlosds[1],'k-',zorder=3,
+                   xrange=[vloslinspace[0],vloslinspace[1]],
+                   yrange=[0.,sc.amax(vlosds.flatten())*1.1],
+                   xtitle='v_{\mathrm{los} / v_0')
+    plot.bovy_plot(vloss,vlosds[0],ls='-',color='0.5',
+                   overplot=True,zorder=2,lw=2.)
+    plot.bovy_plot(vloss,vlosds[2],ls='-',color='0.5',
+                   overplot=True,zorder=2,lw=2.)
+    #BOVY: annotate
+    plot.bovy_end_print(plotfilename)
+
 def get_options():
     usage = "usage: %prog [options] <plotfilename>\n\nplotfilename= name of the file that the figure will be saved to"
     parser = OptionParser(usage=usage)
@@ -263,11 +315,26 @@ def get_options():
     parser.add_option("-c", "--col",dest="col",type='int',
                       default=None,
                       help="Only calculate one column of los")
-    parser.add_option("--convolve", dest="convolve",type='float',
-                      default=None,
-                      help="Convolve with relative distance uncertainties of this magnitude")
-    
+    parser.add_option("-R",dest="R",type='float',
+                      default=_DEFAULTR,
+                      help="Galactocentric radius of target region (for convolve, barstrength, df, and slope figures")
+    parser.add_option("--phi",dest="phi",type='float',
+                      default=_DEFAULTPHI,
+                      help="Galactocentric azimuth of target region (for convolve, barstrength, df, and slope figures")
+    parser.add_option("--convolve", dest="convolve",
+                      default=False,action="store_true", 
+                      help="Make plot showing influence of distance uncertainties")
+    parser.add_option("--df", dest="df",
+                      default=False,action="store_true", 
+                      help="Make plot showing influence of distribution function assumptions")
+    parser.add_option("--barstrength", dest="barstrength",
+                      default=False,action="store_true", 
+                      help="Make plot showing influence of the bar-strength")
+    parser.add_option("--slope", dest="slope",
+                      default=False,action="store_true", 
+                      help="Make plot showing the influence of the slope of the rotation curve")
     return parser
+
 if __name__ == '__main__':
     parser= get_options()
     (options,args)= parser.parse_args()
@@ -284,5 +351,7 @@ if __name__ == '__main__':
             veldist_1d_Rphi(args[0],phirange=phirange,row=options.col)
         else:
             veldist_1d_Rphi(args[0],phirange=phirange)
+    elif options.barstrength:
+        veldist_1d_barstrength(args[0],phi=options.phi,R=options.R)
     else:
         veldist_2d_Rphi(args[0])
