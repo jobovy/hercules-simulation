@@ -462,17 +462,18 @@ class shuDF(distFunc):
         #Calculate RL,LL, OmegaL
         if self._beta == 0.:
             xL= L
-            logECLE= sc.log(sc.log(xL)+0.5-E)
+            logECLE= sc.log(-sc.log(xL)-0.5+E)
         else: #non-flat rotation curve
             xL= L**(1./(self._beta+1.))
-            logECLE= sc.log(0.5*(1./self._beta+1.)*xL**(2.*self._beta)-E)
+            logECLE= sc.log(-0.5*(1./self._beta+1.)*xL**(2.*self._beta)+E)
+        if xL < 0.: #We must remove counter-rotating mass
+            return 0.
         if self._correct: 
             correction= self._corr.correct(xL,log=True)
         else:
             correction= sc.zeros(2)
         SRE2= self.targetSigma2(xL,log=True)+correction[1]
-        return sc.exp(logsigmaR2-SRE2+self.targetSurfacemass(xL,log=True)-logSigmaR+sc.exp(logECLE-SRE2)+correction[0])
-
+        return sc.exp(logsigmaR2-SRE2+self.targetSurfacemass(xL,log=True)-logSigmaR-sc.exp(logECLE-SRE2)+correction[0])
 
 def _surfaceIntegrand(vR,vT,R,df,logSigmaR,logsigmaR2,sigmaR1,gamma):
     """Internal function that is the integrand for the surface mass integration"""
