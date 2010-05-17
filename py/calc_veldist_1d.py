@@ -5,7 +5,7 @@ import numpy as nu
 import scipy as sc
 import scipy.integrate as integrate
 from integrate_orbits import uvToELz
-from interpret_as_df import dehnenDF
+from interpret_as_df import dehnenDF, shuDF
 import bovy_plot as plot
 _DEBUG=True
 _degtorad= sc.pi/180.
@@ -293,8 +293,10 @@ def marginalizeAngle(vlos,alpha,R=1.,t=-4.,pot='bar',beta=0.,
     HISTORY:
        2010-04-04 - Written - Bovy (NYU)
     """
-    if dftype == 'dehnen':
+    if dftype.lower() == 'dehnen':
         thisDF= dehnenDF
+    elif dftype.lower() == 'shu':
+        thisDF= shuDF
     df= thisDF(profileParams=dfparams,beta=beta,correct=correct,
                niter=_NCORRECT)
     intLimit= _NSIGMA*m.sqrt(df.targetSigma2(R))
