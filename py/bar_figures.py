@@ -11,7 +11,7 @@ import bovy_plot as plot
 from matplotlib import pyplot
 import matplotlib.ticker as ticker
 from calc_veldist_2d import calc_veldist_2d
-from calc_veldist_1d import predictVlos
+from calc_veldist_1d import predictVlos, predictVlosConvolve
 _degtorad= m.pi/180.
 _radtodeg= 180./m.pi
 _XWIDTH= 1.8*8/10/1.8/1.23
