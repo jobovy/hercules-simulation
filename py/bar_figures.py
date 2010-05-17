@@ -371,8 +371,12 @@ def veldist_1d_barstrength(plotfilename,phi=_DEFAULTPHI,R=_DEFAULTR,
     plot.bovy_plot(vloss,vlosds[0],ls='-',color='0.75',
                    overplot=True,zorder=2,lw=2.)
     plot.bovy_plot(vloss,vlosds[2],ls='-',color='0.5',
-                   overplot=True,zorder=2,lw=2.)
-    #BOVY: annotate
+                   overplot=True,zorder=2,lw=1.5)
+    plot.bovy_text(r'$\mathrm{bar\ strength}$',title=True)
+    plot.bovy_text(r'$\alpha = 0.013$'+'\n'+r'$\alpha = 0.010$'+ '\n'+r'$\alpha = 0.007$',top_right=True)
+    pyplot.arrow(0.45,3.78,-0.41,-0.11,color='0.',lw=.75,ls='dashed')
+    pyplot.arrow(0.45,3.58,-0.4,-0.11,color='0.',lw=.75,ls='dashed')
+    pyplot.arrow(0.45,3.4,-0.4,-0.22,color='0.',lw=.75,ls='dashed')
     plot.bovy_end_print(plotfilename)
 
 def veldist_1d_df(plotfilename,phi=_DEFAULTPHI,R=_DEFAULTR,
