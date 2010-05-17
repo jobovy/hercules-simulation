@@ -564,6 +564,6 @@ if __name__ == '__main__':
     elif options.df:
         veldist_1d_df(args[0],phi=options.phi,R=options.R)
     elif options.convolve:
-        veldist_1d_convovle(args[0],phi=options.phi,R=options.R)
+        veldist_1d_convolve(args[0],phi=options.phi,R=options.R)
     else:
         veldist_2d_Rphi(args[0])
