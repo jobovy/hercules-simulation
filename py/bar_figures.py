@@ -280,7 +280,7 @@ def veldist_1d_convolve(plotfilename,phi=_DEFAULTPHI,R=_DEFAULTR,
             vlosd= pickle.load(savefile)
             savefile.close()
         else:
-            print "Restoring los-velocity distribution at distance uncertainties %.1f" % distsig
+            print "Calculating los-velocity distribution at distance uncertainties %.1f" % distsig
             potparams= (0.9,0.01,25.*_degtorad,.8,None)
             if distsig == 0.:
                 vlosd= predictVlos(vloslinspace,
