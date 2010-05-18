@@ -55,6 +55,7 @@ def bar_detectability(parser,
 
     detect= sc.zeros((nx,ny))
     losd= sc.zeros((nx,ny))
+    gall= sc.zeros((nx,ny))
     for ii in range(nx):
         for jj in range(ny):
             thisR= (rrange[0]+(rrange[1]-rrange[0])/
@@ -88,7 +89,14 @@ def bar_detectability(parser,
             vlosd[axivlosd_zeroindx]= 1.
             axivlosd[axivlosd_zeroindx]= 1.
             detect[ii,jj]= probDistance.kullbackLeibler(vlosd,axivlosd,ddx,nan=True)
-            losd[ii,jj]= m.sqrt(thisR**2.+1.-2.*thisR*m.cos(thisphi))
+            #los distance and Galactic longitude
+            d= m.sqrt(thisR**2.+1.-2.*thisR*m.cos(thisphi))
+            losd[ii,jj]= d
+            if 1./m.cos(thisphi) < thisR and m.cos(thisphi) > 0.:
+                l= m.pi-m.asin(thisR/d*m.sin(thisphi))
+            else:
+                l= m.asin(thisR/d*m.sin(thisphi))
+            gall[ii,jj]= l
 
     #Find maximum, further than 3 kpc away
     detectformax= detect.flatten()
@@ -99,7 +107,7 @@ def bar_detectability(parser,
            (ny*_YWIDTH+(ny-1)*dy)*(indx[1]*(_YWIDTH+dy)+_YWIDTH/2.))
     maxphi= (phirange[0]+(phirange[1]-phirange[0])/
                       (nx*_XWIDTH+(nx-1)*dx)*(indx[0]*(_XWIDTH+dx)+_XWIDTH/2.))
-    print maxR, maxphi, losd[indx[0],indx[1]], detect[indx[0],indx[1]]
+    print maxR, maxphi, losd[indx[0],indx[1]], detect[indx[0],indx[1]], gall[indx[0],indx[1]]*180./sc.pi
 
     #Now plot
     plot.bovy_print()
@@ -109,9 +117,24 @@ def bar_detectability(parser,
                      cmap='gist_yarg',xrange=sc.array(phirange)*_RADTODEG,
                      yrange=rrange,
                      aspect=(phirange[1]-phirange[0])*_RADTODEG/(rrange[1]-rrange[0]))
-    #contour the los distance
+    #contour the los distance and gall
+    #plot.bovy_text(-22.,1.1,r'$\mathrm{apogee}$',color='w',
+    #                rotation=105.)
+    plot.bovy_text(-18.,1.1,r'$\mathrm{APOGEE}$',color='w',
+                    rotation=285.)
     levels= [2/8.2*(ii+1/2.) for ii in range(10)]
     contour(losd.T,levels,colors='0.25',origin='lower',linestyles='--',
+            aspect=(phirange[1]-phirange[0])*_RADTODEG/(rrange[1]-rrange[0]),
+            extent=(phirange[0]*_RADTODEG,phirange[1]*_RADTODEG,
+                    rrange[0],rrange[1]))
+    gall[gall < 0.]+= sc.pi*2.
+    levels= [0.,sc.pi/2.,sc.pi,3.*sc.pi/2.]
+    contour(gall.T,levels,colors='w',origin='lower',linestyles='--',
+            aspect=(phirange[1]-phirange[0])*_RADTODEG/(rrange[1]-rrange[0]),
+            extent=(phirange[0]*_RADTODEG,phirange[1]*_RADTODEG,
+                    rrange[0],rrange[1]))
+    levels= [-5/180.*sc.pi,250/180.*sc.pi]
+    contour(gall.T,levels,colors='w',origin='lower',linestyles='-.',
             aspect=(phirange[1]-phirange[0])*_RADTODEG/(rrange[1]-rrange[0]),
             extent=(phirange[0]*_RADTODEG,phirange[1]*_RADTODEG,
                     rrange[0],rrange[1]))

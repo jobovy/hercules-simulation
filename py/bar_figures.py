@@ -312,7 +312,8 @@ def veldist_1d_convolve(plotfilename,phi=_DEFAULTPHI,R=_DEFAULTR,
                    overplot=True,zorder=2,lw=2.)
     plot.bovy_plot(vloss,vlosds[2],ls='-',color='0.5',
                    overplot=True,zorder=2,lw=2.)
-    #BOVY: annotate
+    plot.bovy_text(r'$\mathrm{distance\ uncertainties}$',title=True)
+    plot.bovy_text(0.5,.65,r'$\sigma_d = 0$'+'\n'+r'$\sigma_d = 10 \%$'+ '\n'+r'$\sigma_d = 20 \%$')
     plot.bovy_end_print(plotfilename)
 
 def veldist_1d_barstrength(plotfilename,phi=_DEFAULTPHI,R=_DEFAULTR,
