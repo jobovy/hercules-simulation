@@ -373,10 +373,10 @@ def veldist_1d_barstrength(plotfilename,phi=_DEFAULTPHI,R=_DEFAULTR,
     plot.bovy_plot(vloss,vlosds[2],ls='-',color='0.5',
                    overplot=True,zorder=2,lw=1.5)
     plot.bovy_text(r'$\mathrm{bar\ strength}$',title=True)
-    plot.bovy_text(0.5,1.,r'$\alpha = 0.013$'+'\n'+r'$\alpha = 0.010$'+ '\n'+r'$\alpha = 0.007$')
-    pyplot.arrow(0.48,1.39,-0.14,-0.28,color='0.',lw=.75,zorder=4)
-    pyplot.arrow(0.48,1.22,-0.14,-0.23,color='0.',lw=.75,zorder=4)
-    pyplot.arrow(0.48,1.04,-0.14,-0.17,color='0.',lw=.75,zorder=4)
+    plot.bovy_text(0.5,.75,r'$\alpha = 0.013$'+'\n'+r'$\alpha = 0.010$'+ '\n'+r'$\alpha = 0.007$')
+    #pyplot.arrow(0.48,1.39,-0.14,-0.28,color='0.',lw=.75,zorder=4)
+    #pyplot.arrow(0.48,1.22,-0.14,-0.23,color='0.',lw=.75,zorder=4)
+    #pyplot.arrow(0.48,1.04,-0.14,-0.17,color='0.',lw=.75,zorder=4)
 
     #plot.bovy_text(r'$\alpha = 0.013$'+'\n'+r'$\alpha = 0.010$'+ '\n'+r'$\alpha = 0.007$',top_right=True)
     #pyplot.arrow(0.45,3.78,-0.41,-0.09,color='0.',lw=.75,ls='dashed',zorder=4)
@@ -517,15 +517,20 @@ def veldist_1d_slope(plotfilename,phi=_DEFAULTPHI,R=_DEFAULTR,
                    overplot=True,zorder=2,lw=2.)
     #BOVY: annotate
     plot.bovy_text(r'$\mathrm{shape\ of\ the\ rotation\ curve}$',title=True)
-    plot.bovy_text(r'$\beta = -0.2$'+'\n'+r'$\beta = -0.1$'+ '\n'+
+    plot.bovy_text(0.5,.5,r'$\beta = -0.2$'+'\n'+r'$\beta = -0.1$'+ '\n'+
                    r'$\beta = \phantom{-}0.0$'+'\n'+
                    r'$\beta= \phantom{-}0.1$'+'\n'+
-                   r'$\beta= \phantom{-}0.2$',top_right=True)
-    pyplot.arrow(0.45,3.85,-0.41,-0.09,color='0.',lw=.75,ls='dashed',zorder=4)
-    pyplot.arrow(0.45,3.68,-0.41,-0.04,color='0.',lw=.75,ls='dashed',zorder=4)
-    pyplot.arrow(0.45,3.48,-0.40,-0.03,color='0.',lw=.75,ls='dashed',zorder=4)
-    pyplot.arrow(0.45,3.29,-0.40,-0.03,color='0.',lw=.75,ls='dashed',zorder=4)
-    pyplot.arrow(0.45,3.12,-0.40,-0.03,color='0.',lw=.75,ls='dashed',zorder=4)
+                   r'$\beta= \phantom{-}0.2$')
+
+    #plot.bovy_text(r'$\beta = -0.2$'+'\n'+r'$\beta = -0.1$'+ '\n'+
+    #               r'$\beta = \phantom{-}0.0$'+'\n'+
+    #               r'$\beta= \phantom{-}0.1$'+'\n'+
+    #               r'$\beta= \phantom{-}0.2$',top_right=True)
+    #pyplot.arrow(0.45,3.85,-0.41,-0.09,color='0.',lw=.75,ls='dashed',zorder=4)
+    #pyplot.arrow(0.45,3.68,-0.41,-0.04,color='0.',lw=.75,ls='dashed',zorder=4)
+    #pyplot.arrow(0.45,3.48,-0.40,-0.03,color='0.',lw=.75,ls='dashed',zorder=4)
+    #pyplot.arrow(0.45,3.29,-0.40,-0.03,color='0.',lw=.75,ls='dashed',zorder=4)
+    #pyplot.arrow(0.45,3.12,-0.40,-0.03,color='0.',lw=.75,ls='dashed',zorder=4)
     plot.bovy_end_print(plotfilename)
 
 def get_options():
