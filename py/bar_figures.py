@@ -448,20 +448,15 @@ def veldist_1d_df(plotfilename,phi=_DEFAULTPHI,R=_DEFAULTR,
     plot.bovy_plot(vloss,vlosds[2],ls='-',color='0.60',
                    overplot=True,zorder=2,lw=2.)
     plot.bovy_plot(vloss,vlosds[3],ls='-',color='0.45',
-                   overplot=True,zorder=2,lw=2.)
+                   overplot=True,zorder=2,lw=1.5)
     plot.bovy_plot(vloss,vlosds[4],ls='-',color='0.3',
-                   overplot=True,zorder=2,lw=2.)
-    #BOVY: annotate
+                   overplot=True,zorder=2,lw=1.5)
     plot.bovy_text(r'$\mathrm{distribution\ function}$',title=True)
     plot.bovy_text(0.53,.3,r'$R_s = 0.25 R_0$'+'\n'
                    +r'$R_{\sigma} = 2 R_s$'+'\n'
                    +r'$\mathrm{fiducial}$'+'\n'
                    +r'$\mathrm{Shu\ DF}$'+'\n'
                    +r'$R_s = 0.4 R_0$',size=10.)
-    #pyplot.arrow(0.48,1.39,-0.14,-0.28,color='0.',lw=.75,zorder=4)
-    #pyplot.arrow(0.48,1.22,-0.14,-0.23,color='0.',lw=.75,zorder=4)
-    #pyplot.arrow(0.48,1.04,-0.14,-0.17,color='0.',lw=.75,zorder=4)
-
     plot.bovy_end_print(plotfilename)
 
 def veldist_1d_slope(plotfilename,phi=_DEFAULTPHI,R=_DEFAULTR,
@@ -522,9 +517,9 @@ def veldist_1d_slope(plotfilename,phi=_DEFAULTPHI,R=_DEFAULTR,
     plot.bovy_plot(vloss,vlosds[1],ls='-',color='0.60',
                    overplot=True,zorder=2,lw=2.)
     plot.bovy_plot(vloss,vlosds[3],ls='-',color='0.45',
-                   overplot=True,zorder=2,lw=2.)
+                   overplot=True,zorder=2,lw=1.5)
     plot.bovy_plot(vloss,vlosds[4],ls='-',color='0.3',
-                   overplot=True,zorder=2,lw=2.)
+                   overplot=True,zorder=2,lw=1.5)
     #BOVY: annotate
     plot.bovy_text(r'$\mathrm{shape\ of\ the\ rotation\ curve}$',title=True)
     plot.bovy_text(0.5,.5,r'$\beta = -0.2$'+'\n'+r'$\beta = -0.1$'+ '\n'+

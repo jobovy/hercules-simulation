@@ -115,6 +115,12 @@ def bar_detectability(parser,
             aspect=(phirange[1]-phirange[0])*_RADTODEG/(rrange[1]-rrange[0]),
             extent=(phirange[0]*_RADTODEG,phirange[1]*_RADTODEG,
                     rrange[0],rrange[1]))
+    if options.skipCenter == 0.:
+        plot.bovy_text(r'$\mathrm{KL\ divergence\ / \ all}\ v_{\mathrm{los}}$',
+                       title=True)
+    else:
+        plot.bovy_text(r'$\mathrm{KL\ divergence\ / }\ |v_{\mathrm{los}}| \geq %.2f \ v_0$' % options.skipCenter,
+                       title=True)
     plot.bovy_end_print(args[0])
 
 def bar_detectability_convolve(parser,nconvsamples=1000,
