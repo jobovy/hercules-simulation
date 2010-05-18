@@ -1,5 +1,5 @@
 
-all: ms.pdf
+all: ms.pdf hercules.pdf
 
 %.pdf: %.ps
 	ps2pdf -dMaxSubsetPct=100 -dCompatibilityLevel=1.2 -dSubsetFonts=true -dEmbedAllFonts=true $<
