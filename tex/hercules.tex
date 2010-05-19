@@ -26,6 +26,17 @@
 \newcommand{\vo}{\ensuremath{v_0}}
 \newcommand{\Ro}{\ensuremath{R_0}}
 \newcommand{\ro}{\Ro}
+\newcommand{\Ab}{\ensuremath{A_b}}
+\newcommand{\Rb}{\ensuremath{R_b}}
+\newcommand{\Omegab}{\ensuremath{\Omega_b}}
+\newcommand{\fdehnen}{\ensuremath{f_{\text{Dehnen}}}}
+\newcommand{\sigmaR}{\ensuremath{\sigma_R}}
+\newcommand{\rE}{\ensuremath{R_e}}
+\newcommand{\Lc}{\ensuremath{L_c}}
+\newcommand{\Rs}{\ensuremath{R_s}}
+\newcommand{\Rsigma}{\ensuremath{R_{\sigma}}}
+\newcommand{\Rolr}{\ensuremath{R_{\text{OLR}}}}
+
 
 \begin{document}
 
@@ -70,7 +81,78 @@ baryon acoustic feature, coincidence problem
 
 \section{Methodology}
 
-We follow Dehnen's approach \citep{dehnen00a}. Only planar.
+To simulate the effect of the bar on stellar orbits near the Solar
+circle, we follow the approach of \citet{dehnen00a}. For a fixed
+position in the Galaxy, we evaluate the velocity distribution function
+at values for the radial---toward the Galactic center---and
+tangential---in the direction of Galactic rotation---velocity by
+backward-integrating these velocities in the the Galactic potential to
+obtain the intial orbit before bar formation. We posit that at this
+epoch the old stellar disk was in a steady-state that can be described
+by a simple distribution function that is a function of the energy and
+angular momentum of the orbit alone. It follows from the collisionless
+Boltzmann equation that the value of the velocity distribution at the
+present position and velocity is equal to that of the steady-state
+distribution function before bar formation evaluated at the initial
+orbit.
+
+Since the Hercules stream is only apparent in the planar motions in
+the disk \citep[\eg][]{Bovy09a}, we only consider a two-dimensional
+model for the Galaxy. We use a simple power-law rotation curve to
+model the axisymmetric Galactic potential
+\begin{equation}
+v_c = \vo(R/\Ro)^\beta \,,
+\end{equation}
+and for most of the simulations below we specify this model further to
+a flat rotation curve ($\beta = 0$). The model for the bar is given by
+the following potential
+\begin{equation}
+\Phi_b(R,\phi) = \Ab(t) \cos [2(\phi - \Omegab t)] \times
+\left\{ \begin{array}{ll} -(\Rb/R)^3\,, & \mathrm{for}\ R \geq
+  \Rb\,,\\ (R/\Rb)^3-2\,, & \mathrm{for}\ R \leq \Rb\,. \end{array}
+\right.
+\end{equation}
+Here \Omegab\ is the pattern speed of the bar and \Rb\ is the bar
+radius, which is fixed to be 80\,percent of the bar's corotation
+radius. The bar is grown smoothly during a time $t_1$, always set to
+half of the total integration time in what follows, following the
+prescription
+\begin{equation}
+\Ab(t) = \alpha \, \frac{\vo^2}{3}\,\left(\frac{\Ro}{\Rb}\right)^3
+\times \left\{ \begin{array}{lll}
+\frac{3}{16}\xi^5 - \frac{5}{8} \xi^3 + \frac{15}{16} \xi + \frac{1}{2}\,, & \xi \equiv 2\frac{t}{t_1}-1\,, & t \leq t_1\,,\\
+1\,, & & t \geq t_1\,.\end{array} \right. 
+\end{equation}
+
+For the distribution function of the stellar disk before bar
+formation, we use a Dehnen distribution function \citep{dehnen99b}
+given by
+\begin{equation}
+\fdehnen(E,L) \propto \frac{\Sigma(\rE)}{\sigmaR^2(\rE)} \, \exp\left[ \frac{\Omega(\rE)\left[L-\Lc(E)\right]}{\sigmaR^2(\rE)}\right]\,,
+\end{equation}
+where \rE, \Lc, and $\Omega(\rE)$ are the radius, the angular
+momentum, and the angular frequency, respectively, of the circular
+orbit with energy $E$. Using the procedure given in \sectionname~3.2
+of \citet{dehnen99b}, we choose the $\Sigma(R)$ and $\sigmaR$
+functions such that they reproduce a disk with exponential surface
+density and velocity dispersion profiles 
+\begin{equation}
+\Sigma(R) = \Sigma_0 \exp\left(-R/\Rs\right)\,, \qquad 
+\sigmaR(R) = \sigma_0 \exp\left(-R/\Rsigma\right)\,,
+\end{equation}
+to an accuracy of a fraction of a percent at all radii. Our fiducial
+model for the distribution function has \Rs = \Ro /3 and \Rsigma =
+3\Rs, and $\sigma_0$ such that $\sigmaR(\Ro) = 0.2 \vo$.
+
+As shown by \citet{dehnen99c,dehnen00a}, the model described above
+that places the Sun at \Ro = 0.9\Rolr---where \Rolr\ is the radius at
+which a circular orbit is in the outer Lindblad resonance with the
+bar---at a current angle of 25$^{\circ}$ with the bar, with a bar
+strength $\alpha = 0.01$, and integrating for four bar periods,
+reproduces the Hercules feature in the local velocity distribution
+while agreeing with other photometric and kinematical observations of
+the bar. In what follows, unless indicated otherwise, we fix all of
+the parameters of the model at these fiducial values.
 
 
 \section{Two-dimensional velocity distributions}
@@ -135,14 +217,14 @@ SDSS-III Project Description\footnote{Available at
 \bibitem[{{Dehnen}(1998)}]{Dehnen98b}
 Dehnen,~W., 1998, \aj, 115, 2384
 
-\bibitem[Dehnen(1999a)]{dehnen99a}
-  Dehnen,~W., 1999a, \aj, 118, 1190
+%\bibitem[Dehnen(1999a)]{dehnen99a}
+%  Dehnen,~W., 1999a, \aj, 118, 1190
 
-\bibitem[Dehnen(1999b)]{dehnen99b}
-  Dehnen,~W., 1999b, \aj, 118, 1201
+\bibitem[Dehnen(1999a)]{dehnen99b}
+  Dehnen,~W., 1999a, \aj, 118, 1201
 
-\bibitem[Dehnen(1999c)]{dehnen99c}
-  Dehnen,~W., 1999c, \apj, 524, L35
+\bibitem[Dehnen(1999b)]{dehnen99c}
+  Dehnen,~W., 1999b, \apj, 524, L35
 
 \bibitem[Dehnen(2000)]{dehnen00a}
   Dehnen,~W., 2000, \aj, 119, 800
