@@ -20,6 +20,12 @@
 \newcommand{\vx}{\tvector{x}}
 \newcommand{\vv}{\tvector{v}}
 \newcommand{\Gaia}{\emph{Gaia}}
+\newcommand{\apogee}{APOGEE}
+\newcommand{\vR}{\ensuremath{v_R}}
+\newcommand{\vphi}{\ensuremath{v_{\phi}}}
+\newcommand{\vo}{\ensuremath{v_0}}
+\newcommand{\Ro}{\ensuremath{R_0}}
+\newcommand{\ro}{\Ro}
 
 \begin{document}
 
@@ -44,13 +50,13 @@ Hercules feature is strong enough that it can be unambiguously
 detected in the distribution of line-of-sight velocities in selected
 directions. I quantify the most promising lines-of-sight for detection
 in radial velocities: The most promising directions to target are at
-$l \geq 250^{\circ}$. The predictions presented here are only weakly
-affected by distance uncertainties, assumptions about the distribution
-function of the old stellar disk, and the details of the Galactic
-potential including the effect of spiral structure; \Gaia\ and future
-spectroscopic surveys of the Galactic disk will be able to robustly
-test the origin of the Hercules stream and constrain the properties of
-the Galactic bar.
+$l \gtrsim 250^{\circ}$. The predictions presented here are only
+weakly affected by distance uncertainties, assumptions about the
+distribution function of the old stellar disk, and the details of the
+Galactic potential including the effect of spiral structure;
+\Gaia\ and future spectroscopic surveys of the Galactic disk will be
+able to robustly test the origin of the Hercules stream and constrain
+the properties of the Galactic bar.
 \end{abstract}
 
 \keywords{Galaxy: bulge --- Galaxy: disk --- Galaxy: evolution ---
@@ -81,6 +87,8 @@ We follow Dehnen's approach \citep{dehnen00a}. Only planar.
 
 SDSS-III Project Description\footnote{Available at
   \url{http://sdss3.org/collaboration/description.pdf}~.}
+
+\acknowledgements David Hogg, Michael Blanton.
 
 \begin{thebibliography}{}
 
@@ -179,27 +187,49 @@ Dehnen,~W., 1998, \aj, 115, 2384
 \clearpage
 \begin{figure}
 \includegraphics[width=0.5\textwidth]{veldist.eps}
-\caption{observed}\label{fig:obs}
+\caption{The velocity distribution of nearby ($\lesssim 100$ pc) stars
+  from \citet{Bovy09a}. The Hercules moving group is visible as an
+  overdensity at \vphi $\approx$ -0.2 $\vo$.}\label{fig:obs}
 \end{figure}
 
 \clearpage
 \begin{figure}
 \includegraphics[width=\textwidth]{rphi2d.ps}
-\caption{2D}\label{fig:rphi2d}
+\caption{Two-dimensional velocity distributions along the Solar
+  circle. The axes of each subpanel are the radial and tangential
+  velocities in Galactocentric cylindrical coordinates for the same
+  ranges as in \figurename~\ref{fig:obs}. The velocity distributions
+  on the other side of the Galaxy are obtained by shifting the
+  azimuths by 180$^{\circ}$. }\label{fig:rphi2d}
 \end{figure}
 
 \clearpage
 \begin{figure}
 \includegraphics[width=\textwidth]{rphi1d.ps}\\
 \includegraphics[width=\textwidth]{rphi1d2.ps}
-\caption{1D}\label{fig:rphi1d}
+\caption{Line-of-sight velocity distributions along the Solar
+  circle. The range in line-of-sight velocities in each subpanel is as
+  in \figurename~\ref{fig:1dvar}. The gray curve in each panel is the
+  predicted distribution for an axisymmetric, steady-state
+  Galaxy.}\label{fig:rphi1d}
 \end{figure}
 
 \clearpage
 \begin{figure}
 \includegraphics[width=0.5\textwidth]{detecta.ps}
 \includegraphics[width=0.5\textwidth]{detectb.ps}
-\caption{detect}\label{fig:detect}
+\caption{Kullback-Leibler divergence between the predicted
+  line-of-sight velocity distributions with and without the
+  bar. Darker values have a larger discriminatory potential. The left
+  panel uses the full line-of-sight velocity distributions, the right
+  panel excludes the main mode of the velocity distribution that is
+  likely to be affected by other dynamical and phase-space
+  effects. The concentric dashed lines indicate
+  constant-distance slices from the Sun, starting at 1 kpc and spaced
+  2 kpc apart.  The white dashed lines indicate the boundaries of the
+  four quadrants in Galactic longitude.  The white dashed-dotted line
+  shows the region of the sky that \apogee\ can see (-5$^{\circ} \leq
+  l \leq 250^{\circ}$).}\label{fig:detect}
 \end{figure}
 
 \clearpage
@@ -208,7 +238,11 @@ Dehnen,~W., 1998, \aj, 115, 2384
 \includegraphics[width=0.5\textwidth]{df.ps}\\
 \includegraphics[width=0.5\textwidth]{slope.ps}
 \includegraphics[width=0.5\textwidth]{barstrength.ps}
-\caption{1dvar}\label{fig:1dvar}
+\caption{Variation of the predicted velocity distribution at R = 1.075
+  \Ro , $\phi = -21^{\circ}$ (d= 0.4 \Ro, $l$ = 270$^{\circ}$) with
+  distance uncertainties, parameters and shape of the distribution
+  function, slope of the rotation curve, and bar
+  strength.}\label{fig:1dvar}
 \end{figure}
 
 
