@@ -62,14 +62,13 @@ produces the observed Hercules stream. I further show that the
 Hercules feature is strong enough that it can be unambiguously
 detected in the distribution of line-of-sight velocities in selected
 directions. I quantify the most promising lines-of-sight for detection
-in radial velocities: The most promising directions to target are at
-$l \gtrsim 250^{\circ}$. The predictions presented here are only
-weakly affected by distance uncertainties, assumptions about the
-distribution function of the old stellar disk, and the details of the
-Galactic potential including the effect of spiral structure;
-\Gaia\ and future spectroscopic surveys of the Galactic disk will be
-able to robustly test the origin of the Hercules stream and constrain
-the properties of the Galactic bar.
+in radial velocities; These are at $l \gtrsim 250^{\circ}$. The
+predictions presented here are only weakly affected by distance
+uncertainties, assumptions about the distribution function of the
+stellar disk, and the details of the Galactic potential including the
+effect of spiral structure; \Gaia\ and future spectroscopic surveys of
+the Galactic disk will be able to robustly test the origin of the
+Hercules stream and constrain the properties of the Galactic bar.
 \end{abstract}
 
 \keywords{Galaxy: bulge --- Galaxy: disk --- Galaxy: evolution ---
@@ -90,7 +89,7 @@ of ages and metallicities
 that has it originating through resonant interactions of stars in the
 outer disk with the bar in the central region of the Galaxy has been
 put forward \citep{dehnen00a,fux01a}, but any confirmation of this
-picture beyond the locallly observed kinematics of stars remains
+picture beyond the locallly observed stellar kinematics remains
 lacking. An investigation of the Hercules members' color--magnitude
 diagram found no evidence for any significant metallicity anomaly with
 respect to other local stars \citep{Bovy10a}, even though such a
@@ -120,7 +119,7 @@ circle, we follow the approach of \citet{dehnen00a}. For a fixed
 position in the Galaxy, we evaluate the velocity distribution function
 at values for the radial---toward the Galactic center---and
 tangential---in the direction of Galactic rotation---velocity by
-backward-integrating these velocities in the the Galactic potential to
+backward-integrating these velocities in the Galactic potential to
 obtain the intial orbit before bar formation. We posit that at this
 epoch the old stellar disk was in a steady-state that can be described
 by a simple distribution function that is a function of the energy and
@@ -135,7 +134,7 @@ the disk \citep[\eg,][]{Bovy09a}, we only consider a two-dimensional
 model for the Galaxy. We use a simple power-law rotation curve to
 model the axisymmetric Galactic potential
 \begin{equation}
-v_c = \vo(R/\Ro)^\beta \,,
+v_c(R) = \vo(R/\Ro)^\beta \,,
 \end{equation}
 and for most of the simulations below we specify this model further to
 a flat rotation curve ($\beta = 0$). The model for the bar is given by
@@ -169,12 +168,12 @@ given by
 \begin{equation}\label{eq:fdehnen}
 \fdehnen(E,L) \propto \frac{\Sigma(\rE)}{\sigmaR^2(\rE)} \, \exp\left[ \frac{\Omega(\rE)\left[L-\Lc(E)\right]}{\sigmaR^2(\rE)}\right]\,,
 \end{equation}
-where \rE, \Lc, and $\Omega(\rE)$ are the radius, the angular
-momentum, and the angular frequency, respectively, of the circular
-orbit with energy $E$. Using the procedure given in \sectionname~3.2
-of \citet{dehnen99b}, we choose the $\Sigma(R)$ and $\sigmaR$
+where \rE, \Lc, and $\Omega(\rE)$ are the radius, angular momentum,
+and angular frequency, respectively, of the circular orbit with energy
+$E$. Using the procedure given in \sectionname~3.2 of
+\citet{dehnen99b}, we choose the $\Sigma(R)$ and $\sigmaR(R)$
 functions such that they reproduce a disk with exponential surface
-density and velocity dispersion profiles 
+density and velocity dispersion profiles
 \begin{equation}
 \Sigma(R) = \Sigma_0 \exp\left(-R/\Rs\right)\,, \qquad 
 \sigmaR(R) = \sigma_0 \exp\left(-R/\Rsigma\right)\,,
@@ -184,18 +183,17 @@ model for the distribution function has \Rs = \Ro /3 and \Rsigma =
 3\Rs, and $\sigma_0$ such that $\sigmaR(\Ro) = 0.2 \vo$.
 
 As shown by \citet{dehnen99c,dehnen00a}, the model described above
-that places the Sun at \Ro = 0.9\Rolr---where \Rolr\ is the radius at
-which a circular orbit is in the outer Lindblad resonance with the
-bar---at a current angle of 25$^{\circ}$ with the bar, with a bar
-strength $\alpha = 0.01$, and integrating for four bar periods,
-reproduces the Hercules feature in the local velocity distribution
-while agreeing with other photometric and kinematical observations of
-the bar \citep[\eg,][]{binney97a,bissantz02a,cole02a,Shen10a}. In what
+with the Sun at \Ro = 0.9\Rolr---where \Rolr\ is the radius at which a
+circular orbit is in the outer Lindblad resonance with the bar---at a
+current angle of 25$^{\circ}$ with the bar, with a bar strength
+$\alpha = 0.01$, and integrating for four bar periods, reproduces the
+Hercules feature in the local velocity distribution while agreeing
+with other photometric and kinematical observations of the bar
+\citep[\eg,][]{binney97a,bissantz02a,cole02a,Shen10a}. In what
 follows, unless indicated otherwise, we fix all of the parameters of
-the model at these fiducial values.
-
-In what follows, all velocities are always considered to be with
-respect to their local standard of rest in the absence of a bar.
+the model at these fiducial values. All velocities are always
+considered to be with respect to their local standard of rest in the
+absence of a bar.
 
 \section{The full planar velocity distribution in the disk}\label{sec:2d}
 
@@ -207,50 +205,51 @@ Sun-Galactic center line and the bar could also be interpreted as
 showing the velocity distribution on the Solar circle for different
 Galactocentric azimuths, fixing the bar angle. In this way, these
 simulations become predictions for what one might find when one
-studies the velocity distribution in locations beyond those probed by
+studies the velocity distribution in regions beyond those probed by
 the \hipparcos\ mission.
 
 In \figurename~\ref{fig:rphi2d}, I present the predictions for the
 velocity distributions near the Solar circle for the full
-360$^{\circ}$ range in Galactocentric azimuths for the fiducial model
-from \sectionname~\ref{sec:method}. Only the range
-$-90^{\circ} \leq \phi \leq 90^{\circ}$ is shown here, since the
-barred Galaxy is symmetric with respect to rotations through
-180$^{\circ}$, such that the predictions for the other side of the
-Galaxy can be obtained from those shown by shifting the azimuths by
-180$^{\circ}$. The $R = \Ro$ locus is not shown here, but it can be
-inferred from \figurename~2 in \citet{dehnen00a}.
+360$^{\circ}$ range in Galactocentric azimuth for the fiducial model
+from \sectionname~\ref{sec:method}. Only the range $-90^{\circ} \leq
+\phi \leq 90^{\circ}$ is shown here, since the barred Galaxy is
+symmetric with respect to rotations through 180$^{\circ}$, such that
+the predictions for the other side of the Galaxy can be obtained from
+those shown by shifting the azimuths by 180$^{\circ}$. The $R = \Ro$
+locus is not shown here, but it can be inferred from \figurename~2 in
+\citet{dehnen00a}.
 
 It is clear from this \figurename\ that we can trace the Hercules
-stream going around the Galaxy and when looking further in or further
-out. The effect of the bar is also not confined to a narrow range in
-radii, rather the effects of the bar and especially its outer Lindblad
-resonance are felt through a large range of radii (0.6 $\leq R/\Ro \leq
-1.4$). These effects are strong and robust predictions of the
-bar-origin model for the Hercules stream, especially in regions beyond
-the Solar radius, where the Hercules feature can be found
-significantly removed from the bulk of the velocity distribution,
-which might be severely shaped at all locations by the processes that
-create the pattern of low-velocity moving groups in the local velocity
-distribution (the main mode in \figurename~\ref{fig:obs}). As I
-discuss below, \Gaia\ will be able to easily verify these predictions.
+stream going around the Galaxy and when looking further in toward the
+Galactic center or further out. The effect of the bar is also not
+confined to a narrow range in radii, rather the effects of the bar and
+especially its outer Lindblad resonance are felt through a large range
+of radii (0.6 $\leq R/\Ro \leq 1.4$). These effects are strong and
+robust predictions of the bar-origin model for the Hercules stream,
+especially in regions beyond the Solar radius, where the Hercules
+feature can be found significantly removed from the bulk of the
+velocity distribution, which might be severely shaped at all locations
+by the processes that create the pattern of low-velocity moving groups
+in the local velocity distribution (the main mode in
+\figurename~\ref{fig:obs}). As I discuss below, \Gaia\ will be able to
+verify these predictions.
 
 
 
 
 \section{Line-of-sight velocity distributions}
 
-Rather than wait for a comprehensive survey of the disk of the Galaxy
-that measures the full phase-space position of a large number of stars
-by measuring proper motions, we can ask whether a targeted survey of
+Rather than wait for a comprehensive survey of the Galactic disk that
+measures the full phase-space position of a large number of stars by
+measuring proper motions, we can ask whether a targeted survey of
 line-of-sight velocities in selected regions of the Galaxy could see a
 clear signature of the Hercules feature. That this should be possible
 follows from the following argument. The Hercules feature stands out
-in the velocity distribution most in its Galactocentric tangential
-velocity $\vphi$. On the Solar circle near the Sun we see almost
-entirely this Galactocentric tangential velocity in the line-of-sight,
-so we would expect to see at least a hint of the Hercules stream in
-the line-of sight.
+in the velocity distribution most in its tangential velocity
+$\vphi$. On the Solar circle near the Sun we see almost entirely this
+Galactocentric tangential velocity in the line-of-sight, so we would
+expect to see at least a hint of the Hercules stream in the line-of
+sight.
 
 In \figurename~\ref{fig:rphi1d} I show the predicted line-of-sight
 velocity distributions in various locations near the Solar circle all
@@ -266,9 +265,9 @@ distributions are normalized to have equal mass since I assume that
 our knowledge of the Galaxy and the tracer population will not be
 great enough that we can test predicted differences in the absolute
 number of stars at a given location between the axisymmetric and the
-bar-resonance predictions. These predictions are also largely a
+bar-resonance predictions. These differences are also largely a
 function of the particular form and parameters of the distribution
-function that we chose the represent the stellar disk before bar
+function that we choose the represent the stellar disk before bar
 formation.
 
 We see that the prospects to see the Hercules feature are quite good
@@ -283,9 +282,10 @@ the rest of the velocity distribution. We see hardly any effect of the
 bar on the line-of-sight velocity distributions on the other side of
 the Galaxy ($90^{\circ} \leq \phi \leq 270^{\circ}$). This is due to
 the fact that on that side we see mostly the Galactocentric radial
-velocities. Even though upcoming surveys such as \apogee\ have the
-ability to probe the other side of the Galaxy, for the purposes of
-detecting the Hercules stream it is uninteresting.
+velocities, in which the Hercules feature does not separate clearly
+from the bulk of the stars. Even though upcoming surveys such as
+\apogee\ have the ability to probe the other side of the Galaxy, for
+the purposes of detecting the Hercules stream this is uninteresting.
 
 To further analyze the best directions to target to best see the
 Hercules feature in the line-of-sight velocities, I have calculated
@@ -306,7 +306,7 @@ be interpreted as the expected weight of evidence for the prediction
 by the bar-resonance model over the fully axisymmetric prediction that
 can be expected from each sampled star. As such, locations with the
 maximal Kullback-Leibler divergence are those in which the Hercules
-feature stands out most prominent in the line-of-sight.
+feature stands out most prominently in the line-of-sight.
 
 The result of this analysis is shown in
 \figurename~\ref{fig:detect}. I present results both using the full
@@ -383,11 +383,12 @@ l \leq 250^{\circ}$ (SDSS-III Project Description\footnote{Available
 of where one might hope to detect the Hercules feature. Since
 \apogee\ is expected to start taking data in 2011 and to finish
 operations before the first \Gaia\ data release, \apogee\ could trace
-the Hercules stream around the Galaxy \Gaia. Since \apogee\ will also
-obtain detailed chemical abundances for its target stars, this would
-also allow for a more detailed analysis of the abundances of stars in
-the Hercules stream \citep[following, \eg,][]{Bensby07a,Bovy10a},
-which could shed more light on radial mixing in the Galactic disk.
+the Hercules stream around the Galaxy before \Gaia\ does. Since
+\apogee\ will also obtain detailed chemical abundances for its target
+stars, this would also allow for a more detailed analysis of the
+abundances of stars in the Hercules stream \citep[following,
+  \eg,][]{Bensby07a,Bovy10a}, which could shed more light on radial
+mixing in the Galactic disk.
 
 \acknowledgements It is a pleasure to thank Mike Blanton and David
 Hogg for helpful discussions and assistance.  Financial support for
@@ -423,7 +424,7 @@ Administration (grant NNX08AJ48G) and the National Science Foundation
   \apj, in press
 
 \bibitem[Caloi \etal(1999)]{caloi99a}
-  Caloi,~V.~, \etal, 1999,
+  Caloi,~V., \etal, 1999,
   \aap, 351, 925
 
 \bibitem[Cole \& Weinberg(2002)]{cole02a}
@@ -455,7 +456,7 @@ Dehnen,~W., 1998, \aj, 115, 2384
   Information theory, inference, and learning algorithms (Cambridge University Press)
 
 \bibitem[Marshall \etal(2006)]{marshall06a}
-  Marshall,~D.~J.~, \etal, 2006,
+  Marshall,~D.~J., \etal, 2006,
   \aap, 453, 635
 
 \bibitem[Raboud \etal(1998)]{raboud98a}
@@ -465,6 +466,11 @@ Dehnen,~W., 1998, \aj, 115, 2384
 \bibitem[Robin \etal(2005)]{robin05a}
   Robin,~A.~C., \etal, 2005,
   \aap, 430, 129
+
+\bibitem[Sellwood(2010)]{sellwood10a}
+  Sellwood,~J.~A., 2010,
+  \mnras, submitted, 
+  arXiv:1001.5197v1 [astro-ph.GA]
 
 \bibitem[Sellwood \& Binney(2002)]{sellwood02a}
   Sellwood,~J.~A.~\& Binney,~J.J., 2002,
@@ -486,19 +492,19 @@ Dehnen,~W., 1998, \aj, 115, 2384
 \caption{The velocity distribution of nearby ($\lesssim 100$ pc) stars
   from \citet{Bovy09a}. \vR\ and \vphi\ are the velocities toward the
   Galactic center and in the direction of Galactic rotation,
-  respectively. The Hercules moving group is visible as an overdensity
-  at \vphi $\approx$ -0.2 $\vo$.}\label{fig:obs}
+  respectively, corrected for the Solar motion. The Hercules moving
+  group is visible as an overdensity at \vphi $\approx$ -0.2
+  $\vo$.}\label{fig:obs}
 \end{figure}
 
 \clearpage
 \begin{figure}
 \includegraphics[width=\textwidth]{rphi2d.ps}
 \caption{Two-dimensional velocity distributions along the Solar
-  circle. The axes of each subpanel are the radial and tangential
-  velocities in Galactocentric cylindrical coordinates for the same
-  ranges as in \figurename~\ref{fig:obs}. The velocity distributions
-  on the other side of the Galaxy are obtained by shifting the
-  azimuths by 180$^{\circ}$.}\label{fig:rphi2d}
+  circle. The axes of each subpanel are the same as in
+  \figurename~\ref{fig:obs}. The velocity distributions on the other
+  side of the Galaxy are obtained by shifting the azimuths by
+  180$^{\circ}$.}\label{fig:rphi2d}
 \end{figure}
 
 \clearpage
@@ -539,7 +545,7 @@ Dehnen,~W., 1998, \aj, 115, 2384
 \caption{Variation of the predicted velocity distribution at R = 1.075
   \Ro , $\phi = -21^{\circ}$ (d= 0.4 \Ro, $l$ = 270$^{\circ}$) with
   distance uncertainties, parameters and shape of the distribution
-  function, slope of the rotation curve, and bar
+  function, shape of the rotation curve, and bar
   strength.}\label{fig:1dvar}
 \end{figure}
 
