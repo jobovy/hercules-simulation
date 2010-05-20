@@ -78,8 +78,40 @@ the properties of the Galactic bar.
 
 \section{Introduction}
 
+The velocity distribution of nearby stars contains various large
+overdensities of co-moving stars that cannot be explained as the
+vestiges of the clumpy nature of star formation
+\citep[\eg,][]{Bovy10a}. In particular, the Hercules moving group, a
+group of stars significantly offset from the bulk of the observed
+velocity distribution \citep[\eg,][see
+  \figurename~\ref{fig:obs}]{Dehnen98b,Bovy10a}, displays a wide range
+of ages and metallicities
+\citep{Blaauw70a,raboud98a,caloi99a,Bensby07a}. A compelling model
+that has it originating through resonant interactions of stars in the
+outer disk with the bar in the central region of the Galaxy has been
+put forward \citep{dehnen00a,fux01a}, but any confirmation of this
+picture beyond the locallly observed kinematics of stars remains
+lacking. An investigation of the Hercules members' color--magnitude
+diagram found no evidence for any significant metallicity anomaly with
+respect to other local stars \citep{Bovy10a}, even though such a
+difference should be expected as the Hercules stars originate from a
+few kiloparsec toward the Galactic center where the average
+metallicity is higher than in the Solar neighborhood. The absence of
+the predicted metallicity anomaly could potentially be explained
+through, \eg, radial mixing \citep{sellwood02a}, but it is clear that
+chemodynamical modeling of the Galactic disk is currently not up to
+the task of separating out these effects.
 
-baryon acoustic feature, coincidence problem
+In this Letter I propose that a robust and unambiguous test of the
+bar-resonance model for the Hercules stream is the distinct pattern it
+predicts as we trace the velocity distribution of stars near the Solar
+radius around the Galaxy. \Gaia\ is in a good position to have the
+final word on this, but I also show that the Hercules feature can be
+detected in the line-of-sight velocity distribution in selected
+directions on the sky. Clear signatures should exist in regions a few
+kiloparsec from the Sun, allowing for a clean verification of the
+bar-resonance model for the Hercules stream.
+
 
 \section{Methodology}\label{sec:method}
 
@@ -125,6 +157,11 @@ prescription
 \frac{3}{16}\xi^5 - \frac{5}{8} \xi^3 + \frac{15}{16} \xi + \frac{1}{2}\,, & \xi \equiv 2\frac{t}{t_1}-1\,, & t \leq t_1\,,\\
 1\,, & & t \geq t_1\,.\end{array} \right. 
 \end{equation}
+A comparison of the local velocity distribution obtained by using this
+simple bar potential with that resulting from the more realistic bar
+potential of \citet{gardner10a} shows that this simple model is
+sufficient to model the bar's influence on stellar orbits in the outer
+disk.
 
 For the distribution function of the stellar disk before bar
 formation, we use a Dehnen distribution function \citep{dehnen99b}
@@ -153,9 +190,9 @@ bar---at a current angle of 25$^{\circ}$ with the bar, with a bar
 strength $\alpha = 0.01$, and integrating for four bar periods,
 reproduces the Hercules feature in the local velocity distribution
 while agreeing with other photometric and kinematical observations of
-the bar. In what follows, unless indicated otherwise, we fix all of
-the parameters of the model at these fiducial values.
-
+the bar \citep[\eg,][]{binney97a,bissantz02a,cole02a,Shen10a}. In what
+follows, unless indicated otherwise, we fix all of the parameters of
+the model at these fiducial values.
 
 In what follows, all velocities are always considered to be with
 respect to their local standard of rest in the absence of a bar.
@@ -228,10 +265,11 @@ axisymmetric potential with a Dehnen distribution function
 distributions are normalized to have equal mass since I assume that
 our knowledge of the Galaxy and the tracer population will not be
 great enough that we can test predicted differences in the absolute
-number of stars at a given location between the axisymmetric Galaxy
-and the barred Galaxy. These predictions are also largely a function
-of the particular form and parameters of the distribution function
-that we chose the represent the stellar disk before bar formation.
+number of stars at a given location between the axisymmetric and the
+bar-resonance predictions. These predictions are also largely a
+function of the particular form and parameters of the distribution
+function that we chose the represent the stellar disk before bar
+formation.
 
 We see that the prospects to see the Hercules feature are quite good
 on our side of the Galaxy. The Hercules feature is especially strong
@@ -253,7 +291,7 @@ To further analyze the best directions to target to best see the
 Hercules feature in the line-of-sight velocities, I have calculated
 the line-of-sight velocity distribution on a 100 by 20 grid in
 Galactocentric azimuth and radius. As a measure of the difference
-between the barred Galaxy model and the steady-state, non-barred
+between the bar-resonance model and the steady-state, axisymmetric
 model, I have calculated the Kullback-Leibler divergence between these
 predicted distributions \citep[\eg,][]{mackay}
 \begin{equation}
@@ -265,7 +303,7 @@ stream, and $q(x)$ is the axisymmetric prediction. The
 Kullback-Leibler divergence is only one among many possible choices to
 quantify the difference between two probability distributions. It can
 be interpreted as the expected weight of evidence for the prediction
-by the barred Galaxy model over the fully axisymmetric prediction that
+by the bar-resonance model over the fully axisymmetric prediction that
 can be expected from each sampled star. As such, locations with the
 maximal Kullback-Leibler divergence are those in which the Hercules
 feature stands out most prominent in the line-of-sight.
@@ -359,10 +397,6 @@ Administration (grant NNX08AJ48G) and the National Science Foundation
 
 \begin{thebibliography}{}
 
-%\bibitem[{{Binney} \& {Tremaine}(2008)}]{binneytremaine}
-%{Binney},~J. \& {Tremaine},~S., 2008, {Galactic Dynamics: Second Edition}
-%  (Princeton University Press)
-
 \bibitem[Bailer-Jones(2008)]{bailerjones08a}
   Bailer-Jones, ~C.~A.~L., 2008,
   in IAU Symp.~254, ed.~J.~Andersen, J.~Bland-Hawthorn, and B.~Nordstr\"{o}m, (Dordrecht: Kluwer), 475  
@@ -382,9 +416,6 @@ Administration (grant NNX08AJ48G) and the National Science Foundation
 \bibitem[Blaauw(1970)]{Blaauw70a}
   Blaauw,~A., 1970, in IAU Symp.~38, ed.~W.~Becker \& I.~Kontopoulos (Dordrecht: Reidel), 199
 
-\bibitem[Blitz \& Spergel(1991)]{blitz91a}
-  Blitz,~L.~\& Spergel,~D.~N., 1991, \apj, 379, 631
-
 \bibitem[Bovy, Hogg, \& Roweis(2009)]{Bovy09a} Bovy,~J., Hogg,~D.~W., \& Roweis,~S.~T., 2009,
   \apj, 700, 1794
 
@@ -401,9 +432,6 @@ Administration (grant NNX08AJ48G) and the National Science Foundation
 
 \bibitem[{{Dehnen}(1998)}]{Dehnen98b}
 Dehnen,~W., 1998, \aj, 115, 2384
-
-%\bibitem[Dehnen(1999a)]{dehnen99a}
-%  Dehnen,~W., 1999a, \aj, 118, 1190
 
 \bibitem[Dehnen(1999a)]{dehnen99b}
   Dehnen,~W., 1999a, \aj, 118, 1201
@@ -422,10 +450,6 @@ Dehnen,~W., 1998, \aj, 115, 2384
   Gardner,~E.~\& Flynn,~C., 2010,
   \mnras, in press
 
-\bibitem[H\"{a}fner \etal(2000)]{hafner00}
-  H\"{a}fner,~R., \etal, 2000,
-  \mnras, 314, 433
-
 \bibitem[Mackay(2003)]{mackay}
   Mackay,~D.~J.~C., 2003,
   Information theory, inference, and learning algorithms (Cambridge University Press)
@@ -434,10 +458,6 @@ Dehnen,~W., 1998, \aj, 115, 2384
   Marshall,~D.~J.~, \etal, 2006,
   \aap, 453, 635
 
-\bibitem[Minchev \& Famaey(2009)]{minchev09a}
-  Minchev,~I.~\& Famaey,~B., 2009,
-  \apj L, submitted
-
 \bibitem[Raboud \etal(1998)]{raboud98a}
   Raboud,~D., \etal, 1998,
   \aap, 335, L61
@@ -445,11 +465,6 @@ Dehnen,~W., 1998, \aj, 115, 2384
 \bibitem[Robin \etal(2005)]{robin05a}
   Robin,~A.~C., \etal, 2005,
   \aap, 430, 129
-
-\bibitem[Sellwood(2010)]{sellwood10a}
-  Sellwood,~J.~A., 2010,
-  \mnras, submitted, 
-  arXiv:1001.5197v1 [astro-ph.GA]
 
 \bibitem[Sellwood \& Binney(2002)]{sellwood02a}
   Sellwood,~J.~A.~\& Binney,~J.J., 2002,
@@ -462,9 +477,6 @@ Dehnen,~W., 1998, \aj, 115, 2384
   Shu,~F.~H., 1969,
   \apj, 158, 505
 
-\bibitem[Skuljan, Hearnshaw, \& Cottrell(1999)]{Skuljan99a}
-  Skuljan,~J., Hearnshaw,~J.~B., \& Cottrell,~P.~L., 1999, \mnras, 308, 731
-
 \end{thebibliography}
 
 
@@ -472,8 +484,10 @@ Dehnen,~W., 1998, \aj, 115, 2384
 \begin{figure}
 \includegraphics[width=0.5\textwidth]{veldist.eps}
 \caption{The velocity distribution of nearby ($\lesssim 100$ pc) stars
-  from \citet{Bovy09a}. The Hercules moving group is visible as an
-  overdensity at \vphi $\approx$ -0.2 $\vo$.}\label{fig:obs}
+  from \citet{Bovy09a}. \vR\ and \vphi\ are the velocities toward the
+  Galactic center and in the direction of Galactic rotation,
+  respectively. The Hercules moving group is visible as an overdensity
+  at \vphi $\approx$ -0.2 $\vo$.}\label{fig:obs}
 \end{figure}
 
 \clearpage
