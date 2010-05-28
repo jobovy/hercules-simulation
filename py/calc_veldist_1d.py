@@ -222,6 +222,7 @@ def predictVlos(vloslinspace,l=0.,d=1.,t=-4.,distCoord='GC',
         print "Theta: ", theta
         print "alpha: ", alphalos
         print "R: ", R
+        print "d: ", d
     potparams= (Rolr,alpha,phi,chi,t1)
     return marginalizeAngleGrid(vloslinspace,alphalos,R=R,t=t,pot=pot,
                                 beta=beta,potparams=potparams,
