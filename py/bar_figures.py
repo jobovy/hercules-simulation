@@ -541,6 +541,72 @@ def veldist_1d_slope(plotfilename,phi=_DEFAULTPHI,R=_DEFAULTR,
     #pyplot.arrow(0.45,3.12,-0.40,-0.03,color='0.',lw=.75,ls='dashed',zorder=4)
     plot.bovy_end_print(plotfilename)
 
+def veldist_1d_apogee(plotfilename,l=250./180.*m.pi,d=0.25,
+                      ngrid=201,saveDir='../bar/apogee/'):
+    """
+    NAME:
+       veldist_1d_apogee
+    PURPOSE:
+       make a plot showing a 1d velocity distribution in an apogee los
+    INPUT:
+       plotfilename - filename for figure
+       l - Galactic longitude
+       d - distance from the Sun
+       ngrid - number of grid-points to calculate the los velocity distribution
+               on
+       saveDir - save pickles here
+    OUTPUT:
+       Figure in plotfilename
+    HISTORY:
+       2010-05-28 - Written - Bovy (NYU)
+    """
+    vloslinspace= (-.9,.9,ngrid)
+    vloss= sc.linspace(*vloslinspace)
+
+    basesavefilename= os.path.join(saveDir,'apogee_')
+    thissavefilename= basesavefilename+'%.2f_%.2f.sav' % (d,l)
+    if os.path.exists(thissavefilename):
+        print "Restoring apogee los-velocity distribution at d,l = %.2f,%.2f" % (d,l)
+        savefile= open(thissavefilename,'r')
+        vlosd= pickle.load(savefile)
+        axivlosd= pickle.load(savefile)
+        savefile.close()
+    else:
+        print "Calculating apogee los-velocity distribution at d,l = %.2f,%.2f" % (d,l)
+        potparams= (0.9,0.01,25.*_degtorad,.8,None)
+        vlosd= predictVlos(vloslinspace,
+                           l=l,
+                           d=d,
+                           distCoord='sun',
+                           pot='bar',beta=0.,
+                           potparams=potparams)
+        vlosd= vlosd/(sc.nansum(vlosd)*(vloss[1]-vloss[0]))
+        potparams= (0.9,0.00,25.*_degtorad,.8,None)
+        axivlosd= predictVlos(vloslinspace,
+                              l=l,
+                              d=d,
+                              t=0.01,
+                              distCoord='sun',
+                              pot='bar',beta=0.,
+                              potparams=potparams)
+        axivlosd= axivlosd/(sc.nansum(axivlosd)*(vloss[1]-vloss[0]))
+        savefile= open(thissavefilename,'w')
+        pickle.dump(vlosd,savefile)
+        pickle.dump(axivlosd,savefile)
+        savefile.close()
+    #Plot
+    plot.bovy_print()
+    plot.bovy_plot(vloss,vlosd,'k',
+                   xlabel=r'$v_{\mathrm{los}} / v_0$',zorder=3)
+    plot.bovy_plot(vloss,axivlosd,ls='-',color='0.5',
+                   overplot=True,zorder=2)
+    thisax= pyplot.gca()
+    thisax.set_xlim(vloslinspace[0],vloslinspace[1])
+    thisax.set_ylim(0.,sc.amax(sc.concatenate((axivlosd,vlosd)))*1.1)
+    plot.bovy_text(r'$d = %.2f R_0$' % d + '\n'+r'$l = %.0f^\circ$' %(l/m.pi*180.),
+                       top_right=True)
+    plot.bovy_end_print(plotfilename)
+
 def get_options():
     usage = "usage: %prog [options] <plotfilename>\n\nplotfilename= name of the file that the figure will be saved to"
     parser = OptionParser(usage=usage)
@@ -571,6 +637,9 @@ def get_options():
     parser.add_option("--slope", dest="slope",
                       default=False,action="store_true", 
                       help="Make plot showing the influence of the slope of the rotation curve")
+    parser.add_option("--apogee", dest="apogee",
+                      default=False,action="store_true", 
+                      help="Make plot showing an apogee los")
     return parser
 
 if __name__ == '__main__':
@@ -597,5 +666,7 @@ if __name__ == '__main__':
         veldist_1d_df(args[0],phi=options.phi,R=options.R)
     elif options.convolve:
         veldist_1d_convolve(args[0],phi=options.phi,R=options.R)
+    elif options.apogee:
+        veldist_1d_apogee(args[0])
     else:
         veldist_2d_Rphi(args[0])

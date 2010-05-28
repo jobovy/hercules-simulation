@@ -3,7 +3,8 @@ BARDIR=../bar
 bar: $(BARDIR)/rphi2d.ps $(BARDIR)/rphi1d.ps $(BARDIR)/detecta.ps \
 	$(BARDIR)/detectb.ps $(BARDIR)/rphi1d2.ps \
 	$(BARDIR)/distuncertain.ps $(BARDIR)/df.ps \
-	$(BARDIR)/barstrength.ps $(BARDIR)/slope.ps
+	$(BARDIR)/barstrength.ps $(BARDIR)/slope.ps \
+	$(BARDIR)/apogee.ps
 
 $(BARDIR)/rphi2d.ps: bar_figures.py calc_veldist_2d.py
 	$(PYTHON) bar_figures.py $@
@@ -31,5 +32,8 @@ $(BARDIR)/slope.ps: bar_figures.py
 
 $(BARDIR)/distuncertain.ps: bar_figures.py
 	$(PYTHON) bar_figures.py $@ --convolve
+
+$(BARDIR)/apogee.ps: bar_figures.py
+	$(PYTHON) bar_figures.py $@ --apogee
 
 
