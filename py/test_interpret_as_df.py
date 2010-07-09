@@ -133,7 +133,7 @@ def test_calc_sigma(baseplotfilename,format='png',ngrid=101):
             sigma[ii]= 0.5*sc.log(distFunc.sigma2(xs[ii]))+xs[ii]-sc.log(0.5)
         plot.bovy_print(fig_width=5,fig_height=2.5)
         plot.bovy_plot(xs*3.,sigma,'k',xlabel=r'R/R_s',
-                       ylabel=r'\ln \sigma_f - \ln \sigma',xrange=[0,10],
+                       ylabel=r'\ln \sigma_{R,f} - \ln \sigma_R',xrange=[0,10],
                        yrange=[-0.25,0.25])
         plot.bovy_text(r'$\beta = 0.0\,,\quad \sigma_0 = 0.5 v_0\,,\quad R_{\sigma} = 3 R_s$',
                        bottom_right=True)
@@ -154,7 +154,7 @@ def test_calc_sigma(baseplotfilename,format='png',ngrid=101):
             sigma[ii]= 0.5*sc.log(distFunc.sigma2(xs[ii]))+xs[ii]-sc.log(0.5)
         plot.bovy_print(fig_width=5,fig_height=2.5)
         plot.bovy_plot(xs*3.,sigma,'k',xlabel=r'R/R_s',
-                       ylabel=r'\ln \sigma_f - \ln \sigma',xrange=[0,10],
+                       ylabel=r'\ln \sigma_{R,f} - \ln \sigma_R',xrange=[0,10],
                        yrange=[-0.12,0.12])
         plot.bovy_text(r'$\beta = 0.2\,,\quad \sigma_0 = 0.5 v_0\,,\quad R_{\sigma} = 3 R_s$',
                        bottom_right=True)
@@ -175,7 +175,7 @@ def test_calc_sigma(baseplotfilename,format='png',ngrid=101):
             sigma[ii]= 0.5*sc.log(distFunc.sigma2(xs[ii]))+xs[ii]-sc.log(0.5)
         plot.bovy_print(fig_width=5,fig_height=2.5)
         plot.bovy_plot(xs*3.,sigma,'k',xlabel=r'R/R_s',
-                       ylabel=r'\ln \sigma_f - \ln \sigma',xrange=[0,10],
+                       ylabel=r'\ln \sigma_{R,f} - \ln \sigma_R',xrange=[0,10],
                        yrange=[-0.45,0.45])
         plot.bovy_text(r'$\beta = -0.2\,,\quad \sigma_0 = 0.5 v_0\,,\quad R_{\sigma} = 3 R_s$',
                        bottom_right=True)
@@ -196,7 +196,7 @@ def test_calc_sigma(baseplotfilename,format='png',ngrid=101):
             sigma[ii]= 0.5*sc.log(distFunc.sigma2(xs[ii]))+xs[ii]
         plot.bovy_print(fig_width=5,fig_height=2.5)
         plot.bovy_plot(xs*3.,sigma,'k',xlabel=r'R/R_s',
-                       ylabel=r'\ln \sigma_f - \ln \sigma',xrange=[0,10],
+                       ylabel=r'\ln \sigma_{R,f} - \ln \sigma_R',xrange=[0,10],
                        yrange=[-0.95,0.95])
         plot.bovy_text(r'$\beta = 0.0\,,\quad \sigma_0 = v_0\,,\quad R_{\sigma} = 3 R_s$',
                        bottom_right=True)
@@ -380,7 +380,7 @@ def test_sigma_corrections(baseplotfilename,format='png'):
         plot.bovy_print(fig_width=10,fig_height=4.5)
         plot.bovy_plot(xs,-sc.log(df1._corr._corrections[:,1])/2.,
                        'k',xlabel=r'R/R_s',
-                       ylabel=r'\ln \sigma_f - \ln \sigma',xrange=[0,15],
+                       ylabel=r'\ln \sigma_{R,f} - \ln \sigma_R',xrange=[0,15],
                        yrange=[-0.015,0.015])
         plot.bovy_plot(xs,-sc.log(df2._corr._corrections[:,1]/df1._corr._corrections[:,1])/2.,
                        overplot=True)
@@ -437,7 +437,7 @@ def test_sigma_corrections(baseplotfilename,format='png'):
         plot.bovy_print(fig_width=10,fig_height=4.5)
         plot.bovy_plot(xs,-sc.log(df1._corr._corrections[:,1])/2.,
                        'k',xlabel=r'R/R_s',
-                       ylabel=r'\ln \sigma_f - \ln \sigma',xrange=[0,15],
+                       ylabel=r'\ln \sigma_{R,f} - \ln \sigma_R',xrange=[0,15],
                        yrange=[-0.015,0.015])
         plot.bovy_plot(xs,-sc.log(df2._corr._corrections[:,1]/df1._corr._corrections[:,1])/2.,
                        overplot=True)
