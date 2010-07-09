@@ -380,7 +380,7 @@ def test_sigma_corrections(baseplotfilename,format='png'):
         plot.bovy_print(fig_width=10,fig_height=4.5)
         plot.bovy_plot(xs,-sc.log(df1._corr._corrections[:,1])/2.,
                        'k',xlabel=r'R/R_s',
-                       ylabel=r'\ln \Sigma_f - \ln \Sigma',xrange=[0,15],
+                       ylabel=r'\ln \sigma_f - \ln \sigma',xrange=[0,15],
                        yrange=[-0.015,0.015])
         plot.bovy_plot(xs,-sc.log(df2._corr._corrections[:,1]/df1._corr._corrections[:,1])/2.,
                        overplot=True)
@@ -437,7 +437,7 @@ def test_sigma_corrections(baseplotfilename,format='png'):
         plot.bovy_print(fig_width=10,fig_height=4.5)
         plot.bovy_plot(xs,-sc.log(df1._corr._corrections[:,1])/2.,
                        'k',xlabel=r'R/R_s',
-                       ylabel=r'\ln \Sigma_f - \ln \Sigma',xrange=[0,15],
+                       ylabel=r'\ln \sigma_f - \ln \sigma',xrange=[0,15],
                        yrange=[-0.015,0.015])
         plot.bovy_plot(xs,-sc.log(df2._corr._corrections[:,1]/df1._corr._corrections[:,1])/2.,
                        overplot=True)
