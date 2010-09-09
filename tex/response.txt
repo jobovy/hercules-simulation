@@ -1,0 +1,160 @@
+Dear Editor,
+
+Please find below the response to the referees' comments for the
+submission "Tracing the Hercules Stream around the Galaxy" by myself
+(MS# ApJ80617).
+
+I have made changes following the referee's suggestions ... 
+
+A detailed list of the main changes is: 
+
+Please contact me by the information given below with any questions
+regarding this re-submission.
+
+With kind regards,
+
+Jo Bovy
+
+-
+Jo Bovy
+Ctr. for Cosmology & Particle Physics, 
+Dept. of Physics
+New York University
+4 Washington Place
+New York, NY 10003
+jb2777@nyu.edu
+
+
+In what follows the referee's comments are indented.
+
+
+
+==================================================================
+
+	Referee Report
+	 Reviewer's Comments:
+	 
+	 The paper titled Tracing the Hercules stream around the Galaxy by Jo
+	 Bovy is concerned with the origin and detectability of this
+	 elusive stream. Overall the paper is well written and
+	 clear. I have a few major concerns and some minor concerns
+	 that should be addressed before the paper can be accepted for
+	 publication.
+
+	 Major concerns:
+
+	 1. Sect 4, page 6, last paragraph: The author discusses in
+	 some detail, and shows plots to illustrate, the possible
+	 implications of e.g.  errors in the distance determination
+	 etc. The one error that is not address explicitly in the text
+	 or plots is the error on the measured radial velocities - how
+	 well do we need to determine these velocities in order to be
+	 able to unambiguously detect the Hercules stream? 1, 5, or 10
+	 km/s? Or some other number? And what happens when V0 is
+	 absolutely known or if it also has an error? Perhaps the
+	 result is that the errors do no matter, but in that case this
+	 should be shown and arguments to why it does not matter
+	 should be given. Also, will either the RVS on board Gaia or
+	 APOGEE deliver radial velocities with small enough errors to
+	 detect the Hercules stream?
+
+	 2. A brief discussion about which tracers, e.g. dwarf stars,
+	 red clump, red giant stars, to be used to test the model
+	 should also be included. For example, is it necessary to
+	 reach as far away from the solar neighbourhood as possible
+	 (eg giants), or is the major test to get as high volume
+	 density of tracers as possible (eg cool dwarfs). Such a
+	 discussion would be highly useful for anyone wanting to
+	 construct surveys for the very purpose of detecting
+	 Hercules. This discussion does not need to be long.
+
+	 3. I find Discussion in Sect 5 (for both Gaia and APOGEE)
+	 somewhat sketchy. For example, no mention of the fact that
+	 Gaia will provide radial velocities for stars down to roughly
+	 17 magnitude is mentioned.  Should the reader conclude that
+	 Hercules could be detected with the tangential velocities
+	 alone? In that case, how does that work with the tests
+	 presented in this article? Again, here the intrinsic
+	 brightness of the tracers is of some interest.
+
+	 4. The discussion could in general be deeper, and also connect to
+	 the abstract (see below).
+
+	 Additional concerns:
+
+	 1. On page 2, last paragraph of the introduction it is stated
+	 that "propose and ... test of the bar resonance model for the
+	 Hercules stream". However, this statement is not really
+	 carried through in the text. It might be a good idea to
+	 connect back to this statement in e.g. Sect 5 and tell the
+	 reader how "testable" this model is once all the
+	 uncertainties of data and shortcomings of the missions has
+	 been discussed. The test and properties of the bar are also
+	 mentioned in the abstract, however, there is no discussion in
+	 the paper of how the properties of the bar are constrained by
+	 the proposed observational test. Add this discussion, which
+	 would be very interesting.
+
+	 2. Page 2, statement at the end of the first paragraph "..up
+	 to the task of separating out these effects." This statement
+	 should be supported with a few relevant references.
+
+	 3. On page 5, sect 4, third paragraph, last sentence. I do
+	 not understand what the last sentence means - could the
+	 author please re-phrase it? The sentence somehow, does not
+	 connect to the previous text.
+
+
+	 Minor items:
+
+	 1. Page 2, sect 2, end of the last sentence. "evaluated at
+	  the initial orbit".  This is, for a person with English as a
+	  second language, really hard to understand. It is not the
+	  words that are hard but how it follows from the first part
+	  of the sentence. For better clarity to all readers I suggest
+	  that the author re-writes the last sentence, perhaps into
+	  two.
+
+This statement was just supposed to state the collisionless Boltzmann
+equation, but I wrote "initial orbit" rather than "initial position
+and velocity", since the phases or angles of the initial orbit are
+irrelevant. This is because the initial distribution function is
+time-independent, and thus only a function of the integrals of the
+motion. I changed the wording to "initial position and velocity" but
+added a comment about the time-indepence of the DF.
+
+	  2. Page 4, sect 3, first paragraph. Hipparcos mission (at
+	   the end of the first paragraph) should be
+	   referenced. Perryman et al. 1997, A&A, 323, L49, and/or the
+	   catalogue references.
+
+I have added the catalog reference.
+
+	   3. Page 5, sect 4, end of third paragraph. The last
+	    sentence is unclear.  APOGEE is able to probe "the other
+	    side of the Galaxy" with reference to which side of the
+	    Galaxy should the "other" be taken?  Other to 90 - 270
+	    degrees? A more explicit statement would be helpful to the
+	    reader.
+
+The "other" side of the Galaxy is defined two sentences before this
+sentence as the region 90 < \phi < 270, where \phi is the
+Galactocentric azimuth. I don't think it is necessary to repeat the
+definition two sentences later.
+
+	    4. Page 7, sect 5.1, first sentence, Gaia should have a
+	    reference. A relevant reference is Perryman, M. A. C., et
+	    al., A&A 369, 339 (2001).
+
+That's quite right. I have added this reference.
+
+	    5. Page 8, sect 5.2, first paragraph
+	      Line 6 from top: hercules --> Hercules
+	      Line 9 from top: APOGEE could trace --> APOGEE could 
+	         potentially trace
+	      	 (his is more in line with the other comments in the article
+		 that APOGEE is jut on the edge of the suitable region etc)
+	      Line 4 from the bottom: 
+	         chemical abundances --> elemental abundances
+
+All fixed!
