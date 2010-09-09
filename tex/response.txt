@@ -104,6 +104,15 @@ In what follows the referee's comments are indented.
 	 author please re-phrase it? The sentence somehow, does not
 	 connect to the previous text.
 
+I thought this followed clearly from the sentences before it, but I
+have changed this sentence to
+
+Even though upcoming surveys such as APOGEE have the ability to probe
+the other side of the Galaxy, for the purposes of detecting the
+Hercules stream this is uninteresting as it does not show up in the
+line-of-sight velocity distribution there.
+
+to make the conclusion clearer.
 
 	 Minor items:
 
