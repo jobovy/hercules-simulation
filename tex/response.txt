@@ -58,6 +58,8 @@ In what follows the referee's comments are indented.
 	 APOGEE deliver radial velocities with small enough errors to
 	 detect the Hercules stream?
 
+Gaia errors: see below; APOGEE errors: better than 0.5 km/s.
+
 	 2. A brief discussion about which tracers, e.g. dwarf stars,
 	 red clump, red giant stars, to be used to test the model
 	 should also be included. For example, is it necessary to
@@ -68,6 +70,9 @@ In what follows the referee's comments are indented.
 	 construct surveys for the very purpose of detecting
 	 Hercules. This discussion does not need to be long.
 
+> 3 kpc: giants (dwarfs in GAIA few kpc, giants go far enough and
+  bright enough to have RVs)
+
 	 3. I find Discussion in Sect 5 (for both Gaia and APOGEE)
 	 somewhat sketchy. For example, no mention of the fact that
 	 Gaia will provide radial velocities for stars down to roughly
@@ -76,6 +81,12 @@ In what follows the referee's comments are indented.
 	 alone? In that case, how does that work with the tests
 	 presented in this article? Again, here the intrinsic
 	 brightness of the tracers is of some interest.
+
+Mission-averaged disk giant or star < 10 km/s to 17. 
+
+\bibitem[Katz \etal(2004)]{Katz04a}
+Katz,~D., \etal, 2004,
+\mnras, 354, 1223
 
 	 4. The discussion could in general be deeper, and also connect to
 	 the abstract (see below).
