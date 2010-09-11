@@ -338,12 +338,18 @@ def veldist_1d_vrconvolve(plotfilename,phi=_DEFAULTPHI,R=_DEFAULTR,
     HISTORY:
        2010-09-11 - Written - Bovy (NYU)
     """
-    convolves= [0.,0.02,0.04,0.08]#0, 5, 10, 20 km/s
+    convolves= [0.02,0.04,0.08]#0, 5, 10, 20 km/s
 
     vloslinspace= (-.9,.9,ngrid)
     vloss= sc.linspace(*vloslinspace)
 
     vlosds= []
+    thissavefilename= os.path.join(saveDir,'convolve_')+'%.1f.sav' % 0.
+    print "Restoring los-velocity distribution at distance uncertainties %.1f" % 0.
+    savefile= open(thissavefilename,'r')
+    vlosd= pickle.load(savefile)
+    savefile.close()
+    vlosds.append(vlosd)
     basesavefilename= os.path.join(saveDir,'vrconvolve_')
     for distsig in convolves:
         thissavefilename= os.path.join(saveDir,'convolve_')+'%.1f.sav' % 0.
@@ -352,9 +358,10 @@ def veldist_1d_vrconvolve(plotfilename,phi=_DEFAULTPHI,R=_DEFAULTR,
         vlosd= pickle.load(savefile)
         savefile.close()
         #Create Gaussian
-        gauss= sc.exp(-0.5*vloss**2./distsig)
-        gauss= gauss/sc.sum(gauss)/(vloss[1]-vloss[0])
+        gauss= sc.exp(-0.5*vloss**2./distsig**2.)
+        #gauss= gauss/sc.sum(gauss)/(vloss[1]-vloss[0])
         vlosd= signal.convolve(vlosd,gauss,mode='same')
+        vlosd= vlosd/sc.sum(vlosd)/(vloss[1]-vloss[0])
         vlosds.append(vlosd)
     #Plot
     plot.bovy_print()
@@ -368,9 +375,9 @@ def veldist_1d_vrconvolve(plotfilename,phi=_DEFAULTPHI,R=_DEFAULTR,
                    overplot=True,zorder=2,lw=2.)
     plot.bovy_plot(vloss,vlosds[3],ls='-',color='0.45',
                    overplot=True,zorder=2,lw=2.)
+    kms= r' \mathrm{km\ s}^{-1}$'
     plot.bovy_text(r'$\mathrm{line-of-sight\ velocity\ uncertainties}$',title=True)
-    plot.bovy_text(0.5,.65,r'$\sigma_v = 0$'+'\n'+r'$\sigma_v = 5$'+'\n'+r'$\sigma_v = 10$'+'\n'+r'$\sigma_v = 20$')
-    print plotfilename
+    plot.bovy_text(0.4,.65,r'$\sigma_v = 0\ '+kms+'\n'+r'$\sigma_v = 5\ '+kms+'\n'+r'$\sigma_v = 10\ '+kms+'\n'+r'$\sigma_v = 20\ '+kms)
     plot.bovy_end_print(plotfilename)
 
 def veldist_1d_barstrength(plotfilename,phi=_DEFAULTPHI,R=_DEFAULTR,
