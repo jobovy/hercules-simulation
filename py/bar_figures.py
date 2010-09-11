@@ -6,6 +6,7 @@ import sys
 import cPickle as pickle
 import math as m
 import scipy as sc
+from scipy import signal
 from optparse import OptionParser
 import bovy_plot as plot
 from matplotlib import pyplot
@@ -318,6 +319,60 @@ def veldist_1d_convolve(plotfilename,phi=_DEFAULTPHI,R=_DEFAULTR,
     plot.bovy_text(0.5,.65,r'$\sigma_d = 0$'+'\n'+r'$\sigma_d = 20 \%$'+'\n'+r'$\sigma_d = 30 \%$')
     plot.bovy_end_print(plotfilename)
 
+def veldist_1d_vrconvolve(plotfilename,phi=_DEFAULTPHI,R=_DEFAULTR,
+                        ngrid=201,saveDir='../bar/1dvar/'):
+    """
+    NAME:
+       veldist_1d_vrconvolve
+    PURPOSE:
+       make a plot showing the influence of the los velocity uncertainties
+    INPUT:
+       plotfilename - filename for figure
+       phi - Galactocentric azimuth
+       R - Galactocentric radius
+       ngrid - number of grid-points to calculate the los velocity distribution
+               on
+       saveDir - save pickles here
+    OUTPUT:
+       Figure in plotfilename
+    HISTORY:
+       2010-09-11 - Written - Bovy (NYU)
+    """
+    convolves= [0.,0.02,0.04,0.08]#0, 5, 10, 20 km/s
+
+    vloslinspace= (-.9,.9,ngrid)
+    vloss= sc.linspace(*vloslinspace)
+
+    vlosds= []
+    basesavefilename= os.path.join(saveDir,'vrconvolve_')
+    for distsig in convolves:
+        thissavefilename= os.path.join(saveDir,'convolve_')+'%.1f.sav' % 0.
+        print "Restoring los-velocity distribution at distance uncertainties %.1f" % 0.
+        savefile= open(thissavefilename,'r')
+        vlosd= pickle.load(savefile)
+        savefile.close()
+        #Create Gaussian
+        gauss= sc.exp(-0.5*vloss**2./distsig)
+        gauss= gauss/sc.sum(gauss)/(vloss[1]-vloss[0])
+        vlosd= signal.convolve(vlosd,gauss,mode='same')
+        vlosds.append(vlosd)
+    #Plot
+    plot.bovy_print()
+    plot.bovy_plot(vloss,vlosds[0],'k-',zorder=3,
+                   xrange=[vloslinspace[0],vloslinspace[1]],
+                   yrange=[0.,sc.nanmax(sc.array(vlosds).flatten())*1.1],
+                   xlabel=r'$v_{\mathrm{los}} / v_0$')
+    plot.bovy_plot(vloss,vlosds[1],ls='-',color='0.75',
+                   overplot=True,zorder=2,lw=2.)
+    plot.bovy_plot(vloss,vlosds[2],ls='-',color='0.6',
+                   overplot=True,zorder=2,lw=2.)
+    plot.bovy_plot(vloss,vlosds[3],ls='-',color='0.45',
+                   overplot=True,zorder=2,lw=2.)
+    plot.bovy_text(r'$\mathrm{line-of-sight\ velocity\ uncertainties}$',title=True)
+    plot.bovy_text(0.5,.65,r'$\sigma_v = 0$'+'\n'+r'$\sigma_v = 5$'+'\n'+r'$\sigma_v = 10$'+'\n'+r'$\sigma_v = 20$')
+    print plotfilename
+    plot.bovy_end_print(plotfilename)
+
 def veldist_1d_barstrength(plotfilename,phi=_DEFAULTPHI,R=_DEFAULTR,
                            ngrid=201,saveDir='../bar/1dvar/'):
     """
@@ -609,6 +664,9 @@ def get_options():
     parser.add_option("--convolve", dest="convolve",
                       default=False,action="store_true", 
                       help="Make plot showing influence of distance uncertainties")
+    parser.add_option("--vrconvolve", dest="vrconvolve",
+                      default=False,action="store_true", 
+                      help="Make plot showing influence of los velocity uncertainties")
     parser.add_option("--df", dest="df",
                       default=False,action="store_true", 
                       help="Make plot showing influence of distribution function assumptions")
@@ -647,6 +705,8 @@ if __name__ == '__main__':
         veldist_1d_df(args[0],phi=options.phi,R=options.R)
     elif options.convolve:
         veldist_1d_convolve(args[0],phi=options.phi,R=options.R)
+    elif options.vrconvolve:
+        veldist_1d_vrconvolve(args[0],phi=options.phi,R=options.R)
     elif options.apogee:
         veldist_1d_apogee(args[0])
     else:
