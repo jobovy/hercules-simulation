@@ -58,7 +58,16 @@ In what follows the referee's comments are indented.
 	 APOGEE deliver radial velocities with small enough errors to
 	 detect the Hercules stream?
 
-Gaia errors: see below; APOGEE errors: better than 0.5 km/s.
+I added a panel to Figure 5 showing the influence of realistic
+line-of-sight velocity uncertainties. The expected uncertainties for
+APOGEE and HERMES are below 1 km/s; for such small uncertainties the
+uncertainty-free prediction and the uncertainty-convolved prediction
+are indistinguishable.
+
+I added explicit references to the Gaia, APOGEE, and HERMES
+uncertainties in the sections describing these surveys. 
+
+BOVY: V0
 
 	 2. A brief discussion about which tracers, e.g. dwarf stars,
 	 red clump, red giant stars, to be used to test the model
@@ -89,6 +98,10 @@ be measured accurately enough to verify the predictions of this paper.
 	 4. The discussion could in general be deeper, and also connect to
 	 the abstract (see below).
 
+I hope that by adding the general discussion and the greater detail in
+discussing the specific surveys that could detect the Hercules
+feature, the discussion now has the required depth.
+
 	 Additional concerns:
 
 	 1. On page 2, last paragraph of the introduction it is stated
@@ -114,7 +127,7 @@ be measured accurately enough to verify the predictions of this paper.
 	 connect to the previous text.
 
 I thought this followed clearly from the sentences before it, but I
-have changed this sentence to
+have changed this sentence to:
 
 Even though upcoming surveys such as APOGEE have the ability to probe
 the other side of the Galaxy, for the purposes of detecting the
