@@ -102,7 +102,7 @@ neighborhood. The absence of the predicted metallicity anomaly could
 potentially be explained, \eg, through radial mixing
 \citep{sellwood02a}, but it is clear that chemodynamical modeling of
 the Galactic disk is not currently up to the task of separating out
-these effects.
+these effects \citep[\eg,][]{samland03a,roskar08a}.
 
 Here I propose that a robust and unambiguous test of the bar-resonance
 model for the Hercules stream is a search for the distinct pattern it
@@ -363,7 +363,7 @@ The discussion in the previous sections shows that the bar-origin
 paradigm for the Hercules moving group makes strong predictions about
 how the Hercules feature should show up when we probe the velocity
 distribution in parts of the Galaxy far removed from the Solar
-neighborhood. In order to most strongly test the bar-origin for the
+neighborhood. In order to most strongly test the bar origin for the
 Hercules moving group it is best to extrapolate this picture far from
 the Solar neighborhood and look at regions further than a few kpc
 removed. \Gaia 's parallaxes, proper motions, and mission-averaged
@@ -384,12 +384,17 @@ below). These surveys will not need to observe many stars to test the
 predictions laid out here: Drawing samples from the predicted velocity
 distribution in \figurename~\ref{fig:1dvar} shows that about 500 stars
 suffice to distinguish the bar-origin model from the axisymmetric
-prediction (based on a KS test with $p < 0.01$). Since large distance
+prediction (based on a KS test with $P < 0.01$). Since large distance
 uncertainties do not affect the prediction very much (see
 \figurename~\ref{fig:1dvar}), these stars can even be sampled
-throughout a volume of 500 pc or more.
+throughout a volume of 500 pc or more. These spectroscopic surveys
+will also obtain detailed elemental abundances for their target stars,
+so they would also allow for a more detailed analysis of the
+abundances of stars in the Hercules stream \citep[following,
+  \eg,][]{Bensby07a,Bovy10a}, which could shed more light on radial
+mixing in the Galactic disk.
 
-The bottom two panels of \figurename~\ref{fig:1dvar} show that the
+The last two panels of \figurename~\ref{fig:1dvar} show that the
 predicted line-of-sight velocity distribution depends strongly on the
 dynamical parameters of the bar. Changing the pattern speed of the bar
 through \Rolr\ shifts the predicted distribution and in particular the
@@ -405,8 +410,9 @@ predicted here due to other dynamical effects. Integrated measures,
 such as the number of stars in the main peak and the number of stars
 in the Hercules feature, could mitigate this somewhat. While
 predicting actual constraints would involve detailed simulations of
-the expected data, it is clear that constraints on the bar can be
-derived from the experiment proposed in this paper.
+the expected data, it is clear that constraints on the dynamical
+properties of the bar can be derived from the experiment proposed in
+this paper.
 
 \subsection{\Gaia}
 
@@ -436,25 +442,28 @@ directions identified as promising in \figurename~\ref{fig:detect}
 near-infrared such as \apogee\ are the best option for seeing the
 Hercules feature in the line-of-sight direction. The range of Galactic
 longitudes that \apogee\ can target along the disk is $-5^{\circ} \leq
-l \leq 250^{\circ}$ (SDSS-III Project Description\footnote{Available
+l \leq 250^{\circ}$ and its expected line-of-sight uncertainties are
+about 0.5 km s$^{-1}$ (SDSS-III Project Description\footnote{Available
   at \url{http://sdss3.org/collaboration/description.pdf}~.}). From
-\figurename~\ref{fig:detect} this limit is right on the edge of where
-we might hope to detect the Hercules feature. The Hercules bump in the
-direction $l = 250^{\circ}$ is about half as strong as in
+\figurename~\ref{fig:detect} this longitude limit is right on the edge
+of where we might hope to detect the Hercules feature. The Hercules
+bump in the direction $l = 250^{\circ}$ is about half as strong as in
 \figurename~\ref{fig:1dvar}, but remains as a clear signature of the
-bar. Since \apogee\ is expected to start taking data in 2011 and to
-finish operations before the first \Gaia\ data release, \apogee\ could
-potentially trace the Hercules stream around the Galaxy before
-\Gaia\ does. Since \apogee\ will also obtain detailed elemental
-abundances for its target stars, this would also allow for a more
-detailed analysis of the abundances of stars in the Hercules stream
-\citep[following, \eg,][]{Bensby07a,Bovy10a}, which could shed more
-light on radial mixing in the Galactic disk.
+bar. As before, about 500 stars a few kpc away are enough to detect
+the Hercules feature. Since \apogee\ is expected to start taking data
+in 2011 and to finish operations before the first \Gaia\ data release,
+\apogee\ could potentially trace the Hercules stream around the Galaxy
+before \Gaia\ does.
 
-BOVY: 500 stars is enough for APOGEE to distinguish from axisymmetric
-background.
+Another planned spectroscopic survey is
+\hermes\ \citep{Freeman10a}. While operating in the optical, it
+expects to survey hundreds of thousands of giants in the inner Galaxy,
+many as far as 6 kpc away, with line-of-sight velocity uncertainties
+less than 1 km s$^{-1}$ (K. Freeman, private communication). Since
+\hermes\ operates from the Southern hemisphere it can observe the most
+promising directions in \figurename~\ref{fig:detect} and, like
+\apogee, detect the Hercules feature before \Gaia.
 
-\citep{Freeman10a}.
 
 \acknowledgements It is a pleasure to thank the anonymous referee for
 valuable comments and Mike Blanton and David W.~Hogg for helpful
@@ -552,6 +561,14 @@ Katz,~D., \etal, 2004,
   Robin,~A.~C., \etal, 2005,
   \aap, 430, 129
 
+\bibitem[Ro{\v s}kar \etal(2008)]{roskar08a}
+  Ro{\v s}kar,~R., \etal, 2008,
+  \apjl, 684, L79
+
+\bibitem[Samland \& Gerhard(2003)]{samland03a}
+  Samland,~M.~\& Gerhard,~O.~E., 2003,
+  \aap, 399, 961
+
 \bibitem[Sellwood(2010)]{sellwood10a}
   Sellwood,~J.~A., 2010,
   \mnras, in press,
@@ -625,12 +642,12 @@ the azimuths by 180$^{\circ}$.}\label{fig:rphi2d}
 
 \clearpage
 \begin{figure}
-\includegraphics[width=0.35\textwidth]{distuncertain.ps}
-\includegraphics[width=0.35\textwidth]{vlosuncertain.ps}\\
-\includegraphics[width=0.35\textwidth]{df.ps}
-\includegraphics[width=0.35\textwidth]{slope.ps}\\
-\includegraphics[width=0.35\textwidth]{rolr.ps}
-\includegraphics[width=0.35\textwidth]{barstrength.ps}
+\includegraphics[width=0.32\textwidth]{distuncertain.ps}
+\includegraphics[width=0.32\textwidth]{vlosuncertain.ps}
+\includegraphics[width=0.32\textwidth]{df.ps}\\
+\includegraphics[width=0.32\textwidth]{slope.ps}
+\includegraphics[width=0.32\textwidth]{rolr.ps}
+\includegraphics[width=0.32\textwidth]{barstrength.ps}
 \caption{Variation of the predicted velocity distribution at R = 1.075
   \Ro , $\phi = -21^{\circ}$ (d= 0.4 \Ro, $l$ = 270$^{\circ}$) with
   distance uncertainties; line-of-sight velocity uncertainties;

@@ -67,7 +67,11 @@ are indistinguishable.
 I added explicit references to the Gaia, APOGEE, and HERMES
 uncertainties in the sections describing these surveys. 
 
-BOVY: V0
+Uncertainty in V0 only changes the scale of the predicted velocity
+distribution (since it is only used to go from vlos/V0 to the observed
+vlos). This is somewhat degenerate with the dynamical R_{olr}
+parameter, which is discussed at the end of the general discussion in
+Section 5.
 
 	 2. A brief discussion about which tracers, e.g. dwarf stars,
 	 red clump, red giant stars, to be used to test the model
@@ -79,8 +83,8 @@ BOVY: V0
 	 construct surveys for the very purpose of detecting
 	 Hercules. This discussion does not need to be long.
 
-> 3 kpc: giants (dwarfs in GAIA few kpc, giants go far enough and
-  bright enough to have RVs)
+This discussion is part of the new "general" discussion at the start
+of section 5.
 
 	 3. I find Discussion in Sect 5 (for both Gaia and APOGEE)
 	 somewhat sketchy. For example, no mention of the fact that
@@ -117,9 +121,33 @@ feature, the discussion now has the required depth.
 	 the proposed observational test. Add this discussion, which
 	 would be very interesting.
 
+The "testibility" of the model is discussed at greater length, but I
+think the whole paper makes it clear that this experiment is not a
+stretch for the spectroscopic surveys or Gaia. The line-of-sight
+velocity uncertainties of the spectroscopic surveys are much better
+than necessary to detect the feature, and not that many stars need to
+be observed to detect the feature (about 500, added to the
+discussion). 
+
+The discussion at the end of Section 4 also makes it clear that none
+of the nuisance or dynamical parameters change how well the model can
+be tested. 
+
+I added some discussion of how the prediction could be used to
+constrain the properties of the bar: The prediction depends on the
+exact properties of the bar, and while some of these dependencies are
+degenerate with dependecies on nuisance parameters, observing the
+velocity distribution at various locations will break some of these
+degeneracies. To actually calculate expected constraints would involve
+simulating the data, which are very unknown for most of the proposed
+surveys, but it is clear that constraints can be achieved using this
+experiment. 
+
 	 2. Page 2, statement at the end of the first paragraph "..up
 	 to the task of separating out these effects." This statement
 	 should be supported with a few relevant references.
+
+I added a few relevant references. 
 
 	 3. On page 5, sect 4, third paragraph, last sentence. I do
 	 not understand what the last sentence means - could the
