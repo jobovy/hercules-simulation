@@ -4,9 +4,12 @@ Please find below the response to the referees' comments for the
 submission "Tracing the Hercules Stream around the Galaxy" by myself
 (MS# ApJ80617).
 
-I have made changes following the referee's suggestions ... 
-
-A detailed list of the main changes is: 
+I have made changes following the referee's suggestions, in particular
+adding a general discussion to section 5 which discusses the kind of
+tracers needed and the number of stars needed to be observed to detect
+the Hercules feature. I also added two panels to figure 5 to address
+some of the referee's comments. All other changes were minor and in
+response to the referee.
 
 Please contact me by the information given below with any questions
 regarding this re-submission.
@@ -62,7 +65,7 @@ I added a panel to Figure 5 showing the influence of realistic
 line-of-sight velocity uncertainties. The expected uncertainties for
 APOGEE and HERMES are below 1 km/s; for such small uncertainties the
 uncertainty-free prediction and the uncertainty-convolved prediction
-are indistinguishable.
+are indistinguishable (which is clear from the new panel).
 
 I added explicit references to the Gaia, APOGEE, and HERMES
 uncertainties in the sections describing these surveys. 
@@ -97,7 +100,10 @@ of section 5.
 
 I added a reference to the line-of-sight velocity accuracies expected
 for Gaia, and an explicit comment that the velocities of giants will
-be measured accurately enough to verify the predictions of this paper.
+be measured accurately enough to verify the predictions of this
+paper. While the Hercules feature could certainly be detected in
+tangential velocities alone, Gaia will have plenty of line-of-sight
+velocities to make this prediction unnecessary.
 
 	 4. The discussion could in general be deeper, and also connect to
 	 the abstract (see below).
@@ -216,4 +222,4 @@ That's quite right. I have added this reference.
 	      Line 4 from the bottom: 
 	         chemical abundances --> elemental abundances
 
-All fixed!
+All fixed, thanks!
