@@ -470,12 +470,12 @@ def veldist_1d_rolr(plotfilename,phi=_DEFAULTPHI,R=_DEFAULTR,
     for rolr in rolrs:
         thissavefilename= basesavefilename+'%.3f.sav' % rolr
         if os.path.exists(thissavefilename):
-            print "Restoring los-velocity distribution at R_OLR %.1f" % rolr
+            print "Restoring los-velocity distribution at R_OLR %.2f" % rolr
             savefile= open(thissavefilename,'r')
             vlosd= pickle.load(savefile)
             savefile.close()
         else:
-            print "Calculating los-velocity distribution at R_OLR %.1f" % rolr
+            print "Calculating los-velocity distribution at R_OLR %.2f" % rolr
             potparams= (rolr,0.01,25.*_degtorad,.8,None)
             vlosd= predictVlos(vloslinspace,
                                l=phi,
