@@ -441,6 +441,67 @@ def veldist_1d_barstrength(plotfilename,phi=_DEFAULTPHI,R=_DEFAULTR,
     plot.bovy_text(0.5,.75,r'$\alpha = 0.013$'+'\n'+r'$\alpha = 0.010$'+ '\n'+r'$\alpha = 0.007$')
     plot.bovy_end_print(plotfilename)
 
+def veldist_1d_rolr(plotfilename,phi=_DEFAULTPHI,R=_DEFAULTR,
+                    ngrid=201,saveDir='../bar/1dvar/'):
+    """
+    NAME:
+       veldist_1d_rolr
+    PURPOSE:
+       make a plot showing the influence of the bar R_OLR
+    INPUT:
+       plotfilename - filename for figure
+       phi - Galactocentric azimuth
+       R - Galactocentric radius
+       ngrid - number of grid-points to calculate the los velocity distribution
+               on
+       saveDir - save pickles here
+    OUTPUT:
+       Figure in plotfilename
+    HISTORY:
+       2010-09-11 - Written - Bovy (NYU)
+    """
+    rolrs= [0.8,0.9,1.0]
+
+    vloslinspace= (-.9,.9,ngrid)
+    vloss= sc.linspace(*vloslinspace)
+
+    vlosds= []
+    basesavefilename= os.path.join(saveDir,'rolr_')
+    for rolr in rolrs:
+        thissavefilename= basesavefilename+'%.3f.sav' % rolr
+        if os.path.exists(thissavefilename):
+            print "Restoring los-velocity distribution at R_OLR %.1f" % rolr
+            savefile= open(thissavefilename,'r')
+            vlosd= pickle.load(savefile)
+            savefile.close()
+        else:
+            print "Calculating los-velocity distribution at R_OLR %.1f" % rolr
+            potparams= (rolr,0.01,25.*_degtorad,.8,None)
+            vlosd= predictVlos(vloslinspace,
+                               l=phi,
+                               d=R,
+                               distCoord='GCGC',
+                               pot='bar',beta=0.,
+                               potparams=potparams)
+            vlosd= vlosd/(sc.nansum(vlosd)*(vloss[1]-vloss[0]))
+            savefile= open(thissavefilename,'w')
+            pickle.dump(vlosd,savefile)
+            savefile.close()
+        vlosds.append(vlosd)
+    #Plot
+    plot.bovy_print()
+    plot.bovy_plot(vloss,vlosds[1],'k-',zorder=3,
+                   xrange=[vloslinspace[0],vloslinspace[1]],
+                   yrange=[0.,sc.amax(sc.array(vlosds).flatten())*1.1],
+                   xlabel=r'$v_{\mathrm{los}} / v_0$')
+    plot.bovy_plot(vloss,vlosds[0],ls='-',color='0.75',
+                   overplot=True,zorder=2,lw=2.)
+    plot.bovy_plot(vloss,vlosds[2],ls='-',color='0.5',
+                   overplot=True,zorder=2,lw=1.5)
+    plot.bovy_text(r'$\mathrm{bar\ strength}$',title=True)
+    plot.bovy_text(0.5,.75,r'$R_{\mathrm{OLR}} = 1.0$'+'\n'+r'$R_{\mathrm{OLR}} = 0.9$'+ '\n'+r'$R_{\mathrm{OLR}} = 0.8$')
+    plot.bovy_end_print(plotfilename)
+
 def veldist_1d_df(plotfilename,phi=_DEFAULTPHI,R=_DEFAULTR,
                   ngrid=201,saveDir='../bar/1dvar/'):
     """
@@ -677,6 +738,9 @@ def get_options():
     parser.add_option("--df", dest="df",
                       default=False,action="store_true", 
                       help="Make plot showing influence of distribution function assumptions")
+    parser.add_option("--rolr", dest="rolr",
+                      default=False,action="store_true", 
+                      help="Make plot showing influence of R_OLR")
     parser.add_option("--barstrength", dest="barstrength",
                       default=False,action="store_true", 
                       help="Make plot showing influence of the bar-strength")
@@ -710,6 +774,8 @@ if __name__ == '__main__':
         veldist_1d_slope(args[0],phi=options.phi,R=options.R)
     elif options.df:
         veldist_1d_df(args[0],phi=options.phi,R=options.R)
+    elif options.rolr:
+        veldist_1d_rolr(args[0],phi=options.phi,R=options.R)
     elif options.convolve:
         veldist_1d_convolve(args[0],phi=options.phi,R=options.R)
     elif options.vrconvolve:
