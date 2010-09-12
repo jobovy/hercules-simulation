@@ -82,11 +82,9 @@ Gaia errors: see below; APOGEE errors: better than 0.5 km/s.
 	 presented in this article? Again, here the intrinsic
 	 brightness of the tracers is of some interest.
 
-Mission-averaged disk giant or star < 10 km/s to 17. 
-
-\bibitem[Katz \etal(2004)]{Katz04a}
-Katz,~D., \etal, 2004,
-\mnras, 354, 1223
+I added a reference to the line-of-sight velocity accuracies expected
+for Gaia, and an explicit comment that the velocities of giants will
+be measured accurately enough to verify the predictions of this paper.
 
 	 4. The discussion could in general be deeper, and also connect to
 	 the abstract (see below).
