@@ -499,7 +499,7 @@ def veldist_1d_rolr(plotfilename,phi=_DEFAULTPHI,R=_DEFAULTR,
     plot.bovy_plot(vloss,vlosds[2],ls='-',color='0.5',
                    overplot=True,zorder=2,lw=1.5)
     plot.bovy_text(r'$\mathrm{bar}\ R_{\mathrm{OLR}}$',title=True)
-    plot.bovy_text(0.5,.75,r'$R_{\mathrm{OLR}} = 0.95$'+'\n'+r'$R_{\mathrm{OLR}} = 0.90$'+ '\n'+r'$R_{\mathrm{OLR}} = 0.85$')
+    plot.bovy_text(0.4,.75,r'$R_{\mathrm{OLR}} = 0.95\ R_0$'+'\n'+r'$R_{\mathrm{OLR}} = 0.90\ R_0$'+ '\n'+r'$R_{\mathrm{OLR}} = 0.85\ R_0$')
     plot.bovy_end_print(plotfilename)
 
 def veldist_1d_df(plotfilename,phi=_DEFAULTPHI,R=_DEFAULTR,
