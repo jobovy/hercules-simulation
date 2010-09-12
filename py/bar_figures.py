@@ -460,7 +460,7 @@ def veldist_1d_rolr(plotfilename,phi=_DEFAULTPHI,R=_DEFAULTR,
     HISTORY:
        2010-09-11 - Written - Bovy (NYU)
     """
-    rolrs= [0.8,0.9,1.0]
+    rolrs= [0.85,0.9,0.95]
 
     vloslinspace= (-.9,.9,ngrid)
     vloss= sc.linspace(*vloslinspace)
@@ -499,7 +499,7 @@ def veldist_1d_rolr(plotfilename,phi=_DEFAULTPHI,R=_DEFAULTR,
     plot.bovy_plot(vloss,vlosds[2],ls='-',color='0.5',
                    overplot=True,zorder=2,lw=1.5)
     plot.bovy_text(r'$\mathrm{bar}\ R_{\mathrm{OLR}}$',title=True)
-    plot.bovy_text(0.5,.75,r'$R_{\mathrm{OLR}} = 1.0$'+'\n'+r'$R_{\mathrm{OLR}} = 0.9$'+ '\n'+r'$R_{\mathrm{OLR}} = 0.8$')
+    plot.bovy_text(0.5,.75,r'$R_{\mathrm{OLR}} = 0.95$'+'\n'+r'$R_{\mathrm{OLR}} = 0.90$'+ '\n'+r'$R_{\mathrm{OLR}} = 0.85$')
     plot.bovy_end_print(plotfilename)
 
 def veldist_1d_df(plotfilename,phi=_DEFAULTPHI,R=_DEFAULTR,
