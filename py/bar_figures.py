@@ -8,7 +8,7 @@ import math as m
 import scipy as sc
 from scipy import signal
 from optparse import OptionParser
-import bovy_plot as plot
+import galpy.util.bovy_plot as plot
 from matplotlib import pyplot
 import matplotlib.ticker as ticker
 from calc_veldist_2d import calc_veldist_2d

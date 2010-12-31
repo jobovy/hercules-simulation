@@ -4,7 +4,7 @@
 ###############################################################################
 import interpret_as_df as df
 import scipy as sc
-import bovy_plot as plot
+import galpy.util.bovy_plot as plot
 import os, os.path
 def test_calc_surfacemass(baseplotfilename,format='png',ngrid=101):
     """

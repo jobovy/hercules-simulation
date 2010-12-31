@@ -12,7 +12,7 @@ import cPickle as pickle
 import scipy as sc
 from integrate_orbits import uvToELz
 from interpret_as_df import dehnenDF
-import bovy_plot as plot
+import galpy.util.bovy_plot as plot
 _degtorad= sc.pi/180.
 _NCORRECT=20
 def plot_veldist_2d(ulinspace=(-0.9,0.9,201),
