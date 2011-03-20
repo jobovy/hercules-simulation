@@ -107,7 +107,7 @@ def apogee_figures(plotfilename,savefilename=None,bar_angle=25.,dt=None,
         bovy_plot.bovy_text(r'$l = %i^\circ$' % int(l),
                             top_right=True)
     else:
-        bovy_plot.bovy_text(r'$l = %i$^\circ' % int(l) +'\n'+
+        bovy_plot.bovy_text(r'$l = %i^\circ$' % int(l) +'\n'+
                             r'$R_{\mathrm{OLR}} = %3.1f$' % rolr +'\n'+
                             r'$\alpha = %5.3f$' % bar_strength+'\n'+
                             r'$\phi_{\mathrm{bar}} = %i^\circ$'
