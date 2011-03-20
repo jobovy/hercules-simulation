@@ -17,8 +17,8 @@ from calc_veldist_1d import predictVlos, predictVlosConvolve
 _degtorad= m.pi/180.
 _radtodeg= 180./m.pi
 _DEFAULTL= 235.
-_VLOSGRID=26
-_DGRID= 21
+_VLOSGRID=101
+_DGRID= 101
 def apogee_figures(plotfilename,savefilename=None,bar_angle=25.,dt=None,
                    l=None,rolr=None,bar_strength=None,slope=None,
                    vlosgrid=201,dgrid=101,
@@ -102,7 +102,8 @@ def apogee_figures(plotfilename,savefilename=None,bar_angle=25.,dt=None,
                           ylabel=r'$(v_{\mathrm{los}} - \vec{v}_c \cdot \vec{d})\ /\ v_0$',
                           yrange=sc.array([vloslinspace[0],vloslinspace[1]]),
                           xrange=sc.array([dlinspace[0],dlinspace[1]]),
-                          contours=True,cntrmass=True)
+                          contours=True,cntrmass=True,
+                          cntrcolors=['w','w','w','w','w','k','k','k','k','k'])
     if bar_strength == 0.:
         bovy_plot.bovy_text(r'$l = %i^\circ$' % int(l),
                             top_right=True)
