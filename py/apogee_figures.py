@@ -116,7 +116,7 @@ def get_options():
     parser.add_option("--barangle", dest="barangle",type='float',
                       default=25.,
                       help="Bar angle [deg]")
-    parser.add_option("--dt", dest="dt",
+    parser.add_option("--dt", dest="dt",type=float,
                       default=None,
                       help="Time to integrate for")
     parser.add_option("--slope", dest="slope",type='float',
@@ -135,8 +135,12 @@ if __name__ == '__main__':
         parser.print_help()
         import sys
         sys.exit(-1)
+    if options.dt == 'None':
+        dt= None
+    else:
+        dt= float(options.dt)
     apogee_figures(args[0],savefilename=options.savefilename,
-                   dt=float(options.dt),bar_angle=options.barangle,
+                   dt=dt,bar_angle=options.barangle,
                    l=options.l,rolr=options.rolr,
                    bar_strength=options.barstrength,slope=options.slope,
                    conditional=options.conditional)
