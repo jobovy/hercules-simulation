@@ -46,12 +46,20 @@ def apogee_figures(plotfilename,savefilename=None,bar_angle=25.,dt=None,
     while dd < dgrid:
         print "Working on %i / %i ..." % (dd+1,dgrid)
         #Calculate vlos for this distance
-        vlosd= predictVlos(vloslinspace,
-                           l=l,
-                           d=ds[dd],
-                           distCoord='Sun',
-                           pot='bar',beta=slope,
-                           potparams=potparams,t=dt)
+        if dt is None:
+            vlosd= predictVlos(vloslinspace,
+                               l=l,
+                               d=ds[dd],
+                               distCoord='Sun',
+                               pot='bar',beta=slope,
+                               potparams=potparams)
+        else:
+            vlosd= predictVlos(vloslinspace,
+                               l=l,
+                               d=ds[dd],
+                               distCoord='Sun',
+                               pot='bar',beta=slope,
+                               potparams=potparams,t=dt)
         vlosds.append(vlosd)
         dd+= 1
         #Save
