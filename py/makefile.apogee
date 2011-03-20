@@ -16,4 +16,4 @@ $(APOGEEDIR)/default_l270.ps: apogee_figures.py calc_veldist_1d.py
 	$(PYTHON) apogee_figures.py $@ -s $(APOGEEDIR)/default_l270.sav -l 270
 
 $(APOGEEDIR)/default_rolr0.8.ps: apogee_figures.py calc_veldist_1d.py
-	$(PYTHON) apogee_figures.py $@ -s $(APOGEEDIR)/default_rolr0.8.sav
+	$(PYTHON) apogee_figures.py $@ -s $(APOGEEDIR)/default_rolr0.8.sav --rolor=0.8
