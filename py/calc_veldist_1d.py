@@ -7,7 +7,7 @@ import scipy.integrate as integrate
 from integrate_orbits import uvToELz
 from interpret_as_df import dehnenDF, shuDF
 import galpy.util.bovy_plot as plot
-_DEBUG=False
+_DEBUG=True
 _degtorad= sc.pi/180.
 _NCORRECT=20
 _MAXITER= 20

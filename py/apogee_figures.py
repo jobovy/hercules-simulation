@@ -23,6 +23,27 @@ def apogee_figures(plotfilename,savefilename=None,bar_angle=25.,dt=None,
                    l=None,rolr=None,bar_strength=None,slope=None,
                    vlosgrid=201,dgrid=101,
                    conditional=False):
+    """
+    NAME:
+       apogee_figures
+    PURPOSE:
+       make a vlos-d plot for APOGEE
+    INPUT:
+       plotfilename - name of the file the figure will be saved to
+       savefilename - name of the file the velocity distributions will
+                      be saved to
+       bar_angle= angle between the GC-Sun lin and the bar major axis
+       dt= - time to integrate for (in bar-periods)
+       l= - Galactic longitude
+       rolr= radius of outer lindblad radius
+       bar_strength= strength of the bar
+       slop= slope of the rotation curve (power-law index)
+       conditional= if True, normalize each velocity distribution independently
+    OUTPUT:
+       saves velocity distributions to pickle save file and produces plot
+    HISTORY:
+       2011-03-19 - Written - Bovy (NYU)
+    """
     #Grid
     vlosgrid=_VLOSGRID
     dgrid= _DGRID
