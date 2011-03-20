@@ -17,13 +17,15 @@ from calc_veldist_1d import predictVlos, predictVlosConvolve
 _degtorad= m.pi/180.
 _radtodeg= 180./m.pi
 _DEFAULTL= 235.
+_VLOSGRID=26
+_DGRID= 21
 def apogee_figures(plotfilename,savefilename=None,bar_angle=25.,dt=None,
                    l=None,rolr=None,bar_strength=None,slope=None,
                    vlosgrid=201,dgrid=101,
                    conditional=False):
     #Grid
-    vlosgrid=101
-    dgrid= 21
+    vlosgrid=_VLOSGRID
+    dgrid= _DGRID
     vloslinspace= (-.9,.9,vlosgrid)
     vloss= sc.linspace(*vloslinspace)
     dlinspace= (0.,10./8.,dgrid)

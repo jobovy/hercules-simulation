@@ -1,0 +1,11 @@
+APOGEEDIR=../apogee
+
+apogee: $(APOGEEDIR)/axi.ps \
+	$(APOGEEDIR)/default.ps
+
+$(APOGEEDIR)/axi.ps: apogee_figures.py calc_veldist_1d.py
+	$(PYTHON) apogee_figures.py $@ -s $(APOGEEDIR)/axi.sav \
+	--barstrength=0. --dt=0.00001
+
+$(APOGEEDIR)/default.ps: apogee_figures.py calc_veldist_1d.py
+	$(PYTHON) apogee_figures.py $@ -s $(APOGEEDIR)/default.sav
