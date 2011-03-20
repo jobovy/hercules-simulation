@@ -102,7 +102,7 @@ def apogee_figures(plotfilename,savefilename=None,bar_angle=25.,dt=None,
                           ylabel=r'$(v_{\mathrm{los}} - \vec{v}_c \cdot \vec{d})\ /\ v_0$',
                           yrange=sc.array([vloslinspace[0],vloslinspace[1]]),
                           xrange=sc.array([dlinspace[0],dlinspace[1]]),
-                          contours=False,cntrmass=False)
+                          contours=True,cntrmass=True)
     if bar_strength == 0.:
         bovy_plot.bovy_text(r'$l = %i^\circ$' % int(l),
                             top_right=True)
