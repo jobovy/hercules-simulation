@@ -135,7 +135,7 @@ if __name__ == '__main__':
         parser.print_help()
         import sys
         sys.exit(-1)
-    if options.dt == 'None':
+    if options.dt == 'None' or options.dt is None:
         dt= None
     else:
         dt= float(options.dt)
