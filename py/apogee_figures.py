@@ -49,7 +49,7 @@ def apogee_figures(plotfilename,savefilename=None,bar_angle=25.,dt=None,
     dgrid= _DGRID
     vloslinspace= (-.9,.9,vlosgrid)
     vloss= sc.linspace(*vloslinspace)
-    dlinspace= (0.,10./8.,dgrid)
+    dlinspace= (0.0001,10./8.,dgrid)
     ds= sc.linspace(*dlinspace)
 
     #Set up parameters
