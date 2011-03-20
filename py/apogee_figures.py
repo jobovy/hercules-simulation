@@ -69,7 +69,7 @@ def apogee_figures(plotfilename,savefilename=None,bar_angle=25.,dt=None,
         #Calculate vlos for this distance
         if dt is None:
             vlosd= predictVlos(vloslinspace,
-                               l=l,
+                               l=l*_degtorad,
                                d=ds[dd],
                                distCoord='Sun',
                                pot='bar',beta=slope,
