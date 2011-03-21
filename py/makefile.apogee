@@ -1,9 +1,9 @@
 APOGEEDIR=../apogee
 
 apogee: $(APOGEEDIR)/axi.ps \
-	$(APOGEEDIR)/default.ps
-	$(APOGEEDIR)/default_l270.ps
-	$(APOGEEDIR)/default_rolr0.8.ps
+	$(APOGEEDIR)/default.ps \
+	$(APOGEEDIR)/default_l270.ps \
+	$(APOGEEDIR)/default_rolr0.8.ps \
 	$(APOGEEDIR)/default_rolr1.ps
 
 $(APOGEEDIR)/axi.ps: apogee_figures.py calc_veldist_1d.py
