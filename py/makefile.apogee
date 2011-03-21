@@ -4,7 +4,9 @@ apogee: $(APOGEEDIR)/axi.ps \
 	$(APOGEEDIR)/default.ps \
 	$(APOGEEDIR)/default_l270.ps \
 	$(APOGEEDIR)/default_rolr0.8.ps \
-	$(APOGEEDIR)/default_rolr1.ps
+	$(APOGEEDIR)/default_rolr1.ps \
+	$(APOGEEDIR)/default_angle15.ps \
+	$(APOGEEDIR)/default_angle35.ps
 
 $(APOGEEDIR)/axi.ps: apogee_figures.py calc_veldist_1d.py
 	$(PYTHON) apogee_figures.py $@ -s $(APOGEEDIR)/axi.sav \
@@ -23,3 +25,11 @@ $(APOGEEDIR)/default_rolr0.8.ps: apogee_figures.py calc_veldist_1d.py
 $(APOGEEDIR)/default_rolr1.ps: apogee_figures.py calc_veldist_1d.py
 	$(PYTHON) apogee_figures.py $@ -s $(APOGEEDIR)/default_rolr1.sav \
 	--rolr=1.
+
+$(APOGEEDIR)/default_angle15.ps: apogee_figures.py calc_veldist_1d.py
+	$(PYTHON) apogee_figures.py $@ -s $(APOGEEDIR)/default_angle15.sav \
+	--barangle=15
+
+$(APOGEEDIR)/default_angle35.ps: apogee_figures.py calc_veldist_1d.py
+	$(PYTHON) apogee_figures.py $@ -s $(APOGEEDIR)/default_angle35.sav \
+	--barangle=35
