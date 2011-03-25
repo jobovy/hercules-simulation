@@ -177,5 +177,5 @@ if __name__ == '__main__':
                    dt=dt,bar_angle=options.barangle,
                    l=options.l,rolr=options.rolr,
                    bar_strength=options.barstrength,slope=options.slope,
-                   conditional=options.conditional,dmax=dmax)
+                   conditional=options.conditional,dmax=options.dmax)
     
