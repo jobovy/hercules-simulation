@@ -22,7 +22,8 @@ _DGRID= 101
 def apogee_figures(plotfilename,savefilename=None,bar_angle=25.,dt=None,
                    l=None,rolr=None,bar_strength=None,slope=None,
                    vlosgrid=201,dgrid=101,
-                   conditional=False):
+                   conditional=False,
+                   dmax=10./8.):
     """
     NAME:
        apogee_figures
@@ -49,7 +50,7 @@ def apogee_figures(plotfilename,savefilename=None,bar_angle=25.,dt=None,
     dgrid= _DGRID
     vloslinspace= (-.9,.9,vlosgrid)
     vloss= sc.linspace(*vloslinspace)
-    dlinspace= (0.0001,10./8.,dgrid)
+    dlinspace= (0.0001,dmax,dgrid)
     ds= sc.linspace(*dlinspace)
 
     #Set up parameters
@@ -152,6 +153,9 @@ def get_options():
     parser.add_option("--slope", dest="slope",type='float',
                       default=0.,
                       help="slope of the rotation curve (power-law)")
+    parser.add_option("--dmax", dest="dmax",type='float',
+                      default=1.25,
+                      help="maximum d to consider")
     parser.add_option("--conditional", dest="conditional",
                       default=False,action="store_true", 
                       help="Normalize all of the velocity distributions indepently")
@@ -173,5 +177,5 @@ if __name__ == '__main__':
                    dt=dt,bar_angle=options.barangle,
                    l=options.l,rolr=options.rolr,
                    bar_strength=options.barstrength,slope=options.slope,
-                   conditional=options.conditional)
+                   conditional=options.conditional,dmax=dmax)
     

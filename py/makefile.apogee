@@ -33,3 +33,8 @@ $(APOGEEDIR)/default_angle15.ps: apogee_figures.py calc_veldist_1d.py
 $(APOGEEDIR)/default_angle35.ps: apogee_figures.py calc_veldist_1d.py
 	$(PYTHON) apogee_figures.py $@ -s $(APOGEEDIR)/default_angle35.sav \
 	--barangle=35
+
+#For rotcurve project
+$(APOGEEDIR)/axi_l30.ps: apogee_figures.py calc_veldist_1d.py
+	$(PYTHON) apogee_figures.py $@ -s $(APOGEEDIR)/axi_l30.sav \
+	--barstrength=0. --dt=0.00001 -l 30. --dmax=6.
